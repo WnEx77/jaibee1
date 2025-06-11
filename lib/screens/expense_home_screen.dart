@@ -111,8 +111,7 @@ Widget build(BuildContext context) {
         backgroundColor: const Color.fromARGB(255, 130, 148, 179),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: SafeArea(
-        child: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
           backgroundColor: const Color.fromARGB(255, 130, 148, 179),
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.white.withOpacity(0.6),
@@ -140,7 +139,6 @@ Widget build(BuildContext context) {
             ),
           ],
         ),
-      ),
     ),
   );
 }
