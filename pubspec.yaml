@@ -1,0 +1,78 @@
+name: jaibee1
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  hive_flutter: ^1.1.0
+  fl_chart: ^0.70.2
+  intl: ^0.20.2
+  cupertino_icons: ^1.0.8
+  flutter_native_splash: ^2.4.6
+  printing: ^5.12.0
+  pdf: ^3.10.4
+  share_plus: ^7.2.1
+  shared_preferences: ^2.2.2 
+  month_year_picker: ^0.5.0+1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  hive_generator:
+  build_runner:
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^5.0.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/Jaibee_logo-removebg-preview.png"
+  adaptive_icon_background: "#FFFFFF"
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    # - assets/images/jaibee_logo.png
+    - assets/images/Jaibee_logo.png
+    - assets/images/background.png
+    - assets/images/Jaibee_flutter_icon_improved.png
+    - assets/images/Jaibee_logo-removebg-preview.png
+    - assets/images/WnEx_signature.png
+    - assets/fonts/Amiri-Regular.ttf
+    - assets/fonts/Rubik-Regular.ttf
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
+          
+
+          
+flutter_native_splash:
+  background_image: assets/images/background.png
+  image: assets/images/Jaibee_logo-removebg-preview.png
+  branding: assets/images/WnEx_signature.png
+  branding_mode: bottom
+  android: true
+  ios: true
+  android_gravity: center
+  ios_content_mode: center
+
+  android_12:
+    # DO NOT use image for Android 12 to avoid the circular mask
+    image: null
+    background_image: assets/images/background.png
+    branding: assets/images/WnEx_signature.png
+    branding_mode: bottom
+
