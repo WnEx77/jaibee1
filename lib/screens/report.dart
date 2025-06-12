@@ -60,149 +60,149 @@ class _ReportsScreenState extends State<ReportsScreen> {
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  final localizer = S.of(context)!;
+  @override
+  Widget build(BuildContext context) {
+    final localizer = S.of(context)!;
 
-  Map<String, double> dailyExpenses = {};
-  Map<String, double> categoryExpenses = {};
+    Map<String, double> dailyExpenses = {};
+    Map<String, double> categoryExpenses = {};
 
-  for (var txn in filteredTransactions) {
-    String dateKey = DateFormat('yyyy-MM-dd').format(txn.date);
-    dailyExpenses.update(
-      dateKey,
-      (v) => v + txn.amount,
-      ifAbsent: () => txn.amount,
-    );
-    final cat = txn.category ?? 'Other';
-    categoryExpenses.update(
-      cat,
-      (v) => v + txn.amount,
-      ifAbsent: () => txn.amount,
+    for (var txn in filteredTransactions) {
+      String dateKey = DateFormat('yyyy-MM-dd').format(txn.date);
+      dailyExpenses.update(
+        dateKey,
+        (v) => v + txn.amount,
+        ifAbsent: () => txn.amount,
+      );
+      final cat = txn.category ?? 'Other';
+      categoryExpenses.update(
+        cat,
+        (v) => v + txn.amount,
+        ifAbsent: () => txn.amount,
+      );
+    }
+
+    List<FlSpot> expenseSpots = [];
+    List<String> dateLabels = [];
+    int index = 0;
+
+    dailyExpenses.forEach((date, amount) {
+      expenseSpots.add(FlSpot(index.toDouble(), amount));
+      dateLabels.add(date);
+      index++;
+    });
+
+    double maxExpense = dailyExpenses.isNotEmpty
+        ? dailyExpenses.values.reduce((a, b) => a > b ? a : b)
+        : 100;
+    double interval = (maxExpense / 4).ceilToDouble();
+    double avgExpense = dailyExpenses.isNotEmpty
+        ? dailyExpenses.values.reduce((a, b) => a + b) / dailyExpenses.length
+        : 0;
+    double totalExpense = dailyExpenses.values.fold(0, (a, b) => a + b);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(localizer.reportTitle),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+        foregroundColor: Colors.white,
+        elevation: 1,
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const FinancialAdviceScreen(),
+            ),
+          );
+        },
+        label: Text(localizer.getAdvice),
+        icon: const Icon(Icons.lightbulb),
+        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+      ),
+      body: filteredTransactions.isEmpty
+          ? _buildEmptyState(localizer)
+          : RefreshIndicator(
+              onRefresh: () async {
+                _filterTransactions();
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildViewToggle(localizer),
+                    const SizedBox(height: 16),
+                    if (isMonthlyView) _buildMonthPicker(localizer),
+                    const SizedBox(height: 24),
+                    _buildSummaryCard(localizer, avgExpense, totalExpense),
+                    const SizedBox(height: 24),
+                    if (dailyExpenses.isNotEmpty) ...[
+                      Text(
+                        localizer.dailyExpenses,
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.redAccent.shade700,
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildLineChart(expenseSpots, dateLabels, interval, maxExpense),
+                      const SizedBox(height: 32),
+                      Text(
+                        localizer.selectCategory,
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.redAccent.shade700,
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildBarChart(categoryExpenses),
+                      const SizedBox(height: 32),
+                      _buildPieChart(categoryExpenses), // Add Pie Chart here
+                    ],
+                  ],
+                ),
+              ),
+            ),
+      backgroundColor: const Color(0xFFF9FAFB),
     );
   }
 
-  List<FlSpot> expenseSpots = [];
-  List<String> dateLabels = [];
-  int index = 0;
-
-  dailyExpenses.forEach((date, amount) {
-    expenseSpots.add(FlSpot(index.toDouble(), amount));
-    dateLabels.add(date);
-    index++;
-  });
-
-  double maxExpense = dailyExpenses.isNotEmpty
-      ? dailyExpenses.values.reduce((a, b) => a > b ? a : b)
-      : 100;
-  double interval = (maxExpense / 4).ceilToDouble();
-  double avgExpense = dailyExpenses.isNotEmpty
-      ? dailyExpenses.values.reduce((a, b) => a + b) / dailyExpenses.length
-      : 0;
-  double totalExpense = dailyExpenses.values.fold(0, (a, b) => a + b);
-
-  return Scaffold(
-    appBar: AppBar(
-      title: Text(localizer.reportTitle),
-      centerTitle: true,
-      backgroundColor: Colors.white,
-      foregroundColor: const Color.fromARGB(255, 130, 148, 179),
-      elevation: 1,
-    ),
-    floatingActionButton: FloatingActionButton.extended(
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const FinancialAdviceScreen(),
-          ),
-        );
-      },
-      label: Text(localizer.getAdvice),
-      icon: const Icon(Icons.lightbulb),
-      backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-    ),
-    body: filteredTransactions.isEmpty
-        ? _buildEmptyState(localizer)
-        : RefreshIndicator(
-            onRefresh: () async {
-              // Add refresh logic if needed, here simply refilter
-              _filterTransactions();
-            },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildViewToggle(localizer),
-                  const SizedBox(height: 16),
-                  if (isMonthlyView) _buildMonthPicker(localizer),
-                  const SizedBox(height: 24),
-                  _buildSummaryCard(localizer, avgExpense, totalExpense),
-                  const SizedBox(height: 24),
-                  if (dailyExpenses.isNotEmpty) ...[
-                    Text(
-                      localizer.dailyExpenses,
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.redAccent.shade700,
-                          ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildLineChart(expenseSpots, dateLabels, interval, maxExpense),
-                    const SizedBox(height: 32),
-                    Text(
-                      localizer.selectCategory,
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.redAccent.shade700,
-                          ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildBarChart(categoryExpenses),
-                  ],
-                ],
+  Widget _buildEmptyState(S localizer) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.insert_chart_outlined,
+              size: 100,
+              color: Colors.redAccent.shade200,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              localizer.noDataMonth,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.redAccent.shade400,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          ),
-    backgroundColor: const Color(0xFFF9FAFB),
-  );
-}
-
-Widget _buildEmptyState(S localizer) {
-  return Center(
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.insert_chart_outlined,
-            size: 100,
-            color: Colors.redAccent.shade200,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            localizer.noDataMonth,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.redAccent.shade400,
-              fontWeight: FontWeight.w600,
+            const SizedBox(height: 12),
+            Text(
+              localizer.noDataAdvice,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.redAccent.shade200),
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            localizer.noDataAdvice,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.redAccent.shade200),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildViewToggle(S localizer) {
     return Row(
@@ -286,131 +286,196 @@ Widget _buildEmptyState(S localizer) {
     );
   }
 
-  // Keep your _buildSummaryCard, _buildLineChart, _buildBarChart as-is
-}
-
-Widget _buildSummaryCard(S localizer, double avg, double total) {
-  return Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('${localizer.averageDaily}: \$${avg.toStringAsFixed(2)}'),
-        const SizedBox(height: 8),
-        Text('${localizer.totalSpent}: \$${total.toStringAsFixed(2)}'),
-      ],
-    ),
-  );
-}
-
-Widget _buildLineChart(
-  List<FlSpot> spots,
-  List<String> labels,
-  double interval,
-  double maxY,
-) {
-  return Container(
-    height: 300,
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
-    ),
-    child: LineChart(
-      LineChartData(
-        titlesData: FlTitlesData(
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              interval: 1,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                int idx = value.toInt();
-                if (idx >= 0 && idx < labels.length) {
-                  return Text(
-                    DateFormat(
-                      'MM/dd',
-                    ).format(DateFormat('yyyy-MM-dd').parse(labels[idx])),
-                    style: const TextStyle(fontSize: 10),
-                  );
-                }
-                return const Text('');
-              },
-            ),
-          ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              interval: interval,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return Text(
-                  '\$${value.toInt()}',
-                  style: const TextStyle(fontSize: 10),
-                );
-              },
-            ),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-        ),
-        gridData: FlGridData(
-          show: true,
-          drawVerticalLine: true,
-          horizontalInterval: interval,
-          getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.grey.withOpacity(0.3),
-            strokeWidth: 1,
-            dashArray: [5, 5],
-          ),
-        ),
-        lineBarsData: [
-          LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            gradient: const LinearGradient(
-              colors: [Colors.redAccent, Colors.orange],
-            ),
-            barWidth: 4,
-            belowBarData: BarAreaData(
-              show: true,
-              gradient: LinearGradient(
-                colors: [
-                  Colors.redAccent.withOpacity(0.3),
-                  Colors.orange.withOpacity(0.1),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-            dotData: const FlDotData(show: false),
-          ),
+  Widget _buildSummaryCard(S localizer, double avg, double total) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('${localizer.averageDaily}: \$${avg.toStringAsFixed(2)}'),
+          const SizedBox(height: 8),
+          Text('${localizer.totalSpent}: \$${total.toStringAsFixed(2)}'),
         ],
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(color: Colors.black.withOpacity(0.1)),
-        ),
-        minY: 0,
-        maxY: maxY + interval * 2,
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildBarChart(Map<String, double> categoryExpenses) {
-  final sortedCategories = categoryExpenses.entries.toList()
-    ..sort((a, b) => b.value.compareTo(a.value));
+  Widget _buildLineChart(
+    List<FlSpot> spots,
+    List<String> labels,
+    double interval,
+    double maxY,
+  ) {
+    return Container(
+      height: 300,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+      ),
+      child: LineChart(
+        LineChartData(
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: 1,
+                reservedSize: 40,
+                getTitlesWidget: (value, meta) {
+                  int idx = value.toInt();
+                  if (idx >= 0 && idx < labels.length) {
+                    return Text(
+                      DateFormat('MM/dd').format(DateFormat('yyyy-MM-dd').parse(labels[idx])),
+                      style: const TextStyle(fontSize: 10),
+                    );
+                  }
+                  return const Text('');
+                },
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: interval,
+                reservedSize: 40,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    '\$${value.toInt()}',
+                    style: const TextStyle(fontSize: 10),
+                  );
+                },
+              ),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+          ),
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: true,
+            horizontalInterval: interval,
+            getDrawingHorizontalLine: (value) => FlLine(
+              color: Colors.grey.withOpacity(0.3),
+              strokeWidth: 1,
+              dashArray: [5, 5],
+            ),
+          ),
+          lineBarsData: [
+            LineChartBarData(
+              spots: spots,
+              isCurved: true,
+              gradient: const LinearGradient(
+                colors: [Colors.redAccent, Colors.orange],
+              ),
+              barWidth: 4,
+              belowBarData: BarAreaData(
+                show: true,
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.redAccent.withOpacity(0.3),
+                    Colors.orange.withOpacity(0.1),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              dotData: const FlDotData(show: false),
+            ),
+          ],
+          borderData: FlBorderData(
+            show: true,
+            border: Border.all(color: Colors.black.withOpacity(0.1)),
+          ),
+          minY: 0,
+          maxY: maxY + interval * 2,
+        ),
+      ),
+    );
+  }
 
+  Widget _buildBarChart(Map<String, double> categoryExpenses) {
+    final sortedCategories = categoryExpenses.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return Container(
+      height: 300,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+      ),
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          maxY: sortedCategories.first.value + 10,
+          barTouchData: BarTouchData(enabled: true),
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  int index = value.toInt();
+                  if (index < sortedCategories.length) {
+                    return Text(
+                      sortedCategories[index].key,
+                      style: const TextStyle(fontSize: 10),
+                    );
+                  }
+                  return const Text('');
+                },
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 40,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    '\$${value.toInt()}',
+                    style: const TextStyle(fontSize: 10),
+                  );
+                },
+              ),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+          ),
+          barGroups: List.generate(sortedCategories.length, (i) {
+            return BarChartGroupData(
+              x: i,
+              barRods: [
+                BarChartRodData(
+                  toY: sortedCategories[i].value,
+                  gradient: const LinearGradient(
+                    colors: [Colors.redAccent, Colors.orange],
+                  ),
+                  width: 14,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ],
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+Widget _buildPieChart(Map<String, double> categoryExpenses) {
+  final total = categoryExpenses.values.fold(0.0, (a, b) => a + b);
   return Container(
     height: 300,
     padding: const EdgeInsets.all(16),
@@ -419,62 +484,24 @@ Widget _buildBarChart(Map<String, double> categoryExpenses) {
       borderRadius: BorderRadius.circular(20),
       boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
     ),
-    child: BarChart(
-      BarChartData(
-        alignment: BarChartAlignment.spaceAround,
-        maxY: sortedCategories.first.value + 10,
-        barTouchData: BarTouchData(enabled: true),
-        titlesData: FlTitlesData(
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                int index = value.toInt();
-                if (index < sortedCategories.length) {
-                  return Text(
-                    sortedCategories[index].key,
-                    style: const TextStyle(fontSize: 10),
-                  );
-                }
-                return const Text('');
-              },
-            ),
-          ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return Text(
-                  '\$${value.toInt()}',
-                  style: const TextStyle(fontSize: 10),
-                );
-              },
-            ),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-        ),
-        barGroups: List.generate(sortedCategories.length, (i) {
-          return BarChartGroupData(
-            x: i,
-            barRods: [
-              BarChartRodData(
-                toY: sortedCategories[i].value,
-                gradient: const LinearGradient(
-                  colors: [Colors.redAccent, Colors.orange],
-                ),
-                width: 14,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ],
+    child: PieChart(
+      PieChartData(
+        sections: categoryExpenses.entries.map((entry) {
+          final value = entry.value;
+          final percentage = (value / total) * 100;
+          return PieChartSectionData(
+            value: value, // This should remain a double
+            title: '${entry.key} (${percentage.toStringAsFixed(1)}%)',
+            color: Colors.primaries[categoryExpenses.keys.toList().indexOf(entry.key) % Colors.primaries.length],
+            radius: 80,
+            titleStyle: const TextStyle(fontSize: 12, color: Colors.black),
           );
-        }),
+        }).toList(),
+        borderData: FlBorderData(show: false),
+        sectionsSpace: 2,
+        centerSpaceRadius: 40,
       ),
     ),
   );
+}
 }

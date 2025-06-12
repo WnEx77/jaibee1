@@ -91,17 +91,13 @@ class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
           elevation: 2,
           actions: [
             IconButton(
-              icon: const Icon(Icons.language),
-              tooltip: S.of(context)!.changeLanguage,
-              onPressed: _showLanguageDialog,
-            ),
-            IconButton(
               icon: const Icon(Icons.person),
               tooltip: S.of(context)!.profile,
               onPressed: _goToProfile,
             ),
           ],
         ),
+
         body: _screens[_selectedIndex],
         floatingActionButton: SizedBox(
           height: 64,

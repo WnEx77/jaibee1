@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee1/screens/goals_screen.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:intl/intl.dart';
+import 'package:jaibee1/main.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -76,6 +77,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _changeLanguage(String langCode) {
+    Locale newLocale = Locale(langCode);
+    ExpenseTrackerApp.setLocale(context, newLocale);
+  }
+
+  void _showLanguageDialog() {
+    final s = S.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: Text(s.changeLanguage),
+          children: [
+            SimpleDialogOption(
+              child: Text(s.english),
+              onPressed: () {
+                _changeLanguage('en');
+                Navigator.pop(context);
+              },
+            ),
+            SimpleDialogOption(
+              child: Text(s.arabic),
+              onPressed: () {
+                _changeLanguage('ar');
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context)!;
@@ -91,6 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // Personal Info
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -99,11 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(s.personalInfo,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        )),
+                    Text(s.personalInfo, style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 16),
 
                     // Sex Dropdown
@@ -122,7 +153,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.person),
                         border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -158,6 +188,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                   ],
                 ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Language Selection
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: ListTile(
+                leading: const Icon(Icons.language, color: Colors.blueGrey),
+                title: Text(s.changeLanguage),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: _showLanguageDialog,
               ),
             ),
 
