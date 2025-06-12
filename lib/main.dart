@@ -6,27 +6,33 @@ import 'package:jaibee1/models/trancs.dart';
 import 'package:jaibee1/screens/expense_home_screen.dart';
 import 'package:jaibee1/models/category.dart';
 import 'package:month_year_picker/month_year_picker.dart';
-
-
+import 'package:jaibee1/models/budget.dart';
+import 'package:jaibee1/models/goal_model.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive
+  // Initialize Hive only once:
   await Hive.initFlutter();
 
-  // Register Adapters
+  // Register Adapters before opening boxes:
   Hive.registerAdapter(TransactionAdapter());
   Hive.registerAdapter(CategoryAdapter());
+  Hive.registerAdapter(BudgetAdapter());
+  Hive.registerAdapter(GoalAdapter());
 
-  // Open boxes
+  // Open boxes BEFORE running the app:
   await Hive.openBox('transactions');
   await Hive.openBox<Category>('categories');
-  await Hive.openBox<double>('settings'); // Used for settings like monthlyLimit
+  await Hive.openBox<double>('settings'); // For monthlyLimit and other simple settings
+  await Hive.openBox<Budget>('budgets');
+  await Hive.openBox<Goal>('goals');
+  // print('Box type: ${Hive.box<Goal>('goals').runtimeType}');
 
-  // Add default categories and default limit
+  // Add default data if needed
   await addDefaultCategoriesIfEmpty();
-  // await addDefaultMonthlyLimitIfNotExists();
+  await addDefaultMonthlyLimitIfNotExists();
 
   runApp(const ExpenseTrackerApp());
 }
@@ -45,7 +51,13 @@ Future<void> addDefaultCategoriesIfEmpty() async {
 }
 
 Future<void> addDefaultMonthlyLimitIfNotExists() async {
-  // Do nothing — let the app handle missing limit gracefully
+  final settingsBox = Hive.box<double>('settings');
+  if (!settingsBox.containsKey('monthlyLimit')) {
+    await settingsBox.put(
+      'monthlyLimit',
+      1000.0,
+    ); // Default monthly limit $1000
+  }
 }
 
 class ExpenseTrackerApp extends StatefulWidget {

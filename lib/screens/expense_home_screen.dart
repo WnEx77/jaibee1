@@ -5,6 +5,7 @@ import 'package:jaibee1/screens/report.dart';
 import 'package:jaibee1/screens/tranc_screen.dart';
 import 'package:jaibee1/main.dart';
 import 'package:jaibee1/screens/profile.dart';
+import 'package:jaibee1/screens/budget_screen.dart';
 
 class ExpenseHomeScreen extends StatefulWidget {
   const ExpenseHomeScreen({super.key});
@@ -90,6 +91,16 @@ class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
           foregroundColor: Colors.white,
           elevation: 2,
           actions: [
+            IconButton(
+              icon: const Icon(Icons.account_balance_wallet),
+              tooltip: 'Budgets',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const BudgetScreen()),
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.person),
               tooltip: S.of(context)!.profile,

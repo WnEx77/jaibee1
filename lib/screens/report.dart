@@ -5,6 +5,8 @@ import 'package:hive/hive.dart';
 import 'package:jaibee1/models/trancs.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/screens/FinancialAdviceScreen.dart'; // Adjust path as needed
+import 'package:jaibee1/models/goal_model.dart';
+import 'package:jaibee1/screens/edit_goal_dialog.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -19,11 +21,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
   DateTime selectedMonth = DateTime.now();
   bool isMonthlyView = true;
 
+  late List<Goal> goals;
+
   @override
   void initState() {
     super.initState();
     final transactionBox = Hive.box('transactions');
     allTransactions = transactionBox.values.toList().cast<Transaction>();
+
+    final goalBox = Hive.box<Goal>('goals'); // ✅ safe if already open
+    goals = goalBox.values.toList().cast<Goal>();
+
     _filterTransactions();
   }
 
@@ -129,7 +137,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
               },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -143,24 +154,43 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       Text(
                         localizer.dailyExpenses,
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent.shade700,
-                            ),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.redAccent.shade700,
+                        ),
                       ),
                       const SizedBox(height: 16),
-                      _buildLineChart(expenseSpots, dateLabels, interval, maxExpense),
+                      _buildLineChart(
+                        expenseSpots,
+                        dateLabels,
+                        interval,
+                        maxExpense,
+                      ),
                       const SizedBox(height: 32),
                       Text(
                         localizer.selectCategory,
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent.shade700,
-                            ),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.redAccent.shade700,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       _buildBarChart(categoryExpenses),
                       const SizedBox(height: 32),
                       _buildPieChart(categoryExpenses), // Add Pie Chart here
+                      if (goals.isNotEmpty) ...[
+                        Text(
+                          localizer.yourGoals,
+                          style: Theme.of(context).textTheme.titleLarge!
+                              .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.redAccent.shade700,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        ...goals
+                            .map((goal) => _buildGoalProgressCard(goal, index))
+                            .toList(),
+                      ],
                     ],
                   ],
                 ),
@@ -331,7 +361,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   int idx = value.toInt();
                   if (idx >= 0 && idx < labels.length) {
                     return Text(
-                      DateFormat('MM/dd').format(DateFormat('yyyy-MM-dd').parse(labels[idx])),
+                      DateFormat(
+                        'MM/dd',
+                      ).format(DateFormat('yyyy-MM-dd').parse(labels[idx])),
                       style: const TextStyle(fontSize: 10),
                     );
                   }
@@ -474,34 +506,136 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-Widget _buildPieChart(Map<String, double> categoryExpenses) {
-  final total = categoryExpenses.values.fold(0.0, (a, b) => a + b);
-  return Container(
-    height: 300,
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
-    ),
-    child: PieChart(
-      PieChartData(
-        sections: categoryExpenses.entries.map((entry) {
-          final value = entry.value;
-          final percentage = (value / total) * 100;
-          return PieChartSectionData(
-            value: value, // This should remain a double
-            title: '${entry.key} (${percentage.toStringAsFixed(1)}%)',
-            color: Colors.primaries[categoryExpenses.keys.toList().indexOf(entry.key) % Colors.primaries.length],
-            radius: 80,
-            titleStyle: const TextStyle(fontSize: 12, color: Colors.black),
-          );
-        }).toList(),
-        borderData: FlBorderData(show: false),
-        sectionsSpace: 2,
-        centerSpaceRadius: 40,
+  Widget _buildPieChart(Map<String, double> categoryExpenses) {
+    final total = categoryExpenses.values.fold(0.0, (a, b) => a + b);
+    return Container(
+      height: 300,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
-    ),
-  );
-}
+      child: PieChart(
+        PieChartData(
+          sections: categoryExpenses.entries.map((entry) {
+            final value = entry.value;
+            final percentage = (value / total) * 100;
+            return PieChartSectionData(
+              value: value, // This should remain a double
+              title: '${entry.key} (${percentage.toStringAsFixed(1)}%)',
+              color:
+                  Colors.primaries[categoryExpenses.keys.toList().indexOf(
+                        entry.key,
+                      ) %
+                      Colors.primaries.length],
+              radius: 80,
+              titleStyle: const TextStyle(fontSize: 12, color: Colors.black),
+            );
+          }).toList(),
+          borderData: FlBorderData(show: false),
+          sectionsSpace: 2,
+          centerSpaceRadius: 40,
+        ),
+      ),
+    );
+  }
+
+ Widget _buildGoalProgressCard(Goal goal, int index) {
+    final progress = goal.targetAmount > 0
+        ? (goal.savedAmount / goal.targetAmount).clamp(0.0, 1.0)
+        : 0.0;
+
+    final now = DateTime.now();
+    final daysLeft = goal.targetDate.difference(now).inDays;
+    final isPastDue = daysLeft < 0;
+
+    Color progressColor;
+    if (progress >= 1.0) {
+      progressColor = Colors.green;
+    } else if (isPastDue) {
+      progressColor = Colors.red;
+    } else if (daysLeft <= 7) {
+      progressColor = Colors.orange;
+    } else {
+      progressColor = Colors.blue;
+    }
+
+    String dateStatusText;
+    if (isPastDue) {
+      dateStatusText = 'Past due: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year}';
+    } else {
+      dateStatusText = 'Target: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year} • $daysLeft days left';
+    }
+
+    return InkWell(
+      // onTap: () {
+      //   showDialog(
+      //     context: context,
+      //     builder: (context) => EditGoalDialog(
+      //       goal: goal,
+      //       index: index,
+      //       onUpdate: (updatedGoal, index) {
+      //         setState(() {
+      //           goals[index] = updatedGoal;
+      //         });
+      //       },
+      //       onDelete: (index) {
+      //         setState(() {
+      //           goals.removeAt(index);
+      //         });
+      //       },
+      //     ),
+      //   );
+      // },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              goal.name,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              dateStatusText,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: isPastDue ? Colors.red : Colors.grey.shade700,
+              ),
+            ),
+            const SizedBox(height: 12),
+            LinearProgressIndicator(
+              value: progress,
+              minHeight: 12,
+              backgroundColor: Colors.grey.shade300,
+              valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '\$${goal.savedAmount.toStringAsFixed(2)} saved',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+                Text(
+                  'Goal: \$${goal.targetAmount.toStringAsFixed(2)}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

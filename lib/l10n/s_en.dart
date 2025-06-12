@@ -296,4 +296,7 @@ class SEn extends S {
 
   @override
   String get noDataAdvice => 'Try adding some expenses to see reports.';
+
+  @override
+  String get yourGoals => 'Your Goals';
 }

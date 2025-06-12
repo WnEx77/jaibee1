@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:jaibee1/models/trancs.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/screens/edit_tranc.dart';
+import 'package:jaibee1/screens/budget_screen.dart';  // Import BudgetScreen
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});
@@ -23,16 +25,22 @@ class _TransactionScreenState extends State<TransactionScreen> {
   ];
 
   final Set<String> _selectedFilters = Set.from(defaultQuickCategories);
-  final settingsBox = Hive.box<double>('settings');
-  final String monthlyLimitKey = 'monthlyLimit';
 
-  double _monthlyLimit = 0;
   DateTime _selectedMonth = DateTime.now();
+
+  double? _monthlyLimit; // retrieved from budget box
 
   @override
   void initState() {
     super.initState();
-    _monthlyLimit = settingsBox.get(monthlyLimitKey, defaultValue: 0.0) ?? 0.0;
+    _loadMonthlyLimit();
+  }
+
+  Future<void> _loadMonthlyLimit() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _monthlyLimit = prefs.getDouble('monthly_limit');
+    });
   }
 
   void _previousMonth() {
@@ -49,64 +57,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
     });
   }
 
-  void _showSetLimitDialog(BuildContext context, S localizer) {
-    final controller = TextEditingController(
-      text: _monthlyLimit > 0 ? _monthlyLimit.toStringAsFixed(2) : '',
-    );
-
-    final formKey = GlobalKey<FormState>();
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text(localizer.setMonthlyLimit),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: controller,
-            autofocus: true,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: InputDecoration(
-              labelText: localizer.monthlyLimit,
-              prefixIcon: const Icon(Icons.attach_money),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            validator: (value) {
-              final amount = double.tryParse(value ?? '');
-              if (amount == null || amount < 0) {
-                return localizer.invalidAmount;
-              }
-              return null;
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(localizer.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                final value = double.parse(controller.text);
-                setState(() => _monthlyLimit = value);
-                settingsBox.put(monthlyLimitKey, value);
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(localizer.monthlyLimitSet)),
-                );
-              }
-            },
-            child: Text(localizer.ok),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
@@ -120,19 +70,30 @@ class _TransactionScreenState extends State<TransactionScreen> {
         elevation: 1,
         foregroundColor: Colors.black,
         title: Text(
-          '${localizer.montlyLimitSetter} ${_monthlyLimit.toStringAsFixed(0)} ${localizer.sar}',
+          localizer.transactions,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         actions: [
+          // IconButton(
+          //   icon: const Icon(Icons.settings),
+          //   tooltip: 'Budgets',
+          //   onPressed: () async {
+          //     // Navigate to BudgetScreen and wait for result
+          //     final result = await Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (_) => const BudgetScreen()),
+          //     );
+
+          //     if (result == true) {
+          //       // Reload the monthly limit if budgets were saved
+          //       await _loadMonthlyLimit();
+          //     }
+          //   },
+          // ),
           IconButton(
             icon: const Icon(Icons.filter_list),
             tooltip: localizer.filterTransactions,
             onPressed: () => _showFilterDialog(context, localizer),
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: localizer.setMonthlyLimit,
-            onPressed: () => _showSetLimitDialog(context, localizer),
           ),
         ],
       ),
@@ -164,9 +125,12 @@ class _TransactionScreenState extends State<TransactionScreen> {
           }
 
           final balance = totalIncome - totalExpenses;
-          final progress = _monthlyLimit > 0
-              ? (totalExpenses / _monthlyLimit).clamp(0.0, 1.0)
-              : 0.0;
+
+          // Calculate monthly limit usage percentage (if limit exists)
+          double usagePercent = 0;
+          if (_monthlyLimit != null && _monthlyLimit! > 0) {
+            usagePercent = (totalExpenses / _monthlyLimit!).clamp(0, 1);
+          }
 
           return Column(
             children: [
@@ -181,6 +145,35 @@ class _TransactionScreenState extends State<TransactionScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                     child: Column(
                       children: [
+                        // Monthly limit display with progress bar (if limit exists)
+                        if (_monthlyLimit != null) ...[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(localizer.monthlyLimit, style: const TextStyle(fontWeight: FontWeight.w600)),
+                              Text(
+                                '\$${totalExpenses.toStringAsFixed(2)} / \$${_monthlyLimit!.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: usagePercent >= 1 ? Colors.red : Colors.green,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: LinearProgressIndicator(
+                              value: usagePercent,
+                              minHeight: 10,
+                              backgroundColor: Colors.grey.shade300,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                usagePercent >= 1 ? Colors.red : Colors.green,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -201,22 +194,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             ),
                           ],
                         ),
-                        if (_monthlyLimit > 0) ...[
-                          const SizedBox(height: 12),
-                          LinearProgressIndicator(
-                            value: progress,
-                            backgroundColor: Colors.grey.shade300,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              progress < 0.7
-                                  ? Colors.green
-                                  : (progress < 1 ? Colors.orange : Colors.red),
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            '${(progress * 100).toStringAsFixed(1)}% ${localizer.used}',
-                          ),
-                        ],
                       ],
                     ),
                   ),

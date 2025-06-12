@@ -666,6 +666,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Try adding some expenses to see reports.'**
   String get noDataAdvice;
+
+  /// No description provided for @yourGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Goals'**
+  String get yourGoals;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

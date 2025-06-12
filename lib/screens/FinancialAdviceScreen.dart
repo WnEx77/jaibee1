@@ -184,11 +184,11 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
   Future<void> _loadAdvice() async {
     try {
       final locale = Localizations.localeOf(context);
-      final prefs = await SharedPreferences.getInstance();
 
       final transactionsBox = Hive.box('transactions');
-      final settingsBox = Hive.box<double>('settings');
-      final double? monthlyLimit = settingsBox.get('monthlyLimit');
+      final prefs = await SharedPreferences.getInstance();
+      final double? monthlyLimit = prefs.getDouble('monthly_limit') ?? 0;
+
 
       final summary = getMonthlySummary(
         _selectedMonth,

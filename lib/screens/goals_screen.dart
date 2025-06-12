@@ -1,192 +1,87 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jaibee1/l10n/s.dart'; // Import localization
-// import 'package:jaibee1/screens/BackgroundContainer.dart';
-
-
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:jaibee1/models/goal_model.dart';
+import 'package:jaibee1/screens/add_goal_dialog.dart';
+import 'package:jaibee1/screens/edit_goal_dialog.dart';
 
 class GoalsScreen extends StatefulWidget {
-  const GoalsScreen({super.key});
+  const GoalsScreen({Key? key}) : super(key: key);
 
   @override
   State<GoalsScreen> createState() => _GoalsScreenState();
 }
 
 class _GoalsScreenState extends State<GoalsScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _monthlyInvestmentController = TextEditingController();
-  final TextEditingController _itemToBuyController = TextEditingController();
-  final TextEditingController _timeFrameController = TextEditingController();
-  String? _goalType;
-
-  List<Map<String, dynamic>> _goals = [];
+  late Box<Goal> _goalBox;
 
   @override
   void initState() {
     super.initState();
-    _loadGoals();
+    _goalBox = Hive.box<Goal>('goals');
   }
 
-  Future<void> _loadGoals() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? goalsJson = prefs.getString('user_goals_list');
-    if (goalsJson != null) {
-      final List decoded = jsonDecode(goalsJson);
-      setState(() {
-        _goals = decoded.cast<Map<String, dynamic>>();
-      });
-    }
+  void _addGoal(Goal goal) {
+    _goalBox.add(goal);
   }
 
-  Future<void> _saveGoals() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_goals_list', jsonEncode(_goals));
-  }
-
-  void _addGoal() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      final newGoal = {
-        'type': _goalType ?? '',
-        'monthly': double.tryParse(_monthlyInvestmentController.text) ?? 0.0,
-        'item': _itemToBuyController.text,
-        'months': int.tryParse(_timeFrameController.text) ?? 0,
-      };
-
-      setState(() {
-        _goals.add(newGoal);
-        _goalType = null;
-        _monthlyInvestmentController.clear();
-        _itemToBuyController.clear();
-        _timeFrameController.clear();
-      });
-
-      _saveGoals();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context)!.goalAdded)),
-      );
-    }
+  void _updateGoal(Goal goal, int index) {
+    _goalBox.putAt(index, goal);
   }
 
   void _deleteGoal(int index) {
-    setState(() {
-      _goals.removeAt(index);
-    });
-    _saveGoals();
-  }
-
-  @override
-  void dispose() {
-    _monthlyInvestmentController.dispose();
-    _itemToBuyController.dispose();
-    _timeFrameController.dispose();
-    super.dispose();
+    _goalBox.deleteAt(index);
   }
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context)!;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(s.financialGoals),
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-        foregroundColor: Colors.white,
+      appBar: AppBar(title: const Text('Goals')),
+      body: ValueListenableBuilder(
+        valueListenable: _goalBox.listenable(),
+        builder: (context, Box<Goal> box, _) {
+          if (box.values.isEmpty) {
+            return const Center(child: Text('No goals added yet'));
+          }
+
+          return ListView.builder(
+            itemCount: box.length,
+            itemBuilder: (context, index) {
+              final goal = box.getAt(index);
+              if (goal == null) return const SizedBox.shrink();
+
+              return ListTile(
+                title: Text(goal.name),
+                subtitle: Text(
+                  'Saved: \$${goal.savedAmount.toStringAsFixed(2)} / Target: \$${goal.targetAmount.toStringAsFixed(2)}',
+                ),
+                trailing: Text(
+                  'Due: ${goal.targetDate.toLocal().toString().split(' ')[0]}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => EditGoalDialog(
+                      goal: goal,
+                      index: index,
+                      onUpdate: _updateGoal,
+                      onDelete: _deleteGoal,
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  DropdownButtonFormField<String>(
-                    value: _goalType,
-                    decoration: InputDecoration(
-                      labelText: s.goalType,
-                      border: const OutlineInputBorder(),
-                    ),
-                    items: [
-                      DropdownMenuItem(value: 'Retirement', child: Text(s.retirement)),
-                      DropdownMenuItem(value: 'Education', child: Text(s.education)),
-                      DropdownMenuItem(value: 'Home', child: Text(s.home)),
-                      DropdownMenuItem(value: 'Travel', child: Text(s.travel)),
-                      DropdownMenuItem(value: 'Other', child: Text(s.other)),
-                    ],
-                    onChanged: (value) => setState(() => _goalType = value),
-                    validator: (value) => value == null ? s.goalType : null,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _monthlyInvestmentController,
-                    decoration: InputDecoration(
-                      labelText: s.monthlyInvestment,
-                      border: const OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) =>
-                        value == null || value.isEmpty ? s.enterAmount : null,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _itemToBuyController,
-                    decoration: InputDecoration(
-                      labelText: s.whatToBuy,
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _timeFrameController,
-                    decoration: InputDecoration(
-                      labelText: s.timeframe,
-                      border: const OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) =>
-                        value == null || value.isEmpty ? s.enterTimeframe : null,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _addGoal,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-                      foregroundColor: Colors.white,
-                    ),
-                    child: Text(s.addGoal),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Expanded(
-              child: _goals.isEmpty
-                  ? Text(s.noGoals)
-                  : ListView.builder(
-                      itemCount: _goals.length,
-                      itemBuilder: (context, index) {
-                        final goal = _goals[index];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          child: ListTile(
-                            title: Text(goal['type']),
-                            subtitle: Text(
-                              '${s.monthlyInvestment}: \$${goal['monthly']}, ${s.whatToBuy}: ${goal['item']}, ${s.timeframe}: ${goal['months']}',
-                            ),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _deleteGoal(index),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AddGoalDialog(onAdd: _addGoal),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

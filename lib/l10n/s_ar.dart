@@ -295,4 +295,7 @@ class SAr extends S {
 
   @override
   String get noDataAdvice => 'لم يتم ادخال بيانات';
+
+  @override
+  String get yourGoals => 'أهدافك';
 }
