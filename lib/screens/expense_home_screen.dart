@@ -66,19 +66,17 @@ class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
       MaterialPageRoute(builder: (context) => const ProfileScreen()),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final isRtl = Localizations.localeOf(context).languageCode == 'ar';
 
-    int navBarIndex;
-    if (_selectedIndex == 0) {
-      navBarIndex = 0;
-    } else if (_selectedIndex == 2) {
-      navBarIndex = 1;
-    } else {
-      navBarIndex = -1;
-    }
+    int navBarIndex = (_selectedIndex == 0)
+        ? 0
+        : (_selectedIndex == 2)
+        ? 1
+        : 0;
+    bool isFabSelected = _selectedIndex == 1;
 
     return Directionality(
       textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
@@ -120,9 +118,11 @@ class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
 
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-          selectedItemColor: Colors.white,
+          selectedItemColor: isFabSelected
+              ? Colors.white.withOpacity(0.6)
+              : Colors.white,
           unselectedItemColor: Colors.white.withOpacity(0.6),
-          currentIndex: navBarIndex == -1 ? 0 : navBarIndex,
+          currentIndex: navBarIndex,
           onTap: (index) {
             if (index == 0) {
               _onItemTapped(0);

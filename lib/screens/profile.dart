@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee1/screens/goals_screen.dart';
-import 'package:jaibee1/l10n/s.dart'; // localization import
+import 'package:jaibee1/l10n/s.dart';
+import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,7 +13,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String? _selectedSex;
-  int? _age;
+  DateTime? _birthDate;
   final TextEditingController _goalsController = TextEditingController();
 
   final List<String> _sexOptions = ['Male', 'Female', 'Other'];
@@ -27,7 +28,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _selectedSex = prefs.getString('user_sex');
-      _age = prefs.getInt('user_age');
+      final dobString = prefs.getString('user_birthdate');
+      if (dobString != null) {
+        _birthDate = DateTime.tryParse(dobString);
+      }
       _goalsController.text = prefs.getString('user_goals') ?? '';
     });
   }
@@ -35,12 +39,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _saveProfile() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_sex', _selectedSex ?? '');
-    await prefs.setInt('user_age', _age ?? 0);
+    if (_birthDate != null) {
+      await prefs.setString('user_birthdate', _birthDate!.toIso8601String());
+    }
     await prefs.setString('user_goals', _goalsController.text);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(S.of(context)!.profileSaved)),
     );
+  }
+
+  int? _calculateAge(DateTime? birthDate) {
+    if (birthDate == null) return null;
+    final today = DateTime.now();
+    int age = today.year - birthDate.year;
+    if (birthDate.month > today.month ||
+        (birthDate.month == today.month && birthDate.day > today.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  Future<void> _selectBirthDate() async {
+    final now = DateTime.now();
+    final initialDate = _birthDate ?? DateTime(now.year - 20);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(1900),
+      lastDate: now,
+    );
+    if (picked != null) {
+      setState(() {
+        _birthDate = picked;
+      });
+    }
   }
 
   @override
@@ -59,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           children: [
             Card(
-              elevation: 3,
+              elevation: 4,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -67,7 +100,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(s.personalInfo,
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        )),
                     const SizedBox(height: 16),
 
                     // Sex Dropdown
@@ -91,23 +127,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Age Input
+                    // Date of Birth Picker
                     Text(s.age, style: const TextStyle(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 6),
-                    TextFormField(
-                      initialValue: _age?.toString(),
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.cake),
-                        border: const OutlineInputBorder(),
-                        hintText: s.enterAge,
+                    GestureDetector(
+                      onTap: _selectBirthDate,
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: s.enterAge,
+                            prefixIcon: const Icon(Icons.calendar_today),
+                            border: const OutlineInputBorder(),
+                          ),
+                          controller: TextEditingController(
+                            text: _birthDate != null
+                                ? DateFormat('yyyy-MM-dd').format(_birthDate!)
+                                : '',
+                          ),
+                        ),
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          _age = int.tryParse(value);
-                        });
-                      },
                     ),
+
+                    if (_birthDate != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          '${s.age}: ${_calculateAge(_birthDate)}',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ),
                   ],
                 ),
               ),

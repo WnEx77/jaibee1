@@ -225,7 +225,7 @@ class SEn extends S {
   String get personalInfo => 'Personal Information';
 
   @override
-  String get sex => 'Sex';
+  String get sex => 'Gender';
 
   @override
   String get age => 'Age';

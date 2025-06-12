@@ -526,7 +526,7 @@ abstract class S {
   /// No description provided for @sex.
   ///
   /// In en, this message translates to:
-  /// **'Sex'**
+  /// **'Gender'**
   String get sex;
 
   /// No description provided for @age.
