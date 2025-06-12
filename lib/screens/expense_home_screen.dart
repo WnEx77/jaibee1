@@ -66,52 +66,59 @@ class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
       MaterialPageRoute(builder: (context) => const ProfileScreen()),
     );
   }
+  
+  @override
+  Widget build(BuildContext context) {
+    final isRtl = Localizations.localeOf(context).languageCode == 'ar';
 
-@override
-Widget build(BuildContext context) {
-  final isRtl = Localizations.localeOf(context).languageCode == 'ar';
+    int navBarIndex;
+    if (_selectedIndex == 0) {
+      navBarIndex = 0;
+    } else if (_selectedIndex == 2) {
+      navBarIndex = 1;
+    } else {
+      navBarIndex = -1;
+    }
 
-  int navBarIndex;
-  if (_selectedIndex == 0) {
-    navBarIndex = 0;
-  } else if (_selectedIndex == 2) {
-    navBarIndex = 1;
-  } else {
-    navBarIndex = -1;
-  }
-
-  return Directionality(
-    textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-    child: Scaffold(
-      resizeToAvoidBottomInset: true, // Let scaffold adjust when keyboard shows
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(S.of(context)!.appTitle),
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-        foregroundColor: Colors.white,
-        elevation: 2,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.language),
-            tooltip: S.of(context)!.changeLanguage,
-            onPressed: _showLanguageDialog,
+    return Directionality(
+      textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+      child: Scaffold(
+        resizeToAvoidBottomInset:
+            true, // Let scaffold adjust when keyboard shows
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(S.of(context)!.appTitle),
+          backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+          foregroundColor: Colors.white,
+          elevation: 2,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.language),
+              tooltip: S.of(context)!.changeLanguage,
+              onPressed: _showLanguageDialog,
+            ),
+            IconButton(
+              icon: const Icon(Icons.person),
+              tooltip: S.of(context)!.profile,
+              onPressed: _goToProfile,
+            ),
+          ],
+        ),
+        body: _screens[_selectedIndex],
+        floatingActionButton: SizedBox(
+          height: 64,
+          width: 64,
+          child: FloatingActionButton(
+            onPressed: () => _onItemTapped(1),
+            tooltip: S.of(context)!.addTransaction,
+            backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+            shape: const CircleBorder(),
+            child: const Icon(Icons.add, size: 32),
           ),
-          IconButton(
-            icon: const Icon(Icons.person),
-            tooltip: S.of(context)!.profile,
-            onPressed: _goToProfile,
-          ),
-        ],
-      ),
-      body: _screens[_selectedIndex],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _onItemTapped(1),
-        tooltip: S.of(context)!.addTransaction,
-        child: const Icon(Icons.add),
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationBar(
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+        bottomNavigationBar: BottomNavigationBar(
           backgroundColor: const Color.fromARGB(255, 130, 148, 179),
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.white.withOpacity(0.6),
@@ -139,7 +146,7 @@ Widget build(BuildContext context) {
             ),
           ],
         ),
-    ),
-  );
-}
+      ),
+    );
+  }
 }
