@@ -1,4 +1,3 @@
-// Full code of TransactionScreen with enhancements
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +23,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
   ];
 
   final Set<String> _selectedFilters = Set.from(defaultQuickCategories);
-  bool _showQuickAddMenu = false;
   final settingsBox = Hive.box<double>('settings');
   final String monthlyLimitKey = 'monthlyLimit';
 
@@ -45,48 +43,11 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   void _nextMonth() {
     final now = DateTime.now();
-    if (_selectedMonth.year == now.year && _selectedMonth.month == now.month)
-      return;
+    if (_selectedMonth.year == now.year && _selectedMonth.month == now.month) return;
     setState(() {
       _selectedMonth = DateTime(_selectedMonth.year, _selectedMonth.month + 1);
     });
   }
-
-  // void _showSetLimitDialog(BuildContext context, S localizer) {
-  //   final controller = TextEditingController(
-  //     text: _monthlyLimit > 0 ? _monthlyLimit.toStringAsFixed(2) : '',
-  //   );
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: Text(localizer.setMonthlyLimit),
-  //       content: TextField(
-  //         controller: controller,
-  //         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-  //         decoration: InputDecoration(
-  //           labelText: localizer.monthlyLimit,
-  //           prefixIcon: const Icon(Icons.attach_money),
-  //           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-  //         ),
-  //       ),
-  //       actions: [
-  //         TextButton(onPressed: () => Navigator.pop(context), child: Text(localizer.cancel)),
-  //         ElevatedButton(
-  //           onPressed: () {
-  //             final value = double.tryParse(controller.text);
-  //             if (value != null && value >= 0) {
-  //               setState(() => _monthlyLimit = value);
-  //               Navigator.pop(context);
-  //               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(localizer.monthlyLimitSet)));
-  //             }
-  //           },
-  //           child: Text(localizer.ok),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   void _showSetLimitDialog(BuildContext context, S localizer) {
     final controller = TextEditingController(
@@ -132,7 +93,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
               if (formKey.currentState!.validate()) {
                 final value = double.parse(controller.text);
                 setState(() => _monthlyLimit = value);
-                // Save to Hive right here:
                 settingsBox.put(monthlyLimitKey, value);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -160,9 +120,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
         elevation: 1,
         foregroundColor: Colors.black,
         title: Text(
-          localizer.montlyLimitSetter +
-              '${_monthlyLimit.toStringAsFixed(0)}' +
-              localizer.sar,
+          '${localizer.montlyLimitSetter} ${_monthlyLimit.toStringAsFixed(0)} ${localizer.sar}',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         actions: [
@@ -213,20 +171,14 @@ class _TransactionScreenState extends State<TransactionScreen> {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 16,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                     child: Column(
                       children: [
                         Row(
@@ -271,10 +223,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -318,9 +267,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         itemBuilder: (context, index) {
                           final transaction = filteredTransactions[index];
                           final isIncome = transaction.isIncome;
-                          final formattedDate = DateFormat.yMMMd().format(
-                            transaction.date,
-                          );
+                          final formattedDate = DateFormat.yMMMd().format(transaction.date);
 
                           return Dismissible(
                             key: Key(transaction.key.toString()),
@@ -328,9 +275,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             background: Container(
                               color: Colors.red,
                               alignment: Alignment.centerRight,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
                               child: const Icon(
                                 Icons.delete,
                                 color: Colors.white,
@@ -374,10 +319,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                   ),
                                 ),
                                 title: Text(
-                                  _getLocalizedCategory(
-                                    transaction.category,
-                                    localizer,
-                                  ),
+                                  _getLocalizedCategory(transaction.category, localizer),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -402,62 +344,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
           );
         },
       ),
-      // floatingActionButton: Stack( Quick Add Button Here, turned off now for development issues.
-      //   clipBehavior: Clip.none,
-      //   children: [
-      //     FloatingActionButton(
-      //       onPressed: () =>
-      //           setState(() => _showQuickAddMenu = !_showQuickAddMenu),
-      //       backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-      //       child: Icon(_showQuickAddMenu ? Icons.close : Icons.add),
-      //     ),
-      //     if (_showQuickAddMenu)
-      //       Positioned(
-      //         bottom: 70,
-      //         right: 0,
-      //         child: Material(
-      //           elevation: 6,
-      //           borderRadius: BorderRadius.circular(12),
-      //           child: Container(
-      //             decoration: BoxDecoration(
-      //               color: Colors.white,
-      //               borderRadius: BorderRadius.circular(12),
-      //             ),
-      //             padding: const EdgeInsets.symmetric(
-      //               vertical: 8,
-      //               horizontal: 12,
-      //             ),
-      //             child: Column(
-      //               mainAxisSize: MainAxisSize.min,
-      //               children: defaultQuickCategories.map((key) {
-      //                 return TextButton.icon(
-      //                   onPressed: () {
-      //                     setState(() => _showQuickAddMenu = false);
-      //                     Future.delayed(Duration.zero, () {
-      //                       _showQuickAddDialog(
-      //                         context,
-      //                         key,
-      //                         Hive.box('transactions'),
-      //                         localizer,
-      //                       );
-      //                     });
-      //                   },
-      //                   icon: Icon(
-      //                     _getIconForCategory(key),
-      //                     color: Colors.blue.shade700,
-      //                   ),
-      //                   label: Text(
-      //                     _getLocalizedCategory(key, localizer),
-      //                     style: TextStyle(color: Colors.blue.shade700),
-      //                   ),
-      //                 );
-      //               }).toList(),
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //   ],
-      // ), 
     );
   }
 
@@ -513,60 +399,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
           ],
         );
       },
-    );
-  }
-
-  void _showQuickAddDialog(
-    BuildContext context,
-    String categoryKey,
-    Box box,
-    S localizer,
-  ) {
-    final isIncome = categoryKey == 'income';
-    final controller = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          '${localizer.addTransaction} - ${_getLocalizedCategory(categoryKey, localizer)}',
-        ),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: localizer.amount,
-            prefixIcon: const Icon(Icons.attach_money),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(localizer.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final amount = double.tryParse(controller.text);
-              if (amount != null && amount > 0) {
-                final transaction = Transaction(
-                  category: categoryKey,
-                  amount: amount,
-                  isIncome: isIncome,
-                  date: DateTime.now(),
-                );
-                box.add(transaction);
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(localizer.transactionAdded)),
-                );
-              }
-            },
-            child: Text(localizer.ok),
-          ),
-        ],
-      ),
     );
   }
 
