@@ -3,7 +3,8 @@ import 'package:jaibee1/models/trancs.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/models/category.dart'; // Make sure this is imported
+import 'package:jaibee1/models/category.dart';
+import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -18,7 +19,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   String _category = '';
   bool _isIncome = false;
   DateTime _selectedDate = DateTime.now();
-
   List<String> _customCategories = [];
 
   @override
@@ -37,22 +37,23 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final localizer = S.of(context)!;
 
-    if (_isIncome && _category != 'income') {
-      _category = 'income';
-    }
+@override
+Widget build(BuildContext context) {
+  final localizer = S.of(context)!;
+  if (_isIncome && _category != 'income') {
+    _category = 'income';
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(localizer.addTransaction),
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-        foregroundColor: Colors.white,
-      ),
-      body: SafeArea(
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(localizer.addTransaction),
+      centerTitle: true,
+      backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+      foregroundColor: Colors.white,
+    ),
+    body: AppBackground(
+      child: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
             left: 16,
@@ -64,172 +65,153 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             key: _formKey,
             child: ListView(
               children: [
-                // AMOUNT FIELD
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    // color: _isIncome
-                    //     ? Colors.green.shade50
-                    //     : Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: TextFormField(
-                    controller: _amountController,
-                    decoration: InputDecoration(
-                      labelText: localizer.amount,
-                      border: InputBorder.none,
-                      icon: const Icon(Icons.attach_money),
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return localizer.pleaseEnterAmount;
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-
+                _buildAmountField(localizer),
                 const SizedBox(height: 16),
-
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    // color: _isIncome
-                    //     ? Colors.green.shade50
-                    //     : Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    value: _category.isNotEmpty ? _category : null,
-                    decoration: InputDecoration(
-                      labelText: localizer.category,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white, // Keeps dropdown itself white
-                    ),
-                    onChanged: _isIncome
-                        ? null
-                        : (String? newValue) {
-                            setState(() {
-                              _category = newValue!;
-                            });
-                          },
-                    items:
-                        (_isIncome
-                                ? ['income']
-                                : _customCategories.isNotEmpty
-                                ? _customCategories
-                                : [
-                                    'food',
-                                    'transportation',
-                                    'entertainment',
-                                    'coffee',
-                                    'other',
-                                  ])
-                            .map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Row(
-                                  children: [
-                                    Icon(_getCategoryIcon(value), size: 20),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      _getLocalizedCategory(value, localizer),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            })
-                            .toList(),
-                  ),
-                ),
-
+                _buildCategoryDropdown(localizer),
                 const SizedBox(height: 16),
-
-                // EXPENSE / INCOME SWITCH
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: !_isIncome
-                              ? Colors.red
-                              : Colors.grey.shade300,
-                          foregroundColor: !_isIncome
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isIncome = false;
-                            _category = _customCategories.isNotEmpty
-                                ? _customCategories.first
-                                : 'food';
-                          });
-                        },
-                        icon: const Icon(Icons.arrow_downward),
-                        label: Text(localizer.expense),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _isIncome
-                              ? Colors.green
-                              : Colors.grey.shade300,
-                          foregroundColor: _isIncome
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isIncome = true;
-                            _category = 'income';
-                          });
-                        },
-                        icon: const Icon(Icons.arrow_upward),
-                        label: Text(localizer.income),
-                      ),
-                    ),
-                  ],
-                ),
+                _buildTypeToggle(localizer),
                 const SizedBox(height: 16),
-
-                // DATE PICKER
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(
-                    '${localizer.date}: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}',
-                  ),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: () => _selectDate(context),
-                ),
+                _buildDatePicker(localizer),
                 const SizedBox(height: 24),
-
-                // ADD BUTTON
-                FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  onPressed: _submitForm,
-                  icon: const Icon(Icons.add),
-                  label: Text(localizer.addTransaction),
-                ),
+                _buildSubmitButton(localizer),
               ],
             ),
           ),
         ),
       ),
+    ),
+  );
+}
+
+
+  Widget _buildAmountField(S localizer) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.all(8),
+      child: TextFormField(
+        controller: _amountController,
+        decoration: InputDecoration(
+          labelText: localizer.amount,
+          border: InputBorder.none,
+          icon: const Icon(Icons.attach_money),
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return localizer.pleaseEnterAmount;
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  Widget _buildCategoryDropdown(S localizer) {
+    final categories = _isIncome
+        ? ['income']
+        : _customCategories.isNotEmpty
+            ? _customCategories
+            : ['food', 'transportation', 'entertainment', 'coffee', 'other'];
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.all(8),
+      child: DropdownButtonFormField<String>(
+        value: _category.isNotEmpty ? _category : null,
+        decoration: InputDecoration(
+          labelText: localizer.category,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        onChanged: _isIncome
+            ? null
+            : (String? newValue) {
+                setState(() {
+                  _category = newValue!;
+                });
+              },
+        items: categories.map((value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Row(
+              children: [
+                Icon(_getCategoryIcon(value), size: 20),
+                const SizedBox(width: 8),
+                Text(_getLocalizedCategory(value, localizer)),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildTypeToggle(S localizer) {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: !_isIncome ? Colors.red : Colors.grey.shade300,
+              foregroundColor: !_isIncome ? Colors.white : Colors.black,
+            ),
+            onPressed: () {
+              setState(() {
+                _isIncome = false;
+                _category = _customCategories.isNotEmpty
+                    ? _customCategories.first
+                    : 'food';
+              });
+            },
+            icon: const Icon(Icons.arrow_downward),
+            label: Text(localizer.expense),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _isIncome ? Colors.green : Colors.grey.shade300,
+              foregroundColor: _isIncome ? Colors.white : Colors.black,
+            ),
+            onPressed: () {
+              setState(() {
+                _isIncome = true;
+                _category = 'income';
+              });
+            },
+            icon: const Icon(Icons.arrow_upward),
+            label: Text(localizer.income),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDatePicker(S localizer) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(
+        '${localizer.date}: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}',
+      ),
+      trailing: const Icon(Icons.calendar_today),
+      onTap: () => _selectDate(context),
+    );
+  }
+
+  Widget _buildSubmitButton(S localizer) {
+    return FilledButton.icon(
+      style: FilledButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+      ),
+      onPressed: _submitForm,
+      icon: const Icon(Icons.add),
+      label: Text(localizer.addTransaction),
     );
   }
 
@@ -238,13 +220,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
     if (_formKey.currentState!.validate()) {
       if (_category.isEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(localizer.pleaseSelectCategory)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(localizer.pleaseSelectCategory)),
+        );
         return;
       }
-
-      _formKey.currentState!.save();
 
       final transaction = Transaction(
         category: _category,
@@ -259,14 +239,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         _amountController.clear();
         _isIncome = false;
         _selectedDate = DateTime.now();
-        _category = _customCategories.isNotEmpty
-            ? _customCategories.first
-            : 'food';
+        _category = _customCategories.isNotEmpty ? _customCategories.first : 'food';
       });
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(localizer.transactionAdded)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(localizer.transactionAdded)),
+      );
     }
   }
 
@@ -300,7 +278,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       case 'other':
         return localizer.other;
       default:
-        return key; // Custom category fallback
+        return key;
     }
   }
 
@@ -319,7 +297,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       case 'other':
         return Icons.category;
       default:
-        return Icons.label; // fallback for custom categories
+        return Icons.label;
     }
   }
 }

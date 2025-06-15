@@ -672,6 +672,72 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Your Goals'**
   String get yourGoals;
+
+  /// No description provided for @budgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets'**
+  String get budgets;
+
+  /// No description provided for @birthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Date'**
+  String get birthDate;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @monthlyBudgetLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Budget Limit'**
+  String get monthlyBudgetLimit;
+
+  /// No description provided for @enterMonthlyLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 1000'**
+  String get enterMonthlyLimitHint;
+
+  /// No description provided for @limitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit'**
+  String get limitLabel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @budgetsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets saved'**
+  String get budgetsSaved;
+
+  /// No description provided for @replaceAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace All'**
+  String get replaceAll;
+
+  /// تحذير عندما لا يساوي الحد الشهري مجموع حدود الفئات
+  ///
+  /// In en, this message translates to:
+  /// **'يجب أن يكون الحد الشهري ({monthly}) مساويًا لمجموع حدود جميع الفئات ({total}).'**
+  String monthlyLimitValidation(Object monthly, Object total);
+
+  /// No description provided for @manageCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Categories'**
+  String get manageCategories;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

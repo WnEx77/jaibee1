@@ -4,6 +4,8 @@ import 'package:jaibee1/screens/goals_screen.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:intl/intl.dart';
 import 'package:jaibee1/main.dart';
+import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
+import 'package:provider/provider.dart'; // <-- Add this import for ThemeProvider
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -115,131 +117,155 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final s = S.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(s.profileTitle),
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-        foregroundColor: Colors.white,
-        elevation: 2,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Personal Info
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(s.personalInfo, style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 16),
+      // appBar: AppBar(
+      //   title: Text(s.profileTitle),
+      //   backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+      //   foregroundColor: Colors.white,
+      //   elevation: 2,
+      // ),
+      body: AppBackground(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // Personal Info
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(s.personalInfo, style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 16),
 
-                    // Sex Dropdown
-                    Text(s.sex, style: const TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 6),
-                    DropdownButtonFormField<String>(
-                      value: _selectedSex,
-                      items: _sexOptions.map((sex) {
-                        return DropdownMenuItem(value: sex, child: Text(sex));
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedSex = value;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person),
-                        border: OutlineInputBorder(),
+                      // Sex Dropdown
+                      Text(s.sex, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 6),
+                      DropdownButtonFormField<String>(
+                        value: _selectedSex,
+                        items: _sexOptions.map((sex) {
+                          return DropdownMenuItem(value: sex, child: Text(sex));
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedSex = value;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.person),
+                          border: OutlineInputBorder(),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
-                    // Date of Birth Picker
-                    Text(s.age, style: const TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 6),
-                    GestureDetector(
-                      onTap: _selectBirthDate,
-                      child: AbsorbPointer(
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            hintText: s.enterAge,
-                            prefixIcon: const Icon(Icons.calendar_today),
-                            border: const OutlineInputBorder(),
-                          ),
-                          controller: TextEditingController(
-                            text: _birthDate != null
-                                ? DateFormat('yyyy-MM-dd').format(_birthDate!)
-                                : '',
+                      // Date of Birth Picker
+                      Text(s.birthDate, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 6),
+                      GestureDetector(
+                        onTap: _selectBirthDate,
+                        child: AbsorbPointer(
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              hintText: s.enterAge,
+                              prefixIcon: const Icon(Icons.calendar_today),
+                              border: const OutlineInputBorder(),
+                            ),
+                            controller: TextEditingController(
+                              text: _birthDate != null
+                                  ? DateFormat('yyyy-MM-dd').format(_birthDate!)
+                                  : '',
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    if (_birthDate != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          '${s.age}: ${_calculateAge(_birthDate)}',
-                          style: const TextStyle(color: Colors.grey),
+                      if (_birthDate != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            '${s.age}: ${_calculateAge(_birthDate)}',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Language Selection
-            Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: ListTile(
-                leading: const Icon(Icons.language, color: Colors.blueGrey),
-                title: Text(s.changeLanguage),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: _showLanguageDialog,
+              // Language Selection
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: ListTile(
+                  leading: const Icon(Icons.language, color: Colors.blueGrey),
+                  title: Text(s.changeLanguage),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: _showLanguageDialog,
+                ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Set Goals Button
-            ElevatedButton.icon(
-              icon: const Icon(Icons.flag),
-              label: Text(s.setGoals),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              // Dark Mode Toggle
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: ListTile(
+                  leading: const Icon(Icons.brightness_6, color: Colors.blueGrey),
+                  title: Text(s.darkMode), // Make sure you add this string to your localization files
+                  trailing: Consumer<ThemeProvider>(
+                    builder: (context, themeProvider, _) {
+                      return Switch(
+                        value: themeProvider.isDarkTheme,
+                        onChanged: (val) {
+                          themeProvider.toggleTheme(val);
+                        },
+                      );
+                    },
+                  ),
+                ),
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const GoalsScreen()),
-                );
-              },
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Save Profile Button
-            ElevatedButton.icon(
-              icon: const Icon(Icons.save),
-              onPressed: _saveProfile,
-              label: Text(s.saveProfile),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              // Set Goals Button
+              ElevatedButton.icon(
+                icon: const Icon(Icons.flag),
+                label: Text(s.setGoals),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const GoalsScreen()),
+                  );
+                },
               ),
-            ),
-          ],
+
+              const SizedBox(height: 20),
+
+              // Save Profile Button
+              ElevatedButton.icon(
+                icon: const Icon(Icons.save),
+                onPressed: _saveProfile,
+                label: Text(s.saveProfile),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

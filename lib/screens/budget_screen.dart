@@ -3,6 +3,8 @@ import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee1/models/budget.dart';
 import 'package:jaibee1/models/category.dart';
+import 'package:jaibee1/widgets/app_background.dart';
+import 'package:jaibee1/l10n/s.dart'; // <-- Localization import
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -33,7 +35,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
         orElse: () => Budget(category: category.name, limit: 0.0),
       );
       _controllers[category.name] = TextEditingController(
-        text: existingBudget.limit.toString(),
+        text: existingBudget.limit.toStringAsFixed(0),
       );
     }
   }
@@ -49,7 +51,34 @@ class _BudgetScreenState extends State<BudgetScreen> {
   Future<void> _saveBudgets() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // Save category budgets
+    double totalCategoryLimits = 0;
+
+    for (var category in _categoryBox.values) {
+      final name = category.name;
+      final controller = _controllers[name];
+      final limit = double.tryParse(controller?.text ?? '0') ?? 0;
+      totalCategoryLimits += limit;
+    }
+
+    final monthly = double.tryParse(_monthlyLimitController.text) ?? 0;
+
+    if (monthly != totalCategoryLimits) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            S
+                .of(context)!
+                .monthlyLimitValidation(
+                  monthly.toStringAsFixed(0),
+                  totalCategoryLimits.toStringAsFixed(0),
+                ),
+          ),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
     for (var category in _categoryBox.values) {
       final name = category.name;
       final controller = _controllers[name];
@@ -68,17 +97,11 @@ class _BudgetScreenState extends State<BudgetScreen> {
       }
     }
 
-    // Save monthly limit
-    final monthly = double.tryParse(_monthlyLimitController.text) ?? 0;
     await prefs.setDouble('monthly_limit', monthly);
 
-    // Show a snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Budgets saved')),
-    );
-
-    // Pop with 'true' to notify caller screen to reload
-    Navigator.pop(context, true);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(S.of(context)!.budgetsSaved)));
   }
 
   @override
@@ -86,77 +109,69 @@ class _BudgetScreenState extends State<BudgetScreen> {
     final categories = _categoryBox.values.toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Budgets'),
+      backgroundColor: Colors.transparent,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _saveBudgets,
+        label: Text(S.of(context)!.save),
+        icon: const Icon(Icons.save),
         backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: _saveBudgets,
-            tooltip: 'Save Budgets',
-          ),
-        ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Monthly limit input
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Monthly Budget Limit',
-                style: TextStyle(fontWeight: FontWeight.bold),
+      body: AppBackground(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            const SizedBox(height: 24),
+            Text(
+              S.of(context)!.monthlyBudgetLimit,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _monthlyLimitController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: S.of(context)!.enterMonthlyLimitHint,
+                border: const OutlineInputBorder(),
+                isDense: true,
               ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _monthlyLimitController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'e.g. 1000',
-                  border: OutlineInputBorder(),
-                  isDense: true,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          const Divider(),
+            ),
+            const SizedBox(height: 24),
+            const Divider(),
 
-          // Category budget inputs
-          ...categories.map((category) {
-            return Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        category.name,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      flex: 3,
-                      child: TextField(
-                        controller: _controllers[category.name],
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Limit',
-                          border: OutlineInputBorder(),
-                          isDense: true,
+            // Category budget inputs
+            ...categories.map((category) {
+              return Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          category.name,
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-              ],
-            );
-          }).toList(),
-        ],
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 3,
+                        child: TextField(
+                          controller: _controllers[category.name],
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: S.of(context)!.limitLabel,
+                            border: const OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              );
+            }).toList(),
+          ],
+        ),
       ),
     );
   }

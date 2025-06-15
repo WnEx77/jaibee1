@@ -299,4 +299,39 @@ class SEn extends S {
 
   @override
   String get yourGoals => 'Your Goals';
+
+  @override
+  String get budgets => 'Budgets';
+
+  @override
+  String get birthDate => 'Birth Date';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get monthlyBudgetLimit => 'Monthly Budget Limit';
+
+  @override
+  String get enterMonthlyLimitHint => 'e.g. 1000';
+
+  @override
+  String get limitLabel => 'Limit';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get budgetsSaved => 'Budgets saved';
+
+  @override
+  String get replaceAll => 'Replace All';
+
+  @override
+  String monthlyLimitValidation(Object monthly, Object total) {
+    return 'يجب أن يكون الحد الشهري ($monthly) مساويًا لمجموع حدود جميع الفئات ($total).';
+  }
+
+  @override
+  String get manageCategories => 'Manage Categories';
 }

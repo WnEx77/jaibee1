@@ -7,6 +7,7 @@ import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/screens/FinancialAdviceScreen.dart'; // Adjust path as needed
 import 'package:jaibee1/models/goal_model.dart';
 import 'package:jaibee1/screens/edit_goal_dialog.dart';
+import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -110,13 +111,13 @@ class _ReportsScreenState extends State<ReportsScreen> {
     double totalExpense = dailyExpenses.values.fold(0, (a, b) => a + b);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(localizer.reportTitle),
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-        foregroundColor: Colors.white,
-        elevation: 1,
-      ),
+      // appBar: AppBar(
+      //   title: Text(localizer.reportTitle),
+      //   centerTitle: true,
+      //   backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+      //   foregroundColor: Colors.white,
+      //   elevation: 1,
+      // ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.of(context).push(
@@ -129,57 +130,31 @@ class _ReportsScreenState extends State<ReportsScreen> {
         icon: const Icon(Icons.lightbulb),
         backgroundColor: const Color.fromARGB(255, 130, 148, 179),
       ),
-      body: filteredTransactions.isEmpty
-          ? _buildEmptyState(localizer)
-          : RefreshIndicator(
-              onRefresh: () async {
-                _filterTransactions();
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildViewToggle(localizer),
-                    const SizedBox(height: 16),
-                    if (isMonthlyView) _buildMonthPicker(localizer),
-                    const SizedBox(height: 24),
-                    _buildSummaryCard(localizer, avgExpense, totalExpense),
-                    const SizedBox(height: 24),
-                    if (dailyExpenses.isNotEmpty) ...[
-                      Text(
-                        localizer.dailyExpenses,
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.redAccent.shade700,
-                        ),
-                      ),
+      body: AppBackground(
+        child: filteredTransactions.isEmpty
+            ? _buildEmptyState(localizer)
+            : RefreshIndicator(
+                onRefresh: () async {
+                  _filterTransactions();
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 20,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildViewToggle(localizer),
                       const SizedBox(height: 16),
-                      _buildLineChart(
-                        expenseSpots,
-                        dateLabels,
-                        interval,
-                        maxExpense,
-                      ),
-                      const SizedBox(height: 32),
-                      Text(
-                        localizer.selectCategory,
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.redAccent.shade700,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildBarChart(categoryExpenses),
-                      const SizedBox(height: 32),
-                      _buildPieChart(categoryExpenses), // Add Pie Chart here
-                      if (goals.isNotEmpty) ...[
+                      if (isMonthlyView) _buildMonthPicker(localizer),
+                      const SizedBox(height: 24),
+                      _buildSummaryCard(localizer, avgExpense, totalExpense),
+                      const SizedBox(height: 24),
+                      if (dailyExpenses.isNotEmpty) ...[
                         Text(
-                          localizer.yourGoals,
+                          localizer.dailyExpenses,
                           style: Theme.of(context).textTheme.titleLarge!
                               .copyWith(
                                 fontWeight: FontWeight.bold,
@@ -187,16 +162,47 @@ class _ReportsScreenState extends State<ReportsScreen> {
                               ),
                         ),
                         const SizedBox(height: 16),
-                        ...goals
-                            .map((goal) => _buildGoalProgressCard(goal, index))
-                            .toList(),
+                        _buildLineChart(
+                          expenseSpots,
+                          dateLabels,
+                          interval,
+                          maxExpense,
+                        ),
+                        const SizedBox(height: 32),
+                        Text(
+                          localizer.selectCategory,
+                          style: Theme.of(context).textTheme.titleLarge!
+                              .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.redAccent.shade700,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildBarChart(categoryExpenses),
+                        const SizedBox(height: 32),
+                        _buildPieChart(categoryExpenses), // Add Pie Chart here
+                        if (goals.isNotEmpty) ...[
+                          Text(
+                            localizer.yourGoals,
+                            style: Theme.of(context).textTheme.titleLarge!
+                                .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.redAccent.shade700,
+                                ),
+                          ),
+                          const SizedBox(height: 16),
+                          ...goals
+                              .map(
+                                (goal) => _buildGoalProgressCard(goal, index),
+                              )
+                              .toList(),
+                        ],
                       ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
-      backgroundColor: const Color(0xFFF9FAFB),
+      ),
     );
   }
 
@@ -541,7 +547,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
- Widget _buildGoalProgressCard(Goal goal, int index) {
+  Widget _buildGoalProgressCard(Goal goal, int index) {
     final progress = goal.targetAmount > 0
         ? (goal.savedAmount / goal.targetAmount).clamp(0.0, 1.0)
         : 0.0;
@@ -563,9 +569,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
     String dateStatusText;
     if (isPastDue) {
-      dateStatusText = 'Past due: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year}';
+      dateStatusText =
+          'Past due: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year}';
     } else {
-      dateStatusText = 'Target: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year} • $daysLeft days left';
+      dateStatusText =
+          'Target: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year} • $daysLeft days left';
     }
 
     return InkWell(

@@ -95,5 +95,23 @@
   "arabic": "العربية",
   "english": "الانجليزية",
   "noDataAdvice": "لم يتم ادخال بيانات",
-  "yourGoals": "أهدافك"
+  "yourGoals": "أهدافك",
+  "budgets": "الميزانية",
+  "birthDate": "تاريخ الميلاد",
+  "darkMode": "الوضع الداكن",
+  "monthlyBudgetLimit": "الحد الشهري للميزانية",
+  "enterMonthlyLimitHint": "مثال: ١٠٠٠",
+  "limitLabel": "الحد",
+  "save": "حفظ",
+  "budgetsSaved": "تم حفظ الميزانيات",
+  "replaceAll": "استبدال الكل",
+  "monthlyLimitValidation": "يجب أن يكون الحد الشهري ({monthly}) مساويًا لمجموع حدود جميع الفئات ({total}).",
+  "@monthlyLimitValidation": {
+    "description": "تحذير عندما لا يساوي الحد الشهري مجموع حدود الفئات",
+    "placeholders": {
+      "monthly": {},
+      "total": {}
+    }
+  },
+  "manageCategories": "تعديل التصنيفات"
 }

@@ -8,33 +8,37 @@ import 'package:jaibee1/models/category.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 import 'package:jaibee1/models/budget.dart';
 import 'package:jaibee1/models/goal_model.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:jaibee1/providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive only once:
+  // Initialize Hive
   await Hive.initFlutter();
 
-  // Register Adapters before opening boxes:
+  // Register adapters
   Hive.registerAdapter(TransactionAdapter());
   Hive.registerAdapter(CategoryAdapter());
   Hive.registerAdapter(BudgetAdapter());
   Hive.registerAdapter(GoalAdapter());
 
-  // Open boxes BEFORE running the app:
+  // Open boxes
   await Hive.openBox('transactions');
   await Hive.openBox<Category>('categories');
-  await Hive.openBox<double>('settings'); // For monthlyLimit and other simple settings
+  await Hive.openBox<double>('settings'); // For monthlyLimit and theme preference
   await Hive.openBox<Budget>('budgets');
   await Hive.openBox<Goal>('goals');
-  // print('Box type: ${Hive.box<Goal>('goals').runtimeType}');
 
-  // Add default data if needed
   await addDefaultCategoriesIfEmpty();
   await addDefaultMonthlyLimitIfNotExists();
 
-  runApp(const ExpenseTrackerApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider()..loadThemeFromHive(),
+      child: const ExpenseTrackerApp(),
+    ),
+  );
 }
 
 Future<void> addDefaultCategoriesIfEmpty() async {
@@ -53,19 +57,42 @@ Future<void> addDefaultCategoriesIfEmpty() async {
 Future<void> addDefaultMonthlyLimitIfNotExists() async {
   final settingsBox = Hive.box<double>('settings');
   if (!settingsBox.containsKey('monthlyLimit')) {
-    await settingsBox.put(
-      'monthlyLimit',
-      1000.0,
-    ); // Default monthly limit $1000
+    await settingsBox.put('monthlyLimit', 1000.0);
   }
 }
+
+// providers/theme_provider.dart
+
+class ThemeProvider extends ChangeNotifier {
+  static const _themeKey = 'isDarkTheme';
+  final Box<double> _settingsBox = Hive.box<double>('settings');
+
+  bool _isDarkTheme = false;
+
+  bool get isDarkTheme => _isDarkTheme;
+
+  ThemeMode get themeMode => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
+
+  Future<void> loadThemeFromHive() async {
+    // Default to false (light) if not set or value != 1
+    _isDarkTheme = (_settingsBox.get(_themeKey) ?? 0) == 1;
+    notifyListeners();
+  }
+
+  Future<void> toggleTheme(bool isDark) async {
+    _isDarkTheme = isDark;
+    await _settingsBox.put(_themeKey, isDark ? 1 : 0);
+    notifyListeners();
+  }
+}
+
+// main app widget
 
 class ExpenseTrackerApp extends StatefulWidget {
   const ExpenseTrackerApp({super.key});
 
   static void setLocale(BuildContext context, Locale newLocale) {
-    final _ExpenseTrackerAppState? state = context
-        .findAncestorStateOfType<_ExpenseTrackerAppState>();
+    final _ExpenseTrackerAppState? state = context.findAncestorStateOfType<_ExpenseTrackerAppState>();
     state?.setLocale(newLocale);
   }
 
@@ -84,6 +111,22 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    final lightTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+      textTheme: const TextTheme(bodyMedium: TextStyle(fontFamily: 'Cairo')),
+      brightness: Brightness.light,
+    );
+
+    final darkTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey, brightness: Brightness.dark),
+      textTheme: const TextTheme(bodyMedium: TextStyle(fontFamily: 'Cairo')),
+      brightness: Brightness.dark,
+    );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'جيبي',
@@ -105,16 +148,15 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
         }
         return supportedLocales.first;
       },
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        textTheme: const TextTheme(bodyMedium: TextStyle(fontFamily: 'Cairo')),
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeProvider.themeMode,
       home: const SplashScreen(),
     );
   }
 }
 
+// Splash screen (no changes needed)
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -164,7 +206,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,

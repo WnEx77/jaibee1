@@ -95,5 +95,23 @@
   "arabic": "Arabic",
   "english": "English",
   "noDataAdvice": "Try adding some expenses to see reports.",
-  "yourGoals": "Your Goals"
+  "yourGoals": "Your Goals",
+  "budgets": "Budgets",
+  "birthDate": "Birth Date",
+  "darkMode": "Dark Mode",
+  "monthlyBudgetLimit": "Monthly Budget Limit",
+  "enterMonthlyLimitHint": "e.g. 1000",
+  "limitLabel": "Limit",
+  "save": "Save",
+  "budgetsSaved": "Budgets saved",
+  "replaceAll": "Replace All",
+  "monthlyLimitValidation": "يجب أن يكون الحد الشهري ({monthly}) مساويًا لمجموع حدود جميع الفئات ({total}).",
+  "@monthlyLimitValidation": {
+    "description": "تحذير عندما لا يساوي الحد الشهري مجموع حدود الفئات",
+    "placeholders": {
+      "monthly": {},
+      "total": {}
+    }
+  },
+  "manageCategories": "Manage Categories"
 }

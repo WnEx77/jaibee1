@@ -298,4 +298,39 @@ class SAr extends S {
 
   @override
   String get yourGoals => 'أهدافك';
+
+  @override
+  String get budgets => 'الميزانية';
+
+  @override
+  String get birthDate => 'تاريخ الميلاد';
+
+  @override
+  String get darkMode => 'الوضع الداكن';
+
+  @override
+  String get monthlyBudgetLimit => 'الحد الشهري للميزانية';
+
+  @override
+  String get enterMonthlyLimitHint => 'مثال: ١٠٠٠';
+
+  @override
+  String get limitLabel => 'الحد';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get budgetsSaved => 'تم حفظ الميزانيات';
+
+  @override
+  String get replaceAll => 'استبدال الكل';
+
+  @override
+  String monthlyLimitValidation(Object monthly, Object total) {
+    return 'يجب أن يكون الحد الشهري ($monthly) مساويًا لمجموع حدود جميع الفئات ($total).';
+  }
+
+  @override
+  String get manageCategories => 'تعديل التصنيفات';
 }
