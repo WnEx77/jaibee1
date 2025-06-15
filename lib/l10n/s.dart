@@ -738,6 +738,42 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Manage Categories'**
   String get manageCategories;
+
+  /// No description provided for @addCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Category'**
+  String get addCategory;
+
+  /// No description provided for @deleteCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Category'**
+  String get deleteCategory;
+
+  /// Confirmation message shown when deleting a category
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{categoryName}\"?'**
+  String deleteCategoryConfirm(Object categoryName);
+
+  /// No description provided for @categoryExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Category already exists'**
+  String get categoryExists;
+
+  /// No description provided for @incomeProtected.
+  ///
+  /// In en, this message translates to:
+  /// **'The \"income\" category already exists and cannot be modified.'**
+  String get incomeProtected;
+
+  /// No description provided for @selectIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Icon'**
+  String get selectIcon;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

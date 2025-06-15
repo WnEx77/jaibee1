@@ -113,5 +113,17 @@
       "total": {}
     }
   },
-  "manageCategories": "تعديل التصنيفات"
+  "manageCategories": "تعديل التصنيفات",
+  "addCategory": "إضافة فئة",
+  "deleteCategory": "حذف الفئة",
+  "deleteCategoryConfirm": "هل أنت متأكد من رغبتك في حذف \"{categoryName}\"؟",
+  "@deleteCategoryConfirm": {
+    "description": "رسالة تأكيد عند حذف فئة",
+    "placeholders": {
+      "categoryName": {}
+    }
+  },
+  "categoryExists": "الفئة موجودة بالفعل",
+  "incomeProtected": "فئة \"الدخل\" موجودة ولا يمكن تعديلها.",
+  "selectIcon": "اختر علامة"
 }

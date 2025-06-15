@@ -16,10 +16,12 @@ class AddTransactionScreen extends StatefulWidget {
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountController = TextEditingController();
+
   String _category = '';
   bool _isIncome = false;
   DateTime _selectedDate = DateTime.now();
-  List<String> _customCategories = [];
+
+  List<Category> _customCategoryObjects = [];
 
   @override
   void initState() {
@@ -30,59 +32,61 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   void _loadCategories() {
     final box = Hive.box<Category>('categories');
     setState(() {
-      _customCategories = box.values.map((e) => e.name).toList();
-      if (_customCategories.isNotEmpty && !_isIncome) {
-        _category = _customCategories.first;
+      _customCategoryObjects = box.values.toList();
+
+      if (_customCategoryObjects.isNotEmpty && !_isIncome) {
+        _category = _customCategoryObjects.first.name;
+      } else if (_isIncome) {
+        _category = 'income';
       }
     });
   }
 
+  @override
+  Widget build(BuildContext context) {
+    final localizer = S.of(context)!;
 
-@override
-Widget build(BuildContext context) {
-  final localizer = S.of(context)!;
-  if (_isIncome && _category != 'income') {
-    _category = 'income';
-  }
+    if (_isIncome && _category != 'income') {
+      _category = 'income';
+    }
 
-  return Scaffold(
-    appBar: AppBar(
-      title: Text(localizer.addTransaction),
-      centerTitle: true,
-      backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-      foregroundColor: Colors.white,
-    ),
-    body: AppBackground(
-      child: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-          ),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                _buildAmountField(localizer),
-                const SizedBox(height: 16),
-                _buildCategoryDropdown(localizer),
-                const SizedBox(height: 16),
-                _buildTypeToggle(localizer),
-                const SizedBox(height: 16),
-                _buildDatePicker(localizer),
-                const SizedBox(height: 24),
-                _buildSubmitButton(localizer),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(localizer.addTransaction),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+        foregroundColor: Colors.white,
+      ),
+      body: AppBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  _buildAmountField(localizer),
+                  const SizedBox(height: 16),
+                  _buildCategoryDropdown(localizer),
+                  const SizedBox(height: 16),
+                  _buildTypeToggle(localizer),
+                  const SizedBox(height: 16),
+                  _buildDatePicker(localizer),
+                  const SizedBox(height: 24),
+                  _buildSubmitButton(localizer),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildAmountField(S localizer) {
     return AnimatedContainer(
@@ -109,10 +113,8 @@ Widget build(BuildContext context) {
 
   Widget _buildCategoryDropdown(S localizer) {
     final categories = _isIncome
-        ? ['income']
-        : _customCategories.isNotEmpty
-            ? _customCategories
-            : ['food', 'transportation', 'entertainment', 'coffee', 'other'];
+        ? [Category(name: 'income', icon: '💰')]
+        : _customCategoryObjects;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -133,14 +135,18 @@ Widget build(BuildContext context) {
                   _category = newValue!;
                 });
               },
-        items: categories.map((value) {
+        items: categories.map((categoryObj) {
           return DropdownMenuItem<String>(
-            value: value,
+            value: categoryObj.name,
             child: Row(
               children: [
-                Icon(_getCategoryIcon(value), size: 20),
+                Icon(
+                  _getCategoryIcon(categoryObj),
+                  size: 24,
+                  color: Colors.blueGrey,
+                ),
                 const SizedBox(width: 8),
-                Text(_getLocalizedCategory(value, localizer)),
+                Text(_getLocalizedCategory(categoryObj.name, localizer)),
               ],
             ),
           );
@@ -161,9 +167,9 @@ Widget build(BuildContext context) {
             onPressed: () {
               setState(() {
                 _isIncome = false;
-                _category = _customCategories.isNotEmpty
-                    ? _customCategories.first
-                    : 'food';
+                _category = _customCategoryObjects.isNotEmpty
+                    ? _customCategoryObjects.first.name
+                    : '';
               });
             },
             icon: const Icon(Icons.arrow_downward),
@@ -239,7 +245,9 @@ Widget build(BuildContext context) {
         _amountController.clear();
         _isIncome = false;
         _selectedDate = DateTime.now();
-        _category = _customCategories.isNotEmpty ? _customCategories.first : 'food';
+        _category = _customCategoryObjects.isNotEmpty
+            ? _customCategoryObjects.first.name
+            : '';
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -282,8 +290,10 @@ Widget build(BuildContext context) {
     }
   }
 
-  IconData _getCategoryIcon(String category) {
-    switch (category) {
+  /// Map the category or its emoji icon string to a Flutter IconData.
+  IconData _getCategoryIcon(Category category) {
+    // Try to identify icon based on category name
+    switch (category.name) {
       case 'food':
         return Icons.fastfood;
       case 'transportation':
@@ -296,8 +306,25 @@ Widget build(BuildContext context) {
         return Icons.attach_money;
       case 'other':
         return Icons.category;
-      default:
-        return Icons.label;
     }
+
+    // Fallback: map known emojis stored in category.icon to icons
+    switch (category.icon) {
+      case '🍔':
+        return Icons.fastfood;
+      case '🚗':
+        return Icons.directions_car;
+      case '🎬':
+        return Icons.movie;
+      case '☕':
+        return Icons.coffee;
+      case '💰':
+        return Icons.attach_money;
+      case '🔘':
+        return Icons.category;
+    }
+
+    // Default fallback icon
+    return Icons.label;
   }
 }

@@ -333,4 +333,24 @@ class SAr extends S {
 
   @override
   String get manageCategories => 'تعديل التصنيفات';
+
+  @override
+  String get addCategory => 'إضافة فئة';
+
+  @override
+  String get deleteCategory => 'حذف الفئة';
+
+  @override
+  String deleteCategoryConfirm(Object categoryName) {
+    return 'هل أنت متأكد من رغبتك في حذف \"$categoryName\"؟';
+  }
+
+  @override
+  String get categoryExists => 'الفئة موجودة بالفعل';
+
+  @override
+  String get incomeProtected => 'فئة \"الدخل\" موجودة ولا يمكن تعديلها.';
+
+  @override
+  String get selectIcon => 'اختر علامة';
 }

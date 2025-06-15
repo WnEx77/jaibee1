@@ -5,7 +5,14 @@ part 'category.g.dart';
 @HiveType(typeId: 1)
 class Category extends HiveObject {
   @HiveField(0)
-  final String name;
+  String name;
 
-  Category({required this.name});
+  @HiveField(1)
+  String? icon; // 👈 Make it nullable
+
+  Category({
+    required this.name,
+    this.icon,
+  });
 }
+

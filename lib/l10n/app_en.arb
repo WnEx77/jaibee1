@@ -113,5 +113,17 @@
       "total": {}
     }
   },
-  "manageCategories": "Manage Categories"
+  "manageCategories": "Manage Categories",
+  "addCategory": "Add Category",
+  "deleteCategory": "Delete Category",
+  "deleteCategoryConfirm": "Are you sure you want to delete \"{categoryName}\"?",
+  "@deleteCategoryConfirm": {
+    "description": "Confirmation message shown when deleting a category",
+    "placeholders": {
+      "categoryName": {}
+    }
+  },
+  "categoryExists": "Category already exists",
+  "incomeProtected": "The \"income\" category already exists and cannot be modified.",
+  "selectIcon": "Select Icon"
 }

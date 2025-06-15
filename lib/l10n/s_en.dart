@@ -334,4 +334,25 @@ class SEn extends S {
 
   @override
   String get manageCategories => 'Manage Categories';
+
+  @override
+  String get addCategory => 'Add Category';
+
+  @override
+  String get deleteCategory => 'Delete Category';
+
+  @override
+  String deleteCategoryConfirm(Object categoryName) {
+    return 'Are you sure you want to delete \"$categoryName\"?';
+  }
+
+  @override
+  String get categoryExists => 'Category already exists';
+
+  @override
+  String get incomeProtected =>
+      'The \"income\" category already exists and cannot be modified.';
+
+  @override
+  String get selectIcon => 'Select Icon';
 }
