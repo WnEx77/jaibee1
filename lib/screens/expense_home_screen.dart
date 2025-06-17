@@ -8,6 +8,8 @@ import 'package:jaibee1/screens/profile.dart';
 import 'package:jaibee1/screens/budget_screen.dart';
 import 'package:jaibee1/widgets/app_background.dart';
 import 'package:jaibee1/screens/manage_categories.dart';
+import 'package:jaibee1/widgets/animated_screen_wrapper.dart'; // Make sure this file is imported
+import 'package:jaibee1/utils/create_animated_route.dart';
 
 class ExpenseHomeScreen extends StatefulWidget {
   const ExpenseHomeScreen({super.key});
@@ -26,12 +28,12 @@ class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
   void initState() {
     super.initState();
     _screens = [
-      const TransactionScreen(),
-      const BudgetScreen(),
-      const AddTransactionScreen(),
-      const ReportsScreen(),
-      const ProfileScreen(),
-      const ManageCategoriesScreen(), // newly added screen
+      const AnimatedScreenWrapper(child: TransactionScreen()),
+      const AnimatedScreenWrapper(child: BudgetScreen()),
+      const AnimatedScreenWrapper(child: AddTransactionScreen()),
+      const AnimatedScreenWrapper(child: ReportsScreen()),
+      const AnimatedScreenWrapper(child: ProfileScreen()),
+      const AnimatedScreenWrapper(child: ManageCategoriesScreen()),
     ];
     _pageController = PageController(initialPage: _currentPage);
   }
@@ -81,6 +83,7 @@ class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
       curve: Curves.ease,
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,8 +142,7 @@ class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => const ManageCategoriesScreen(),
+                         createAnimatedRoute(const ManageCategoriesScreen(),
                         ),
                       );
                     },

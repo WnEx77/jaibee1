@@ -26,6 +26,8 @@ dependencies:
   path_provider: ^2.1.2
   animated_bottom_navigation_bar: 1.4.0
   provider: ^6.1.5
+  package_info_plus: ^5.0.1
+
 
 
 dev_dependencies:
@@ -40,7 +42,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/Jaibee_logo-removebg-preview.png"
+  image_path: "assets/images/Jaibee_logo.png"
   adaptive_icon_background: "#FFFFFF"
 
 flutter:
@@ -51,8 +53,7 @@ flutter:
     - assets/images/Jaibee_logo.png
     - assets/images/background.png
     - assets/images/background2.png
-    - assets/images/Jaibee_flutter_icon_improved.png
-    - assets/images/Jaibee_logo-removebg-preview.png
+    - assets/images/Jaibee_logo.png
     - assets/images/WnEx_signature.png
     - assets/fonts/Amiri-Regular.ttf
     - assets/fonts/Rubik-Regular.ttf
@@ -67,7 +68,7 @@ flutter:
           
 flutter_native_splash:
   background_image: assets/images/background.png
-  image: assets/images/Jaibee_logo-removebg-preview.png
+  image: assets/images/Jaibee_logo.png
   branding: assets/images/WnEx_signature.png
   branding_mode: bottom
   android: true

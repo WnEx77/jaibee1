@@ -876,6 +876,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'totalSavings'**
   String get totalSavings;
+
+  /// No description provided for @aboutUs.
+  ///
+  /// In en, this message translates to:
+  /// **'About Us'**
+  String get aboutUs;
+
+  /// No description provided for @aboutAppDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'JaiBee is a simple and intuitive app for tracking your income and expenses. We aim to help you take control of your finances with ease.'**
+  String get aboutAppDescription;
+
+  /// No description provided for @developedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Developed by'**
+  String get developedBy;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

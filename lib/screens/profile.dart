@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:jaibee1/main.dart';
 import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
 import 'package:provider/provider.dart'; // <-- Add this import for ThemeProvider
+import 'package:jaibee1/screens/about_us_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -239,6 +240,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
+                ),
+              ),
+
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  leading: const Icon(Icons.account_circle_outlined, color: Colors.blueGrey),
+                  title: Text(s.aboutUs),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AboutUsScreen(),
+                      ),
+                    );
+                  },
                 ),
               ),
 

@@ -212,7 +212,7 @@ class _SplashScreenState extends State<SplashScreen>
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Image.asset(
-            'assets/images/Jaibee_logo-removebg-preview.png',
+            'assets/images/Jaibee_logo.png',
             width: 150,
           ),
         ),

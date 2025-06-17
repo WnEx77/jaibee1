@@ -142,5 +142,9 @@
   "gifts": "Gifts",
   "savings": "Savings",
   "events": "Events",
-  "totalSavings": "totalSavings"
+  "totalSavings": "totalSavings",
+  "aboutUs": "About Us",
+  "aboutAppDescription": "JaiBee is a simple and intuitive app for tracking your income and expenses. We aim to help you take control of your finances with ease.",
+  "developedBy": "Developed by"
+
 }

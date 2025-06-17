@@ -404,4 +404,14 @@ class SAr extends S {
 
   @override
   String get totalSavings => 'مجموع الادخارات';
+
+  @override
+  String get aboutUs => 'About Us';
+
+  @override
+  String get aboutAppDescription =>
+      'جيبي هو تطبيق بسيط وسهل الاستخدام لتتبع الدخل والمصروفات. هدفنا هو مساعدتك على التحكم في أموالك بسهولة ويسر.';
+
+  @override
+  String get developedBy => 'تم تطويره من: ';
 }

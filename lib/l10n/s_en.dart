@@ -406,4 +406,14 @@ class SEn extends S {
 
   @override
   String get totalSavings => 'totalSavings';
+
+  @override
+  String get aboutUs => 'About Us';
+
+  @override
+  String get aboutAppDescription =>
+      'JaiBee is a simple and intuitive app for tracking your income and expenses. We aim to help you take control of your finances with ease.';
+
+  @override
+  String get developedBy => 'Developed by';
 }
