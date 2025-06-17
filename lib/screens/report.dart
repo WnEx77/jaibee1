@@ -72,6 +72,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color buttonColor = isDark
+        ? Colors.grey[900]!
+        : const Color(0xFF4666B0);
 
     Map<String, double> dailyExpenses = {};
     Map<String, double> categoryExpenses = {};
@@ -128,7 +132,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         },
         label: Text(localizer.getAdvice),
         icon: const Icon(Icons.lightbulb),
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+        backgroundColor: buttonColor,
       ),
       body: AppBackground(
         child: filteredTransactions.isEmpty
@@ -241,6 +245,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Widget _buildViewToggle(S localizer) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color buttonColor = isDark
+        ? Colors.grey[900]!
+        : const Color(0xFF4666B0);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -254,8 +262,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
           },
           borderRadius: BorderRadius.circular(12),
           selectedColor: Colors.white,
-          color: const Color.fromARGB(255, 130, 148, 179),
-          fillColor: const Color.fromARGB(255, 130, 148, 179),
+          color: buttonColor,
+          fillColor: buttonColor,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -46,6 +46,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final Color buttonColor = isDark
+        ? Colors.grey[900]!
+        : const Color(0xFF4666B0);
+
     if (_isIncome && _category != 'income') {
       _category = 'income';
     }
@@ -54,7 +60,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       appBar: AppBar(
         title: Text(localizer.addTransaction),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+        backgroundColor: buttonColor,
         foregroundColor: Colors.white,
       ),
       body: AppBackground(
@@ -209,9 +215,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Widget _buildSubmitButton(S localizer) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color buttonColor = isDark
+        ? Colors.grey[900]!
+        : const Color(0xFF4666B0);
     return FilledButton.icon(
       style: FilledButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+        backgroundColor: buttonColor,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 14),
       ),
@@ -226,9 +236,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
     if (_formKey.currentState!.validate()) {
       if (_category.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(localizer.pleaseSelectCategory)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(localizer.pleaseSelectCategory)));
         return;
       }
 
@@ -250,9 +260,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             : '';
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizer.transactionAdded)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(localizer.transactionAdded)));
     }
   }
 
@@ -271,60 +281,92 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  String _getLocalizedCategory(String key, S localizer) {
-    switch (key) {
-      case 'food':
-        return localizer.food;
-      case 'transportation':
-        return localizer.transportation;
-      case 'entertainment':
-        return localizer.entertainment;
-      case 'coffee':
-        return localizer.coffee;
-      case 'income':
-        return localizer.income;
-      case 'other':
-        return localizer.other;
-      default:
-        return key;
-    }
+String _getLocalizedCategory(String name, S localizer) {
+  switch (name.toLowerCase()) {
+    case 'food':
+      return localizer.food;
+    case 'transport':
+    case 'transportation':
+      return localizer.transport;
+    case 'entertainment':
+      return localizer.entertainment;
+    case 'coffee':
+      return localizer.coffee;
+    case 'income':
+      return localizer.income;
+    case 'shopping':
+      return localizer.shopping;
+    case 'health':
+      return localizer.health;
+    case 'bills':
+      return localizer.bills;
+    case 'groceries':
+      return localizer.groceries;
+    case 'beauty':
+      return localizer.beauty;
+    case 'electronics':
+      return localizer.electronics;
+    case 'books':
+      return localizer.books;
+    case 'pet care':
+      return localizer.petCare;
+    case 'gifts':
+      return localizer.gifts;
+    case 'savings':
+      return localizer.savings;
+    case 'events':
+      return localizer.events;
+    case 'fitness':
+      return localizer.fitness;
+    default:
+      return name;
   }
+}
+
 
   /// Map the category or its emoji icon string to a Flutter IconData.
   IconData _getCategoryIcon(Category category) {
-    // Try to identify icon based on category name
-    switch (category.name) {
-      case 'food':
-        return Icons.fastfood;
-      case 'transportation':
-        return Icons.directions_car;
-      case 'entertainment':
-        return Icons.movie;
-      case 'coffee':
-        return Icons.coffee;
-      case 'income':
-        return Icons.attach_money;
-      case 'other':
-        return Icons.category;
-    }
-
-    // Fallback: map known emojis stored in category.icon to icons
     switch (category.icon) {
-      case '🍔':
-        return Icons.fastfood;
-      case '🚗':
+      case 'shopping_cart':
+        return Icons.shopping_cart;
+      case 'local_hospital':
+        return Icons.local_hospital;
+      case 'directions_car':
         return Icons.directions_car;
-      case '🎬':
+      case 'restaurant':
+        return Icons.restaurant;
+      case 'school':
+        return Icons.school;
+      case 'movie':
         return Icons.movie;
-      case '☕':
-        return Icons.coffee;
-      case '💰':
+      case 'fitness_center':
+        return Icons.fitness_center;
+      case 'flight':
+        return Icons.flight;
+      case 'home':
+        return Icons.home;
+      case 'credit_card':
+        return Icons.credit_card;
+      case 'local_mall':
+        return Icons.local_mall;
+      case 'spa':
+        return Icons.spa;
+      case 'computer':
+        return Icons.computer;
+      case 'book':
+        return Icons.book;
+      case 'pets':
+        return Icons.pets;
+      case 'cake':
+        return Icons.cake;
+      case 'savings':
+        return Icons.savings;
+      case 'event':
+        return Icons.event;
+      case 'attach_money':
         return Icons.attach_money;
-      case '🔘':
+      default:
         return Icons.category;
     }
-
-    // Default fallback icon
-    return Icons.label;
   }
 }

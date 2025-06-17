@@ -29,7 +29,7 @@
   "averageDaily": "متوسط الصرف اليومي",
   "totalSpent": "إجمالي الصرف",
   "selectPeriod": "اختر الفترة",
-  "selectCategory": "اختر الفئة",
+  "selectCategory": "اختر فئة",
   "applyFilter": "تطبيق الفلتر",
   "cancel": "إلغاء",
   "addQuickTransaction": "ضيف عملية سريعة",
@@ -113,17 +113,33 @@
       "total": {}
     }
   },
-  "manageCategories": "تعديل التصنيفات",
+  "manageCategories": "إدارة الفئات",
   "addCategory": "إضافة فئة",
   "deleteCategory": "حذف الفئة",
-  "deleteCategoryConfirm": "هل أنت متأكد من رغبتك في حذف \"{categoryName}\"؟",
+  "deleteCategoryConfirm": "هل أنت متأكد أنك تريد حذف {category}؟",
   "@deleteCategoryConfirm": {
     "description": "رسالة تأكيد عند حذف فئة",
     "placeholders": {
-      "categoryName": {}
+      "category": {}
     }
   },
-  "categoryExists": "الفئة موجودة بالفعل",
+  "categoryExists": "هذه الفئة موجودة بالفعل.",
   "incomeProtected": "فئة \"الدخل\" موجودة ولا يمكن تعديلها.",
-  "selectIcon": "اختر علامة"
+  "selectIcon": "اختر علامة",
+  "undo": "تراجع",
+  "categoryDeleted": "حذف التصنيف",
+  "daysRemaining": "يوم متبقي على نهاية الشهر.",
+  "shopping": "التسوق",
+  "health": "الصحة",
+  "transport": "النقل",
+  "bills": "الفواتير",
+  "groceries": "البقالة",
+  "beauty": "الجمال",
+  "electronics": "الإلكترونيات",
+  "books": "الكتب",
+  "petCare": "رعاية الحيوانات",
+  "gifts": "الهدايا",
+  "savings": "المدخرات",
+  "events": "الفعاليات",
+  "fitness": "اللياقة البدنية"
 }

@@ -255,7 +255,7 @@ class SEn extends S {
   String get education => 'Education';
 
   @override
-  String get home => 'Buy a Home';
+  String get home => 'Home';
 
   @override
   String get travel => 'Travel';
@@ -343,7 +343,7 @@ class SEn extends S {
 
   @override
   String deleteCategoryConfirm(Object categoryName) {
-    return 'Are you sure you want to delete \"$categoryName\"?';
+    return 'Are you sure you want to delete \"$categoryName\"? All transactions belong to this category will be removed!';
   }
 
   @override
@@ -355,4 +355,52 @@ class SEn extends S {
 
   @override
   String get selectIcon => 'Select Icon';
+
+  @override
+  String get undo => 'undo';
+
+  @override
+  String get categoryDeleted => 'Category Deleted';
+
+  @override
+  String get daysRemaining => 'Days remaining tell end of the month.';
+
+  @override
+  String get shopping => 'Shopping';
+
+  @override
+  String get health => 'Health';
+
+  @override
+  String get transport => 'Transport';
+
+  @override
+  String get fitness => 'Fitness';
+
+  @override
+  String get bills => 'Bills';
+
+  @override
+  String get groceries => 'Groceries';
+
+  @override
+  String get beauty => 'Beauty';
+
+  @override
+  String get electronics => 'Electronics';
+
+  @override
+  String get books => 'Books';
+
+  @override
+  String get petCare => 'Pet Care';
+
+  @override
+  String get gifts => 'Gifts';
+
+  @override
+  String get savings => 'Savings';
+
+  @override
+  String get events => 'Events';
 }

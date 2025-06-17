@@ -12,11 +12,10 @@ class ManageCategoriesScreen extends StatefulWidget {
 }
 
 class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
-  final TextEditingController _controller = TextEditingController();
-  late Box<Category> _categoryBox;
+  late Box<Category> _userCategoryBox;
+  late Box<Category> _categoriesBox;
 
-  String _selectedIcon = 'category';
-  // bool _showIconPicker = false; // <-- new flag
+  String _selectedCategory = '';
 
   final Map<String, IconData> availableIcons = {
     'fastfood': Icons.fastfood,
@@ -25,7 +24,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     'shopping_cart': Icons.shopping_cart,
     'fitness_center': Icons.fitness_center,
     'savings': Icons.savings,
-    'category': Icons.category, // default
+    'category': Icons.category,
     'coffee': Icons.coffee,
     'local_cafe': Icons.local_cafe,
     'restaurant': Icons.restaurant,
@@ -75,171 +74,189 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     'watch': Icons.watch,
   };
 
+  final List<Category> defaultUserCategories = [
+    Category(name: 'shopping', icon: 'shopping_cart'),
+    Category(name: 'health', icon: 'local_hospital'),
+    Category(name: 'transport', icon: 'directions_car'),
+    Category(name: 'food', icon: 'restaurant'),
+    Category(name: 'education', icon: 'school'),
+    Category(name: 'entertainment', icon: 'movie'),
+    Category(name: 'fitness', icon: 'fitness_center'),
+    Category(name: 'travel', icon: 'flight'),
+    Category(name: 'home', icon: 'home'),
+    Category(name: 'bills', icon: 'credit_card'),
+    Category(name: 'groceries', icon: 'local_mall'),
+    Category(name: 'beauty', icon: 'spa'),
+    Category(name: 'electronics', icon: 'computer'),
+    Category(name: 'books', icon: 'book'),
+    Category(name: 'petCare', icon: 'pets'),
+    Category(name: 'gifts', icon: 'cake'),
+    Category(name: 'savings', icon: 'savings'),
+    Category(name: 'events', icon: 'event'),
+  ];
+
   @override
   void initState() {
     super.initState();
-    _categoryBox = Hive.box<Category>('categories');
+    _userCategoryBox = Hive.box<Category>('userCategories');
+    _categoriesBox = Hive.box<Category>('categories');
+    _selectedCategory = '';
+
+    if (_userCategoryBox.isEmpty) {
+      for (final category in defaultUserCategories) {
+        _userCategoryBox.add(category);
+      }
+    }
+  }
+
+  String _getLocalizedCategory(String key, S localizer) {
+    switch (key.toLowerCase()) {
+      case 'shopping':
+        return localizer.shopping;
+      case 'health':
+        return localizer.health;
+      case 'transport':
+        return localizer.transport;
+      case 'food':
+        return localizer.food;
+      case 'education':
+        return localizer.education;
+      case 'entertainment':
+        return localizer.entertainment;
+      case 'fitness':
+        return localizer.fitness;
+      case 'travel':
+        return localizer.travel;
+      case 'home':
+        return localizer.home;
+      case 'bills':
+        return localizer.bills;
+      case 'groceries':
+        return localizer.groceries;
+      case 'beauty':
+        return localizer.beauty;
+      case 'electronics':
+        return localizer.electronics;
+      case 'books':
+        return localizer.books;
+      case 'petcare':
+        return localizer.petCare;
+      case 'gifts':
+        return localizer.gifts;
+      case 'savings':
+        return localizer.savings;
+      case 'events':
+        return localizer.events;
+      default:
+        return key;
+    }
   }
 
   void _addCategory() {
-    final name = _controller.text.trim();
     final localizer = S.of(context)!;
 
-    if (name.isEmpty) return;
+    if (_selectedCategory.isEmpty) return;
 
-    if (name.toLowerCase() == 'income') {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(localizer.incomeProtected)));
-      return;
-    }
+    final selected = defaultUserCategories.firstWhere(
+      (c) => c.name == _selectedCategory,
+    );
 
-    final exists = _categoryBox.values.any((c) => c.name == name);
+    final exists = _categoriesBox.values.any((c) => c.name == selected.name);
     if (exists) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(localizer.categoryExists)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(localizer.categoryExists)),
+      );
       return;
     }
 
-    _categoryBox.add(Category(name: name, icon: _selectedIcon));
-    _controller.clear();
+    _categoriesBox.add(Category(name: selected.name, icon: selected.icon));
     setState(() {
-      _selectedIcon = 'category';
+      _selectedCategory = '';
     });
   }
-
-void _showIconPickerM() {
-  showModalBottomSheet(
-    context: context,
-    builder: (ctx) {
-      return Padding(
-        padding: const EdgeInsets.all(16),
-        child: Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: availableIcons.entries.map((entry) {
-            final isSelected = _selectedIcon == entry.key;
-            return GestureDetector(
-              onTap: () {
-                setState(() => _selectedIcon = entry.key);
-                Navigator.pop(context); // close the modal
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isSelected ? Colors.blue : Colors.grey.shade200,
-                  border: Border.all(
-                    color: isSelected ? Colors.blueAccent : Colors.grey,
-                    width: 2,
-                  ),
-                ),
-                padding: const EdgeInsets.all(12),
-                child: Icon(
-                  entry.value,
-                  color: isSelected ? Colors.white : Colors.black,
-                  size: 28,
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      );
-    },
-  );
-}
-
-
 
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
-    final categories = _categoryBox.values.toList();
+    final categories = _categoriesBox.values.toList();
+    final userCategories = defaultUserCategories;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(localizer.manageCategories)),
-      body: AppBackground(
-        child: Padding(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color appBarColor =
+        isDark ? Colors.grey[900]! : const Color(0xFF4666B0);
+
+    return AppBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Container(
+            decoration: BoxDecoration(
+              color: appBarColor,
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(20),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              ),
+              title: Text(
+                localizer.manageCategories,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              centerTitle: true,
+            ),
+          ),
+        ),
+        body: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  labelText: localizer.newCategory,
-                  border: const OutlineInputBorder(),
-                  suffixIcon: GestureDetector(
-                    onTap: _showIconPickerM,
-                    child: Icon(
-                      availableIcons[_selectedIcon] ?? Icons.category,
+              DropdownButtonFormField<String>(
+                value: _selectedCategory.isEmpty ? null : _selectedCategory,
+                items: userCategories.map((cat) {
+                  return DropdownMenuItem<String>(
+                    value: cat.name,
+                    child: Row(
+                      children: [
+                        Icon(availableIcons[cat.icon] ?? Icons.category),
+                        const SizedBox(width: 10),
+                        Text(_getLocalizedCategory(cat.name, localizer)),
+                      ],
                     ),
-                  ),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    setState(() {
+                      _selectedCategory = val;
+                    });
+                  }
+                },
+                decoration: InputDecoration(
+                  labelText: localizer.selectCategory,
+                  border: const OutlineInputBorder(),
                 ),
-                onSubmitted: (_) => _addCategory(),
               ),
-
               const SizedBox(height: 12),
-
-              // NEW BUTTON TO TOGGLE ICON PICKER VISIBILITY
-              // ElevatedButton.icon(
-              //   onPressed: () {
-              //     setState(() {
-              //       _showIconPicker = !_showIconPicker;
-              //     });
-              //   },
-              //   icon: const Icon(Icons.color_lens),
-              //   label: Text(localizer.selectIcon),
-              // ),
-
-              // const SizedBox(height: 12),
-
-              // // ICON PICKER VISIBLE ONLY WHEN _showIconPicker IS TRUE
-              // if (_showIconPicker)
-              //   Wrap(
-              //     spacing: 10,
-              //     runSpacing: 10,
-              //     children: availableIcons.entries.map((entry) {
-              //       final isSelected = _selectedIcon == entry.key;
-              //       return GestureDetector(
-              //         onTap: () {
-              //           setState(() {
-              //             _selectedIcon = entry.key;
-              //             _showIconPicker = false; // hide picker after select
-              //           });
-              //         },
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: isSelected
-              //                 ? Colors.blue
-              //                 : Colors.grey.shade200,
-              //             border: Border.all(
-              //               color: isSelected ? Colors.blueAccent : Colors.grey,
-              //               width: 2,
-              //             ),
-              //           ),
-              //           padding: const EdgeInsets.all(10),
-              //           child: Icon(
-              //             entry.value,
-              //             color: isSelected ? Colors.white : Colors.black,
-              //           ),
-              //         ),
-              //       );
-              //     }).toList(),
-              //   ),
-
-              const SizedBox(height: 12),
-
               ElevatedButton.icon(
                 onPressed: _addCategory,
                 icon: const Icon(Icons.add),
                 label: Text(localizer.addCategory),
               ),
-
               const SizedBox(height: 24),
-
               const Divider(),
-
               Expanded(
                 child: ListView.separated(
                   itemCount: categories.length,
@@ -247,12 +264,16 @@ void _showIconPickerM() {
                   itemBuilder: (ctx, index) {
                     final cat = categories[index];
                     final isProtected = cat.name.toLowerCase() == 'income';
-                    final iconData = availableIcons[cat.icon] ?? Icons.category;
+                    final iconData =
+                        availableIcons[cat.icon] ?? Icons.category;
+
+                    final localizedName =
+                        _getLocalizedCategory(cat.name, localizer);
 
                     if (isProtected) {
                       return ListTile(
                         leading: Icon(iconData),
-                        title: Text(cat.name),
+                        title: Text(localizedName),
                         trailing: const Icon(Icons.lock, color: Colors.grey),
                       );
                     }
@@ -271,9 +292,8 @@ void _showIconPickerM() {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: Text(localizer.deleteCategory),
-                            content: Text(
-                              localizer.deleteCategoryConfirm(cat.name),
-                            ),
+                            content: Text(localizer
+                                .deleteCategoryConfirm(localizedName)),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx, false),
@@ -292,12 +312,12 @@ void _showIconPickerM() {
                         return confirmed ?? false;
                       },
                       onDismissed: (_) {
-                        _categoryBox.deleteAt(index);
+                        _categoriesBox.deleteAt(index);
                         setState(() {});
                       },
                       child: ListTile(
                         leading: Icon(iconData),
-                        title: Text(cat.name),
+                        title: Text(localizedName),
                       ),
                     );
                   },

@@ -47,9 +47,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     await prefs.setString('user_goals', _goalsController.text);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(S.of(context)!.profileSaved)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(S.of(context)!.profileSaved)));
   }
 
   int? _calculateAge(DateTime? birthDate) {
@@ -115,6 +115,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color buttonColor = isDark
+        ? Colors.grey[900]!
+        : const Color(0xFF4666B0);
 
     return Scaffold(
       // appBar: AppBar(
@@ -129,77 +133,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             children: [
               // Personal Info
-              Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(s.personalInfo, style: Theme.of(context).textTheme.titleMedium),
-                      const SizedBox(height: 16),
+              // Card(
+              //   elevation: 4,
+              //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(16),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Text(s.personalInfo, style: Theme.of(context).textTheme.titleMedium),
+              //         const SizedBox(height: 16),
 
-                      // Sex Dropdown
-                      Text(s.sex, style: const TextStyle(fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 6),
-                      DropdownButtonFormField<String>(
-                        value: _selectedSex,
-                        items: _sexOptions.map((sex) {
-                          return DropdownMenuItem(value: sex, child: Text(sex));
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedSex = value;
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.person),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+              //         // Sex Dropdown
+              //         Text(s.sex, style: const TextStyle(fontWeight: FontWeight.w600)),
+              //         const SizedBox(height: 6),
+              //         DropdownButtonFormField<String>(
+              //           value: _selectedSex,
+              //           items: _sexOptions.map((sex) {
+              //             return DropdownMenuItem(value: sex, child: Text(sex));
+              //           }).toList(),
+              //           onChanged: (value) {
+              //             setState(() {
+              //               _selectedSex = value;
+              //             });
+              //           },
+              //           decoration: const InputDecoration(
+              //             prefixIcon: Icon(Icons.person),
+              //             border: OutlineInputBorder(),
+              //           ),
+              //         ),
+              //         const SizedBox(height: 16),
 
-                      // Date of Birth Picker
-                      Text(s.birthDate, style: const TextStyle(fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 6),
-                      GestureDetector(
-                        onTap: _selectBirthDate,
-                        child: AbsorbPointer(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              hintText: s.enterAge,
-                              prefixIcon: const Icon(Icons.calendar_today),
-                              border: const OutlineInputBorder(),
-                            ),
-                            controller: TextEditingController(
-                              text: _birthDate != null
-                                  ? DateFormat('yyyy-MM-dd').format(_birthDate!)
-                                  : '',
-                            ),
-                          ),
-                        ),
-                      ),
+              //         // Date of Birth Picker
+              //         Text(s.birthDate, style: const TextStyle(fontWeight: FontWeight.w600)),
+              //         const SizedBox(height: 6),
+              //         GestureDetector(
+              //           onTap: _selectBirthDate,
+              //           child: AbsorbPointer(
+              //             child: TextFormField(
+              //               decoration: InputDecoration(
+              //                 hintText: s.enterAge,
+              //                 prefixIcon: const Icon(Icons.calendar_today),
+              //                 border: const OutlineInputBorder(),
+              //               ),
+              //               controller: TextEditingController(
+              //                 text: _birthDate != null
+              //                     ? DateFormat('yyyy-MM-dd').format(_birthDate!)
+              //                     : '',
+              //               ),
+              //             ),
+              //           ),
+              //         ),
 
-                      if (_birthDate != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            '${s.age}: ${_calculateAge(_birthDate)}',
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-
+              //         if (_birthDate != null)
+              //           Padding(
+              //             padding: const EdgeInsets.only(top: 8),
+              //             child: Text(
+              //               '${s.age}: ${_calculateAge(_birthDate)}',
+              //               style: const TextStyle(color: Colors.grey),
+              //             ),
+              //           ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 20),
 
               // Language Selection
               Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: ListTile(
                   leading: const Icon(Icons.language, color: Colors.blueGrey),
                   title: Text(s.changeLanguage),
@@ -213,10 +218,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Dark Mode Toggle
               Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: ListTile(
-                  leading: const Icon(Icons.brightness_6, color: Colors.blueGrey),
-                  title: Text(s.darkMode), // Make sure you add this string to your localization files
+                  leading: const Icon(
+                    Icons.brightness_6,
+                    color: Colors.blueGrey,
+                  ),
+                  title: Text(
+                    s.darkMode,
+                  ), // Make sure you add this string to your localization files
                   trailing: Consumer<ThemeProvider>(
                     builder: (context, themeProvider, _) {
                       return Switch(
@@ -237,15 +249,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: const Icon(Icons.flag),
                 label: Text(s.setGoals),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
+                  backgroundColor: buttonColor,
                   foregroundColor: Colors.white,
                   minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const GoalsScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const GoalsScreen(),
+                    ),
                   );
                 },
               ),
@@ -253,17 +269,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
 
               // Save Profile Button
-              ElevatedButton.icon(
-                icon: const Icon(Icons.save),
-                onPressed: _saveProfile,
-                label: Text(s.saveProfile),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-              ),
+              // ElevatedButton.icon(
+              //   icon: const Icon(Icons.save),
+              //   onPressed: _saveProfile,
+              //   label: Text(s.saveProfile),
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+              //     foregroundColor: Colors.white,
+              //     minimumSize: const Size.fromHeight(50),
+              //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              //   ),
+              // ),
             ],
           ),
         ),

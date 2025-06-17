@@ -29,6 +29,7 @@ void main() async {
   await Hive.openBox<double>('settings'); // For monthlyLimit and theme preference
   await Hive.openBox<Budget>('budgets');
   await Hive.openBox<Goal>('goals');
+  await Hive.openBox<Category>('userCategories');
 
   await addDefaultCategoriesIfEmpty();
   await addDefaultMonthlyLimitIfNotExists();

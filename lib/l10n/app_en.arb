@@ -81,7 +81,7 @@
   "goalType": "Goal Type",
   "retirement": "Retirement",
   "education": "Education",
-  "home": "Buy a Home",
+  "home": "Home",
   "travel": "Travel",
   "monthlyInvestment": "Monthly Investment",
   "enterAmount": "Enter amount",
@@ -116,7 +116,7 @@
   "manageCategories": "Manage Categories",
   "addCategory": "Add Category",
   "deleteCategory": "Delete Category",
-  "deleteCategoryConfirm": "Are you sure you want to delete \"{categoryName}\"?",
+  "deleteCategoryConfirm": "Are you sure you want to delete \"{categoryName}\"? All transactions belong to this category will be removed!",
   "@deleteCategoryConfirm": {
     "description": "Confirmation message shown when deleting a category",
     "placeholders": {
@@ -125,5 +125,21 @@
   },
   "categoryExists": "Category already exists",
   "incomeProtected": "The \"income\" category already exists and cannot be modified.",
-  "selectIcon": "Select Icon"
+  "selectIcon": "Select Icon",
+  "undo": "undo",
+  "categoryDeleted": "Category Deleted",
+  "daysRemaining": "Days remaining tell end of the month.",
+  "shopping": "Shopping",
+  "health": "Health",
+  "transport": "Transport",
+  "fitness": "Fitness",
+  "bills": "Bills",
+  "groceries": "Groceries",
+  "beauty": "Beauty",
+  "electronics": "Electronics",
+  "books": "Books",
+  "petCare": "Pet Care",
+  "gifts": "Gifts",
+  "savings": "Savings",
+  "events": "Events"
 }

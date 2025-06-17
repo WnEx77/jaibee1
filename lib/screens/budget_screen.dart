@@ -19,7 +19,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
   double? _monthlyLimit;
   final TextEditingController _monthlyLimitController = TextEditingController();
-
   final Map<String, TextEditingController> _controllers = {};
 
   @override
@@ -66,12 +65,10 @@ class _BudgetScreenState extends State<BudgetScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            S
-                .of(context)!
-                .monthlyLimitValidation(
-                  monthly.toStringAsFixed(0),
-                  totalCategoryLimits.toStringAsFixed(0),
-                ),
+            S.of(context)!.monthlyLimitValidation(
+              monthly.toStringAsFixed(0),
+              totalCategoryLimits.toStringAsFixed(0),
+            ),
           ),
           backgroundColor: Colors.redAccent,
         ),
@@ -102,6 +99,50 @@ class _BudgetScreenState extends State<BudgetScreen> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(S.of(context)!.budgetsSaved)));
+  }
+
+  String localizeCategory(BuildContext context, String name) {
+    final s = S.of(context)!;
+    switch (name.toLowerCase()) {
+      case 'food':
+        return s.food;
+      case 'transport':
+      case 'transportation':
+        return s.transport;
+      case 'entertainment':
+        return s.entertainment;
+      case 'coffee':
+        return s.coffee;
+      case 'income':
+        return s.income;
+      case 'shopping':
+        return s.shopping;
+      case 'health':
+        return s.health;
+      case 'bills':
+        return s.bills;
+      case 'groceries':
+        return s.groceries;
+      case 'beauty':
+        return s.beauty;
+      case 'electronics':
+        return s.electronics;
+      case 'books':
+        return s.books;
+      case 'petcare':
+      case 'pet care':
+        return s.petCare;
+      case 'gifts':
+        return s.gifts;
+      case 'savings':
+        return s.savings;
+      case 'events':
+        return s.events;
+      case 'fitness':
+        return s.fitness;
+      default:
+        return name;
+    }
   }
 
   @override
@@ -147,7 +188,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          category.name,
+                          localizeCategory(context, category.name),
                           style: const TextStyle(fontSize: 16),
                         ),
                       ),

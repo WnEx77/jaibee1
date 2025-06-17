@@ -586,7 +586,7 @@ abstract class S {
   /// No description provided for @home.
   ///
   /// In en, this message translates to:
-  /// **'Buy a Home'**
+  /// **'Home'**
   String get home;
 
   /// No description provided for @travel.
@@ -754,7 +754,7 @@ abstract class S {
   /// Confirmation message shown when deleting a category
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete \"{categoryName}\"?'**
+  /// **'Are you sure you want to delete \"{categoryName}\"? All transactions belong to this category will be removed!'**
   String deleteCategoryConfirm(Object categoryName);
 
   /// No description provided for @categoryExists.
@@ -774,6 +774,102 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Select Icon'**
   String get selectIcon;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'undo'**
+  String get undo;
+
+  /// No description provided for @categoryDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Deleted'**
+  String get categoryDeleted;
+
+  /// No description provided for @daysRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Days remaining tell end of the month.'**
+  String get daysRemaining;
+
+  /// No description provided for @shopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get shopping;
+
+  /// No description provided for @health.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get health;
+
+  /// No description provided for @transport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get transport;
+
+  /// No description provided for @fitness.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitness'**
+  String get fitness;
+
+  /// No description provided for @bills.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills'**
+  String get bills;
+
+  /// No description provided for @groceries.
+  ///
+  /// In en, this message translates to:
+  /// **'Groceries'**
+  String get groceries;
+
+  /// No description provided for @beauty.
+  ///
+  /// In en, this message translates to:
+  /// **'Beauty'**
+  String get beauty;
+
+  /// No description provided for @electronics.
+  ///
+  /// In en, this message translates to:
+  /// **'Electronics'**
+  String get electronics;
+
+  /// No description provided for @books.
+  ///
+  /// In en, this message translates to:
+  /// **'Books'**
+  String get books;
+
+  /// No description provided for @petCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet Care'**
+  String get petCare;
+
+  /// No description provided for @gifts.
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts'**
+  String get gifts;
+
+  /// No description provided for @savings.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get savings;
+
+  /// No description provided for @events.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get events;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

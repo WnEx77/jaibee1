@@ -96,7 +96,7 @@ class SAr extends S {
   String get selectPeriod => 'اختر الفترة';
 
   @override
-  String get selectCategory => 'اختر الفئة';
+  String get selectCategory => 'اختر فئة';
 
   @override
   String get applyFilter => 'تطبيق الفلتر';
@@ -332,7 +332,7 @@ class SAr extends S {
   }
 
   @override
-  String get manageCategories => 'تعديل التصنيفات';
+  String get manageCategories => 'إدارة الفئات';
 
   @override
   String get addCategory => 'إضافة فئة';
@@ -342,15 +342,63 @@ class SAr extends S {
 
   @override
   String deleteCategoryConfirm(Object categoryName) {
-    return 'هل أنت متأكد من رغبتك في حذف \"$categoryName\"؟';
+    return 'هل أنت متأكد أنك تريد حذف $category؟';
   }
 
   @override
-  String get categoryExists => 'الفئة موجودة بالفعل';
+  String get categoryExists => 'هذه الفئة موجودة بالفعل.';
 
   @override
   String get incomeProtected => 'فئة \"الدخل\" موجودة ولا يمكن تعديلها.';
 
   @override
   String get selectIcon => 'اختر علامة';
+
+  @override
+  String get undo => 'تراجع';
+
+  @override
+  String get categoryDeleted => 'حذف التصنيف';
+
+  @override
+  String get daysRemaining => 'يوم متبقي على نهاية الشهر.';
+
+  @override
+  String get shopping => 'التسوق';
+
+  @override
+  String get health => 'الصحة';
+
+  @override
+  String get transport => 'النقل';
+
+  @override
+  String get fitness => 'اللياقة البدنية';
+
+  @override
+  String get bills => 'الفواتير';
+
+  @override
+  String get groceries => 'البقالة';
+
+  @override
+  String get beauty => 'الجمال';
+
+  @override
+  String get electronics => 'الإلكترونيات';
+
+  @override
+  String get books => 'الكتب';
+
+  @override
+  String get petCare => 'رعاية الحيوانات';
+
+  @override
+  String get gifts => 'الهدايا';
+
+  @override
+  String get savings => 'المدخرات';
+
+  @override
+  String get events => 'الفعاليات';
 }
