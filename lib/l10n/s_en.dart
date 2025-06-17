@@ -403,4 +403,7 @@ class SEn extends S {
 
   @override
   String get events => 'Events';
+
+  @override
+  String get totalSavings => 'totalSavings';
 }

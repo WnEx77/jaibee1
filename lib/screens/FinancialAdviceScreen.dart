@@ -12,6 +12,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:month_year_picker/month_year_picker.dart';
+import 'package:jaibee1/widgets/app_background.dart';
 
 class MonthlySummary {
   final double totalIncome;
@@ -189,7 +190,6 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
       final prefs = await SharedPreferences.getInstance();
       final double? monthlyLimit = prefs.getDouble('monthly_limit') ?? 0;
 
-
       final summary = getMonthlySummary(
         _selectedMonth,
         transactionsBox,
@@ -228,23 +228,23 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     }
   }
 
-Future<void> _pickMonth() async {
-  final DateTime now = DateTime.now();
-  final DateTime? picked = await showMonthYearPicker(
-    context: context,
-    initialDate: _selectedMonth,
-    firstDate: DateTime(now.year - 3),
-    lastDate: DateTime(now.year + 1),
-  );
+  Future<void> _pickMonth() async {
+    final DateTime now = DateTime.now();
+    final DateTime? picked = await showMonthYearPicker(
+      context: context,
+      initialDate: _selectedMonth,
+      firstDate: DateTime(now.year - 3),
+      lastDate: DateTime(now.year + 1),
+    );
 
-  if (picked != null) {
-    setState(() {
-      _selectedMonth = DateTime(picked.year, picked.month);
-      _loading = true;
-    });
-    await _loadAdvice();
+    if (picked != null) {
+      setState(() {
+        _selectedMonth = DateTime(picked.year, picked.month);
+        _loading = true;
+      });
+      await _loadAdvice();
+    }
   }
-}
 
   void _showShareOptions() {
     showModalBottomSheet(
@@ -337,7 +337,7 @@ Future<void> _pickMonth() async {
                           ),
                         ),
                       ),
-                      pw.Image(logo, height: 50),
+                      pw.Image(logo, height: 100),
                     ],
                   ),
                   pw.SizedBox(height: 16),
@@ -490,7 +490,7 @@ Future<void> _pickMonth() async {
                         color: PdfColors.redAccent,
                       ),
                     ),
-                    pw.Image(logo, height: 50),
+                    pw.Image(logo, height: 100),
                   ],
                 ),
                 pw.SizedBox(height: 16),
@@ -602,64 +602,53 @@ Future<void> _pickMonth() async {
     final String monthName = DateFormat.yMMMM().format(DateTime.now());
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.of(context)!.aiFinancialAdvice),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: _showShareOptions,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF4666B0),
+            borderRadius: const BorderRadius.vertical(
+              bottom: Radius.circular(20),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-        foregroundColor: Colors.white,
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Text(
+              S.of(context)!.aiFinancialAdvice,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: _showShareOptions,
+              ),
+            ],
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : _error != null
-            ? Center(child: Text("Error: $_error"))
-            : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 🔻 Month Picker Button Row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          DateFormat.yMMMM().format(_selectedMonth),
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        TextButton.icon(
-                          onPressed: _pickMonth,
-                          icon: const Icon(Icons.calendar_today, size: 16),
-                          label: const Text("Pick Month"),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    // 🔻 Summary Card
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
-                            blurRadius: 6,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+      body: AppBackground(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null
+              ? Center(child: Text("Error: $_error"))
+              : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Month Picker Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             DateFormat.yMMMM().format(_selectedMonth),
@@ -668,107 +657,145 @@ Future<void> _pickMonth() async {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(S.of(context)!.income),
-                                  Text(
-                                    "\$${_summary!.totalIncome.toStringAsFixed(2)}",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(S.of(context)!.expenses),
-                                  Text(
-                                    "\$${_summary!.totalExpenses.toStringAsFixed(2)}",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(S.of(context)!.limit),
-                                  Text(
-                                    _summary!.monthlyLimit != null
-                                        ? "\$${_summary!.monthlyLimit!.toStringAsFixed(2)}"
-                                        : "Not set",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.orange,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                          TextButton.icon(
+                            onPressed: _pickMonth,
+                            icon: const Icon(Icons.calendar_today, size: 16),
+                            label: const Text("Pick Month"),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 12),
 
-                    Text(
-                      S.of(context)!.personalizedAdvice,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                      // Summary Card
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              DateFormat.yMMMM().format(_selectedMonth),
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(S.of(context)!.income),
+                                    Text(
+                                      "\$${_summary!.totalIncome.toStringAsFixed(2)}",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(S.of(context)!.expenses),
+                                    Text(
+                                      "\$${_summary!.totalExpenses.toStringAsFixed(2)}",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(S.of(context)!.limit),
+                                    Text(
+                                      _summary!.monthlyLimit != null
+                                          ? "\$${_summary!.monthlyLimit!.toStringAsFixed(2)}"
+                                          : "Not set",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.orange,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
+                      const SizedBox(height: 24),
 
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.yellow.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.amber, width: 1.5),
+                      Text(
+                        S.of(context)!.personalizedAdvice,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      child: Text(
-                        _advice ?? S.of(context)!.noAdvice,
-                        style: const TextStyle(fontSize: 16),
+                      const SizedBox(height: 12),
+
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.yellow.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.amber, width: 1.5),
+                        ),
+                        child: Text(
+                          _advice ?? S.of(context)!.noAdvice,
+                          style: const TextStyle(fontSize: 16),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      textAlign: TextAlign.left,
-                      "Disclaimer",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.redAccent,
+                      const SizedBox(height: 24),
+
+                      Text(
+                        textAlign: TextAlign.left,
+                        "Disclaimer",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.redAccent,
+                        ),
                       ),
-                    ),
-    const SizedBox(height: 4),
-    Directionality(
-      textDirection: Directionality.of(context), // Uses app language direction
-      child: Text(
-        'This advice is generated by AI for informational purposes only. The developer is not responsible for any actions taken based on it.',
-        textAlign: TextAlign.left, // Always aligns text to the left
-        style: const TextStyle(fontSize: 14, color: Colors.black54),
-      ),
-    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Directionality(
+                        textDirection: Directionality.of(context),
+                        child: Text(
+                          'This advice is generated by AI for informational purposes only. The developer is not responsible for any actions taken based on it.',
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+        ),
       ),
-      backgroundColor: const Color(0xFFF5F5F5),
     );
   }
 }

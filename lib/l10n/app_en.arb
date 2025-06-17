@@ -141,5 +141,6 @@
   "petCare": "Pet Care",
   "gifts": "Gifts",
   "savings": "Savings",
-  "events": "Events"
+  "events": "Events",
+  "totalSavings": "totalSavings"
 }

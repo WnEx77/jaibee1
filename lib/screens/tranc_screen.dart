@@ -32,6 +32,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
   DateTime _selectedMonth = DateTime.now();
 
   double? _monthlyLimit; // retrieved from budget box
+  // bool _showOnlySavings = false;
 
   @override
   void initState() {
@@ -124,12 +125,15 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 for (var t in filteredTransactions) {
                   if (t.isIncome) {
                     totalIncome += t.amount;
-                  } else {
+                  } else if (t.category.toLowerCase() != 'savings') {
                     totalExpenses += t.amount;
                   }
                 }
+                final totalSavings = allTransactions
+                    .where((t) => t.category.toLowerCase() == 'savings')
+                    .fold<double>(0, (sum, t) => sum + t.amount);
+                final balance = totalIncome - totalExpenses - totalSavings;
 
-                final balance = totalIncome - totalExpenses;
                 double usagePercent = 0;
                 if (_monthlyLimit != null && _monthlyLimit! > 0) {
                   usagePercent = (totalExpenses / _monthlyLimit!).clamp(0, 1);
@@ -232,6 +236,12 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     color: balance >= 0
                                         ? Colors.green
                                         : Colors.red,
+                                  ),
+                                  _summaryItem(
+                                    title: localizer
+                                        .totalSavings, // Add to localization
+                                    amount: totalSavings,
+                                    color: Colors.blue,
                                   ),
                                 ],
                               ),
@@ -343,16 +353,24 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         );
                                       },
                                       leading: CircleAvatar(
+                                        // backgroundColor: isIncome
+                                        //     ? Colors.green.shade50
+                                        //     : Colors.red.shade50,
+                                        // child: Icon(
+                                        //   isIncome
+                                        //       ? Icons.arrow_downward
+                                        //       : Icons.arrow_upward,
+                                        //   color: isIncome
+                                        //       ? Colors.green
+                                        //       : Colors.red,
+                                        // ),
                                         backgroundColor: isIncome
                                             ? Colors.green.shade50
-                                            : Colors.red.shade50,
+                                            : Colors.transparent,
                                         child: Icon(
-                                          isIncome
-                                              ? Icons.arrow_downward
-                                              : Icons.arrow_upward,
-                                          color: isIncome
-                                              ? Colors.green
-                                              : Colors.red,
+                                          _getIconForCategory(
+                                            transaction.category,
+                                          ),
                                         ),
                                       ),
                                       title: Text(
@@ -479,18 +497,44 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   String _getLocalizedCategory(String key, S localizer) {
     switch (key.toLowerCase()) {
-      case 'food':
-        return localizer.food;
-      case 'coffee':
-        return localizer.coffee;
-      case 'transportation':
-        return localizer.transportation;
-      case 'entertainment':
-        return localizer.entertainment;
       case 'income':
         return localizer.income;
-      case 'other':
-        return localizer.other;
+      case 'shopping':
+        return localizer.shopping;
+      case 'health':
+        return localizer.health;
+      case 'transport':
+        return localizer.transport;
+      case 'food':
+        return localizer.food;
+      case 'education':
+        return localizer.education;
+      case 'entertainment':
+        return localizer.entertainment;
+      case 'fitness':
+        return localizer.fitness;
+      case 'travel':
+        return localizer.travel;
+      case 'home':
+        return localizer.home;
+      case 'bills':
+        return localizer.bills;
+      case 'groceries':
+        return localizer.groceries;
+      case 'beauty':
+        return localizer.beauty;
+      case 'electronics':
+        return localizer.electronics;
+      case 'books':
+        return localizer.books;
+      case 'petcare':
+        return localizer.petCare;
+      case 'gifts':
+        return localizer.gifts;
+      case 'savings':
+        return localizer.savings;
+      case 'events':
+        return localizer.events;
       default:
         return key;
     }
@@ -498,16 +542,48 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   IconData _getIconForCategory(String key) {
     switch (key.toLowerCase()) {
+      case 'shopping':
+        return Icons.shopping_cart;
+      case 'health':
+        return Icons.local_hospital;
+      case 'transport':
+        return Icons.directions_car;
       case 'food':
-        return Icons.fastfood;
+        return Icons.restaurant;
+      case 'education':
+        return Icons.school;
+      case 'entertainment':
+        return Icons.movie;
+      case 'fitness':
+        return Icons.fitness_center;
+      case 'travel':
+        return Icons.flight;
+      case 'home':
+        return Icons.home;
+      case 'bills':
+        return Icons.credit_card;
+      case 'groceries':
+        return Icons.local_mall;
+      case 'beauty':
+        return Icons.spa;
+      case 'electronics':
+        return Icons.computer;
+      case 'books':
+        return Icons.book;
+      case 'petcare': // note lowercase
+        return Icons.pets;
+      case 'gifts':
+        return Icons.cake;
+      case 'savings':
+        return Icons.savings;
+      case 'events':
+        return Icons.event;
+      case 'income':
+        return Icons.attach_money;
       case 'coffee':
         return Icons.coffee;
       case 'transportation':
         return Icons.directions_bus;
-      case 'entertainment':
-        return Icons.movie;
-      case 'income':
-        return Icons.attach_money;
       case 'other':
         return Icons.category;
       default:

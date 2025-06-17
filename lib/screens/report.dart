@@ -133,6 +133,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         label: Text(localizer.getAdvice),
         icon: const Icon(Icons.lightbulb),
         backgroundColor: buttonColor,
+        foregroundColor: Colors.white,
       ),
       body: AppBackground(
         child: filteredTransactions.isEmpty

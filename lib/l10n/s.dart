@@ -870,6 +870,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Events'**
   String get events;
+
+  /// No description provided for @totalSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'totalSavings'**
+  String get totalSavings;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

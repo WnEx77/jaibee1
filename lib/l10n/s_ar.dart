@@ -401,4 +401,7 @@ class SAr extends S {
 
   @override
   String get events => 'الفعاليات';
+
+  @override
+  String get totalSavings => 'مجموع الادخارات';
 }

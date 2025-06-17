@@ -45,9 +45,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
-
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
     final Color buttonColor = isDark
         ? Colors.grey[900]!
         : const Color(0xFF4666B0);
@@ -57,12 +55,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(localizer.addTransaction),
-        centerTitle: true,
-        backgroundColor: buttonColor,
-        foregroundColor: Colors.white,
-      ),
+      // appBar: AppBar(
+      //   title: Text(localizer.addTransaction),
+      //   centerTitle: true,
+      //   // backgroundColor: Colors.transparent,
+      //   // foregroundColor: Colors.white,
+      // ),
       body: AppBackground(
         child: SafeArea(
           child: Padding(
@@ -94,28 +92,33 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
-  Widget _buildAmountField(S localizer) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      padding: const EdgeInsets.all(8),
-      child: TextFormField(
-        controller: _amountController,
-        decoration: InputDecoration(
-          labelText: localizer.amount,
-          border: InputBorder.none,
-          icon: const Icon(Icons.attach_money),
+Widget _buildAmountField(S localizer) {
+  return AnimatedContainer(
+    duration: const Duration(milliseconds: 300),
+    curve: Curves.easeInOut,
+    padding: const EdgeInsets.all(8),
+    child: TextFormField(
+      controller: _amountController,
+      decoration: InputDecoration(
+        labelText: localizer.amount,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        keyboardType: TextInputType.number,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return localizer.pleaseEnterAmount;
-          }
-          return null;
-        },
+        filled: true,
+        fillColor: Colors.white,
+        prefixIcon: const Icon(Icons.attach_money, color: Colors.blueGrey),
       ),
-    );
-  }
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return localizer.pleaseEnterAmount;
+        }
+        return null;
+      },
+    ),
+  );
+}
+
 
   Widget _buildCategoryDropdown(S localizer) {
     final categories = _isIncome

@@ -65,10 +65,12 @@ class _BudgetScreenState extends State<BudgetScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            S.of(context)!.monthlyLimitValidation(
-              monthly.toStringAsFixed(0),
-              totalCategoryLimits.toStringAsFixed(0),
-            ),
+            S
+                .of(context)!
+                .monthlyLimitValidation(
+                  monthly.toStringAsFixed(0),
+                  totalCategoryLimits.toStringAsFixed(0),
+                ),
           ),
           backgroundColor: Colors.redAccent,
         ),
@@ -148,15 +150,20 @@ class _BudgetScreenState extends State<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     final categories = _categoryBox.values.toList();
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color buttonColor = isDark
+        ? Colors.grey[900]!
+        : const Color(0xFF4666B0);
     return Scaffold(
       backgroundColor: Colors.transparent,
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: _saveBudgets,
-        label: Text(S.of(context)!.save),
-        icon: const Icon(Icons.save),
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
+        backgroundColor: buttonColor,
+        foregroundColor: Colors.white,
+        tooltip: S.of(context)!.save,
+        child: const Icon(Icons.save),
       ),
+
       body: AppBackground(
         child: ListView(
           padding: const EdgeInsets.all(16),

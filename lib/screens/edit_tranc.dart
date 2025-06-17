@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/models/category.dart';
+import 'package:jaibee1/widgets/app_background.dart'; // import AppBackground
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -50,135 +51,153 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final Color appBarColor = isDark
+        ? Colors.grey[900]!
+        : const Color(0xFF4666B0);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(localizer.editTransaction),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            tooltip: localizer.deleteTransaction,
-            onPressed: _confirmDelete,
+    return AppBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent, // so background shows through
+        appBar: AppBar(
+          backgroundColor: appBarColor,
+          elevation: 0,
+          title: Text(
+            S.of(context)!.editTransaction,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  TextFormField(
-                    controller: _amountController,
-                    decoration: InputDecoration(
-                      labelText: localizer.amount,
-                      border: const OutlineInputBorder(),
-                      icon: const Icon(Icons.attach_money),
+          centerTitle: true,
+          // actions: [
+          //   // IconButton(
+          //   //   icon: const Icon(Icons.category),
+          //   //   tooltip: S.of(context)!.manageCategories,
+          //   //   onPressed: () {
+          //   //     Navigator.pop;
+          //   //   },
+          //   // ),
+          // ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    TextFormField(
+                      controller: _amountController,
+                      decoration: InputDecoration(
+                        labelText: localizer.amount,
+                        border: const OutlineInputBorder(),
+                        icon: const Icon(Icons.attach_money),
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return localizer.pleaseEnterAmount;
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return localizer.pleaseEnterAmount;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  DropdownButtonFormField<String>(
-                    value: _category.isNotEmpty ? _category : null,
-                    decoration: InputDecoration(
-                      labelText: localizer.category,
-                      border: const OutlineInputBorder(),
-                      icon: const Icon(Icons.category),
-                    ),
-                    onChanged: _isIncome
-                        ? null
-                        : (String? newValue) {
-                            setState(() {
-                              _category = newValue!;
-                            });
-                          },
-                    items:
-                        (_isIncome
-                                ? ['income']
-                                : _customCategories.isNotEmpty
-                                ? _customCategories
-                                : [
-                                    'food',
-                                    'transportation',
-                                    'entertainment',
-                                    'coffee',
-                                    'other',
-                                  ])
-                            .map(
-                              (value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  _getLocalizedCategory(value, localizer),
+                    DropdownButtonFormField<String>(
+                      value: _category.isNotEmpty ? _category : null,
+                      decoration: InputDecoration(
+                        labelText: localizer.category,
+                        border: const OutlineInputBorder(),
+                        icon: const Icon(Icons.category),
+                      ),
+                      onChanged: _isIncome
+                          ? null
+                          : (String? newValue) {
+                              setState(() {
+                                _category = newValue!;
+                              });
+                            },
+                      items:
+                          (_isIncome
+                                  ? ['income']
+                                  : _customCategories.isNotEmpty
+                                  ? _customCategories
+                                  : [
+                                      'food',
+                                      'transportation',
+                                      'entertainment',
+                                      'coffee',
+                                      'other',
+                                    ])
+                              .map(
+                                (value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    _getLocalizedCategory(value, localizer),
+                                  ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return localizer.pleaseSelectCategory;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
+                              )
+                              .toList(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return localizer.pleaseSelectCategory;
+                        }
+                        return null;
+                      },
                     ),
-                    child: ListTile(
-                      title: Text(
-                        '${localizer.date}: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      trailing: Icon(
-                        Icons.calendar_today,
-                        color: Colors.blue.shade700,
-                      ),
-                      onTap: () => _selectDate(context),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  const SizedBox(height: 16),
-
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 110, 159, 210),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          '${localizer.date}: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        trailing: Icon(
+                          Icons.calendar_today,
+                          color: Colors.blue.shade700,
+                        ),
+                        onTap: () => _selectDate(context),
                       ),
                     ),
-                    onPressed: _saveEditedTransaction,
-                    icon: const Icon(Icons.save),
-                    label: Text(localizer.saveChanges),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          110,
+                          159,
+                          210,
+                        ),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: _saveEditedTransaction,
+                      icon: const Icon(Icons.save),
+                      label: Text(localizer.saveChanges),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
