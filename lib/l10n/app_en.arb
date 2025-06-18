@@ -61,7 +61,6 @@
   "notSet": "Not set",
   "personalizedAdvice": "Personalized Advice",
   "noAdvice": "No advice",
-  "error": "Error: {error}",
   "errorWithMessage": "Error With Message",
   "financialAdviceTitle": "AI Financial Advice",
   "copyAdvice": "Copy Advice",

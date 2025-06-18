@@ -61,7 +61,6 @@
   "notSet": "غير محدد",
   "personalizedAdvice": "نصيحة مخصصة",
   "noAdvice": "لا توجد نصيحة",
-  "error": "خطأ: {error}",
   "errorWithMessage": "خطأ مع رسالة",
   "financialAdviceTitle": "نصيحة مالية ذكية",
   "copyAdvice": "نسخ النصيحة",

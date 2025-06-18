@@ -192,11 +192,6 @@ class SEn extends S {
   String get noAdvice => 'No advice';
 
   @override
-  String error(Object error) {
-    return 'Error: $error';
-  }
-
-  @override
   String get errorWithMessage => 'Error With Message';
 
   @override

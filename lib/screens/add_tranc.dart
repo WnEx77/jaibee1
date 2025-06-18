@@ -47,7 +47,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
 
     if (_isIncome && _category != 'income') {
       _category = 'income';

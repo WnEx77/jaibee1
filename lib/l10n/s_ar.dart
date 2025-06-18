@@ -192,11 +192,6 @@ class SAr extends S {
   String get noAdvice => 'لا توجد نصيحة';
 
   @override
-  String error(Object error) {
-    return 'خطأ: $error';
-  }
-
-  @override
   String get errorWithMessage => 'خطأ مع رسالة';
 
   @override

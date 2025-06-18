@@ -463,12 +463,6 @@ abstract class S {
   /// **'No advice'**
   String get noAdvice;
 
-  /// No description provided for @error.
-  ///
-  /// In en, this message translates to:
-  /// **'Error: {error}'**
-  String error(Object error);
-
   /// No description provided for @errorWithMessage.
   ///
   /// In en, this message translates to:
