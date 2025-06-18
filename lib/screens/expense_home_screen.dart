@@ -3,7 +3,7 @@ import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/screens/add_tranc.dart';
 import 'package:jaibee1/screens/report.dart';
 import 'package:jaibee1/screens/tranc_screen.dart';
-import 'package:jaibee1/main.dart';
+// import 'package:jaibee1/main.dart';
 import 'package:jaibee1/screens/profile.dart';
 import 'package:jaibee1/screens/budget_screen.dart';
 import 'package:jaibee1/widgets/app_background.dart';
@@ -40,37 +40,37 @@ class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
     _pageController = PageController(initialPage: _currentPage);
   }
 
-  void _changeLanguage(String langCode) {
-    Locale newLocale = Locale(langCode);
-    ExpenseTrackerApp.setLocale(context, newLocale);
-  }
+  // void _changeLanguage(String langCode) {
+  //   Locale newLocale = Locale(langCode);
+  //   ExpenseTrackerApp.setLocale(context, newLocale);
+  // }
 
-  void _showLanguageDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          title: Text(S.of(context)!.changeLanguage),
-          children: [
-            SimpleDialogOption(
-              child: Text(S.of(context)!.english),
-              onPressed: () {
-                _changeLanguage('en');
-                Navigator.pop(context);
-              },
-            ),
-            SimpleDialogOption(
-              child: Text(S.of(context)!.arabic),
-              onPressed: () {
-                _changeLanguage('ar');
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showLanguageDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return SimpleDialog(
+  //         title: Text(S.of(context)!.changeLanguage),
+  //         children: [
+  //           SimpleDialogOption(
+  //             child: Text(S.of(context)!.english),
+  //             onPressed: () {
+  //               _changeLanguage('en');
+  //               Navigator.pop(context);
+  //             },
+  //           ),
+  //           SimpleDialogOption(
+  //             child: Text(S.of(context)!.arabic),
+  //             onPressed: () {
+  //               _changeLanguage('ar');
+  //               Navigator.pop(context);
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   void _onPageChanged(int index) {
     setState(() {
