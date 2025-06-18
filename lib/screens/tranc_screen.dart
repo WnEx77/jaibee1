@@ -237,12 +237,12 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         ? Colors.green
                                         : Colors.red,
                                   ),
-                                  _summaryItem(
-                                    title: localizer
-                                        .totalSavings, // Add to localization
-                                    amount: totalSavings,
-                                    color: Colors.blue,
-                                  ),
+                                  // _summaryItem(
+                                  //   title: localizer
+                                  //       .totalSavings, // Add to localization
+                                  //   amount: totalSavings,
+                                  //   color: Colors.blue,
+                                  // ),
                                 ],
                               ),
                             ],

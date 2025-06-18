@@ -8,6 +8,8 @@ import 'package:jaibee1/screens/FinancialAdviceScreen.dart'; // Adjust path as n
 import 'package:jaibee1/models/goal_model.dart';
 import 'package:jaibee1/screens/edit_goal_dialog.dart';
 import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
+import 'package:jaibee1/providers/mint_jade_theme.dart';
+
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -72,10 +74,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color buttonColor = isDark
-        ? Colors.grey[900]!
-        : const Color(0xFF4666B0);
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
 
     Map<String, double> dailyExpenses = {};
     Map<String, double> categoryExpenses = {};
@@ -132,7 +131,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         },
         label: Text(localizer.getAdvice),
         icon: const Icon(Icons.lightbulb),
-        backgroundColor: buttonColor,
+        backgroundColor: mintTheme.buttonColor,
         foregroundColor: Colors.white,
       ),
       body: AppBackground(

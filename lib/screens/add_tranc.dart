@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/models/category.dart';
 import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
+import 'package:jaibee1/providers/mint_jade_theme.dart';
+
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -45,10 +47,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color buttonColor = isDark
-        ? Colors.grey[900]!
-        : const Color(0xFF4666B0);
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
 
     if (_isIncome && _category != 'income') {
       _category = 'income';
@@ -92,37 +91,34 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
-Widget _buildAmountField(S localizer) {
-  return AnimatedContainer(
-    duration: const Duration(milliseconds: 300),
-    curve: Curves.easeInOut,
-    padding: const EdgeInsets.all(8),
-    child: TextFormField(
-      controller: _amountController,
-      decoration: InputDecoration(
-        labelText: localizer.amount,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+  Widget _buildAmountField(S localizer) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.all(8),
+      child: TextFormField(
+        controller: _amountController,
+        decoration: InputDecoration(
+          labelText: localizer.amount,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          filled: true,
+          fillColor: Colors.white,
+          prefixIcon: const Icon(Icons.attach_money, color: Colors.blueGrey),
         ),
-        filled: true,
-        fillColor: Colors.white,
-        prefixIcon: const Icon(Icons.attach_money, color: Colors.blueGrey),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return localizer.pleaseEnterAmount;
+          }
+          return null;
+        },
       ),
-      keyboardType: TextInputType.number,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return localizer.pleaseEnterAmount;
-        }
-        return null;
-      },
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildCategoryDropdown(S localizer) {
     final categories = _isIncome
-        ? [Category(name: 'income', icon: '💰')]
+        ? [Category(name: 'income', icon: 'attach_money')] // FIXED
         : _customCategoryObjects;
 
     return AnimatedContainer(
@@ -218,13 +214,10 @@ Widget _buildAmountField(S localizer) {
   }
 
   Widget _buildSubmitButton(S localizer) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color buttonColor = isDark
-        ? Colors.grey[900]!
-        : const Color(0xFF4666B0);
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
     return FilledButton.icon(
       style: FilledButton.styleFrom(
-        backgroundColor: buttonColor,
+        backgroundColor: mintTheme.buttonColor,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 14),
       ),
@@ -284,48 +277,47 @@ Widget _buildAmountField(S localizer) {
     }
   }
 
-String _getLocalizedCategory(String name, S localizer) {
-  switch (name.toLowerCase()) {
-    case 'food':
-      return localizer.food;
-    case 'transport':
-    case 'transportation':
-      return localizer.transport;
-    case 'entertainment':
-      return localizer.entertainment;
-    case 'coffee':
-      return localizer.coffee;
-    case 'income':
-      return localizer.income;
-    case 'shopping':
-      return localizer.shopping;
-    case 'health':
-      return localizer.health;
-    case 'bills':
-      return localizer.bills;
-    case 'groceries':
-      return localizer.groceries;
-    case 'beauty':
-      return localizer.beauty;
-    case 'electronics':
-      return localizer.electronics;
-    case 'books':
-      return localizer.books;
-    case 'pet care':
-      return localizer.petCare;
-    case 'gifts':
-      return localizer.gifts;
-    case 'savings':
-      return localizer.savings;
-    case 'events':
-      return localizer.events;
-    case 'fitness':
-      return localizer.fitness;
-    default:
-      return name;
+  String _getLocalizedCategory(String name, S localizer) {
+    switch (name.toLowerCase()) {
+      case 'food':
+        return localizer.food;
+      case 'transport':
+      case 'transportation':
+        return localizer.transport;
+      case 'entertainment':
+        return localizer.entertainment;
+      case 'coffee':
+        return localizer.coffee;
+      case 'income':
+        return localizer.income;
+      case 'shopping':
+        return localizer.shopping;
+      case 'health':
+        return localizer.health;
+      case 'bills':
+        return localizer.bills;
+      case 'groceries':
+        return localizer.groceries;
+      case 'beauty':
+        return localizer.beauty;
+      case 'electronics':
+        return localizer.electronics;
+      case 'books':
+        return localizer.books;
+      case 'pet care':
+        return localizer.petCare;
+      case 'gifts':
+        return localizer.gifts;
+      case 'savings':
+        return localizer.savings;
+      case 'events':
+        return localizer.events;
+      case 'fitness':
+        return localizer.fitness;
+      default:
+        return name;
+    }
   }
-}
-
 
   /// Map the category or its emoji icon string to a Flutter IconData.
   IconData _getCategoryIcon(Category category) {

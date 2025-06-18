@@ -4,7 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee1/models/budget.dart';
 import 'package:jaibee1/models/category.dart';
 import 'package:jaibee1/widgets/app_background.dart';
-import 'package:jaibee1/l10n/s.dart'; // <-- Localization import
+import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee1/widgets/custom_app_bar.dart';  // <-- Import your custom app bar
+import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -65,12 +67,10 @@ class _BudgetScreenState extends State<BudgetScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            S
-                .of(context)!
-                .monthlyLimitValidation(
-                  monthly.toStringAsFixed(0),
-                  totalCategoryLimits.toStringAsFixed(0),
-                ),
+            S.of(context)!.monthlyLimitValidation(
+              monthly.toStringAsFixed(0),
+              totalCategoryLimits.toStringAsFixed(0),
+            ),
           ),
           backgroundColor: Colors.redAccent,
         ),
@@ -98,9 +98,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
     await prefs.setDouble('monthly_limit', monthly);
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(S.of(context)!.budgetsSaved)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(S.of(context)!.budgetsSaved)),
+    );
   }
 
   String localizeCategory(BuildContext context, String name) {
@@ -151,19 +151,24 @@ class _BudgetScreenState extends State<BudgetScreen> {
   Widget build(BuildContext context) {
     final categories = _categoryBox.values.toList();
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
     final Color buttonColor = isDark
         ? Colors.grey[900]!
-        : const Color(0xFF4666B0);
+        : mintTheme.appBarColor;  // Use appBarColor from MintJadeColors for button too
+
     return Scaffold(
       backgroundColor: Colors.transparent,
+      // appBar: CustomAppBar(
+      //   title: S.of(context)!.budgetTitle,  // Use your localized title or hardcoded string
+      //   showBackButton: true,
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: _saveBudgets,
-        backgroundColor: buttonColor,
+        backgroundColor: mintTheme.buttonColor,
         foregroundColor: Colors.white,
         tooltip: S.of(context)!.save,
         child: const Icon(Icons.save),
       ),
-
       body: AppBackground(
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -185,8 +190,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
             ),
             const SizedBox(height: 24),
             const Divider(),
-
-            // Category budget inputs
             ...categories.map((category) {
               return Column(
                 children: [

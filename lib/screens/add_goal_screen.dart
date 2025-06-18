@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/models/goal_model.dart';
 import 'package:intl/intl.dart';
+import 'package:jaibee1/models/goal_model.dart';
+import 'package:jaibee1/widgets/custom_app_bar.dart'; // Import your custom app bar
 
-class AddGoalDialog extends StatefulWidget {
+class AddGoalScreen extends StatefulWidget {
   final Function(Goal) onAdd;
 
-  const AddGoalDialog({required this.onAdd, Key? key}) : super(key: key);
+  const AddGoalScreen({required this.onAdd, Key? key}) : super(key: key);
 
   @override
-  State<AddGoalDialog> createState() => _AddGoalDialogState();
+  State<AddGoalScreen> createState() => _AddGoalScreenState();
 }
 
-class _AddGoalDialogState extends State<AddGoalDialog> {
+class _AddGoalScreenState extends State<AddGoalScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _targetAmountController = TextEditingController();
@@ -62,13 +63,16 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Add New Goal'),
-      content: SingleChildScrollView(
+    return Scaffold(
+      appBar: const CustomAppBar(
+        title: 'Add New Goal',
+        showBackButton: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
                 controller: _nameController,
@@ -151,20 +155,15 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
                   label: const Text('Add Milestone'),
                 ),
               ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _submit,
+                child: const Text('Add Goal'),
+              ),
             ],
           ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text('Add Goal'),
-        ),
-      ],
     );
   }
 }

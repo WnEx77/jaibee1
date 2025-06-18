@@ -10,6 +10,7 @@ import 'package:jaibee1/models/budget.dart';
 import 'package:jaibee1/models/goal_model.dart';
 import 'package:provider/provider.dart';
 import 'package:jaibee1/providers/theme_provider.dart';
+import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,10 +24,15 @@ void main() async {
   Hive.registerAdapter(BudgetAdapter());
   Hive.registerAdapter(GoalAdapter());
 
+  // to reset the default categories, for testing purposes only
+  await Hive.deleteBoxFromDisk('categories');
+
   // Open boxes
   await Hive.openBox('transactions');
   await Hive.openBox<Category>('categories');
-  await Hive.openBox<double>('settings'); // For monthlyLimit and theme preference
+  await Hive.openBox<double>(
+    'settings',
+  ); // For monthlyLimit and theme preference
   await Hive.openBox<Budget>('budgets');
   await Hive.openBox<Goal>('goals');
   await Hive.openBox<Category>('userCategories');
@@ -43,15 +49,28 @@ void main() async {
 }
 
 Future<void> addDefaultCategoriesIfEmpty() async {
-  final box = Hive.box<Category>('categories');
-  if (box.isEmpty) {
-    await box.addAll([
-      Category(name: 'food'),
-      Category(name: 'transportation'),
-      Category(name: 'entertainment'),
-      Category(name: 'coffee'),
-      Category(name: 'other'),
-    ]);
+  final categoriesBox = Hive.box<Category>('categories');
+  // final userCategoriesBox = Hive.box<Category>('userCategories');
+
+  // If categories box is empty, populate it from userCategories box
+  if (categoriesBox.isEmpty) {
+    // if (userCategoriesBox.isNotEmpty) {
+    //   await categoriesBox.addAll(userCategoriesBox.values);
+    // } else
+
+    // Fallback: if both are empty, populate userCategories first
+    final defaultUserCategories = [
+      Category(name: 'shopping', icon: 'shopping_cart'),
+      Category(name: 'transport', icon: 'directions_car'),
+      Category(name: 'food', icon: 'restaurant'),
+      Category(name: 'entertainment', icon: 'movie'),
+      Category(name: 'home', icon: 'home'),
+      Category(name: 'bills', icon: 'credit_card'),
+      // Category(name: 'savings', icon: 'savings'),
+    ];
+
+    // await userCategoriesBox.addAll(defaultUserCategories);
+    await categoriesBox.addAll(defaultUserCategories);
   }
 }
 
@@ -93,7 +112,8 @@ class ExpenseTrackerApp extends StatefulWidget {
   const ExpenseTrackerApp({super.key});
 
   static void setLocale(BuildContext context, Locale newLocale) {
-    final _ExpenseTrackerAppState? state = context.findAncestorStateOfType<_ExpenseTrackerAppState>();
+    final _ExpenseTrackerAppState? state = context
+        .findAncestorStateOfType<_ExpenseTrackerAppState>();
     state?.setLocale(newLocale);
   }
 
@@ -116,16 +136,41 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
 
     final lightTheme = ThemeData(
       useMaterial3: true,
+      brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       textTheme: const TextTheme(bodyMedium: TextStyle(fontFamily: 'Cairo')),
-      brightness: Brightness.light,
+      extensions: <ThemeExtension<dynamic>>[
+        const MintJadeColors(
+          appBarColor: Color(0xFFE9F4F2),
+          navBarColor: Color(0xFFFFFFFF),
+          selectedIconColor: Color(0xFFA8E6CF),
+          unselectedIconColor: Color(0xFF9EB6B3),
+          buttonColor: Color(
+            0xFF4CAF50,
+          ), // Example green button color for light theme
+        ),
+      ],
     );
 
     final darkTheme = ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey, brightness: Brightness.dark),
-      textTheme: const TextTheme(bodyMedium: TextStyle(fontFamily: 'Cairo')),
       brightness: Brightness.dark,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.blueGrey,
+        brightness: Brightness.dark,
+      ),
+      textTheme: const TextTheme(bodyMedium: TextStyle(fontFamily: 'Cairo')),
+      extensions: <ThemeExtension<dynamic>>[
+        const MintJadeColors(
+          appBarColor: Color(0xFF0A1F1E),
+          navBarColor: Color(0xFF071615),
+          selectedIconColor: Color(0xFFA8E6CF),
+          unselectedIconColor: Color(0xFF3A5A57),
+          buttonColor: Color(
+            0xFF81C784,
+          ), // Lighter green for dark theme buttons
+        ),
+      ],
     );
 
     return MaterialApp(
@@ -211,10 +256,7 @@ class _SplashScreenState extends State<SplashScreen>
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
-          child: Image.asset(
-            'assets/images/Jaibee_logo.png',
-            width: 150,
-          ),
+          child: Image.asset('assets/images/Jaibee_logo.png', width: 150),
         ),
       ),
     );

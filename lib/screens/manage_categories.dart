@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:jaibee1/models/category.dart';
 import 'package:jaibee1/widgets/app_background.dart';
 import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee1/providers/mint_jade_theme.dart'; // <-- Add your theme extension import
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});
@@ -91,7 +92,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     Category(name: 'books', icon: 'book'),
     Category(name: 'petCare', icon: 'pets'),
     Category(name: 'gifts', icon: 'cake'),
-    Category(name: 'savings', icon: 'savings'),
+    // Category(name: 'savings', icon: 'savings'),
     Category(name: 'events', icon: 'event'),
   ];
 
@@ -178,12 +179,10 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+
     final categories = _categoriesBox.values.toList();
     final userCategories = defaultUserCategories;
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color appBarColor =
-        isDark ? Colors.grey[900]! : const Color(0xFF4666B0);
 
     return AppBackground(
       child: Scaffold(
@@ -192,7 +191,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
           preferredSize: const Size.fromHeight(60),
           child: Container(
             decoration: BoxDecoration(
-              color: appBarColor,
+              color: mintTheme.appBarColor ?? Colors.blue,
               borderRadius: const BorderRadius.vertical(
                 bottom: Radius.circular(20),
               ),
@@ -251,6 +250,9 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
               ),
               const SizedBox(height: 12),
               ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: mintTheme.unselectedIconColor,
+                ),
                 onPressed: _addCategory,
                 icon: const Icon(Icons.add),
                 label: Text(localizer.addCategory),
@@ -266,60 +268,63 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                     final isProtected = cat.name.toLowerCase() == 'income';
                     final iconData =
                         availableIcons[cat.icon] ?? Icons.category;
-
                     final localizedName =
                         _getLocalizedCategory(cat.name, localizer);
 
-                    if (isProtected) {
-                      return ListTile(
-                        leading: Icon(iconData),
-                        title: Text(localizedName),
-                        trailing: const Icon(Icons.lock, color: Colors.grey),
-                      );
-                    }
-
-                    return Dismissible(
-                      key: Key(cat.name),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        color: Colors.red,
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: const Icon(Icons.delete, color: Colors.white),
-                      ),
-                      confirmDismiss: (_) async {
-                        final confirmed = await showDialog<bool>(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: Text(localizer.deleteCategory),
-                            content: Text(localizer
-                                .deleteCategoryConfirm(localizedName)),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx, false),
-                                child: Text(localizer.cancel),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx, true),
-                                child: Text(
-                                  localizer.delete,
-                                  style: const TextStyle(color: Colors.red),
+                    return isProtected
+                        ? ListTile(
+                            leading: Icon(iconData),
+                            title: Text(localizedName),
+                            trailing:
+                                const Icon(Icons.lock, color: Colors.grey),
+                          )
+                        : Dismissible(
+                            key: Key(cat.name),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              color: Colors.red,
+                              alignment: Alignment.centerRight,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child:
+                                  const Icon(Icons.delete, color: Colors.white),
+                            ),
+                            confirmDismiss: (_) async {
+                              final confirmed = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: Text(localizer.deleteCategory),
+                                  content: Text(localizer
+                                      .deleteCategoryConfirm(localizedName)),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, false),
+                                      child: Text(localizer.cancel),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, true),
+                                      child: Text(
+                                        localizer.delete,
+                                        style:
+                                            const TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                        return confirmed ?? false;
-                      },
-                      onDismissed: (_) {
-                        _categoriesBox.deleteAt(index);
-                        setState(() {});
-                      },
-                      child: ListTile(
-                        leading: Icon(iconData),
-                        title: Text(localizedName),
-                      ),
-                    );
+                              );
+                              return confirmed ?? false;
+                            },
+                            onDismissed: (_) {
+                              _categoriesBox.deleteAt(index);
+                              setState(() {});
+                            },
+                            child: ListTile(
+                              leading: Icon(iconData),
+                              title: Text(localizedName),
+                            ),
+                          );
                   },
                 ),
               ),

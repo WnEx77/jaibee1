@@ -4,9 +4,11 @@ import 'package:jaibee1/screens/goals_screen.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:intl/intl.dart';
 import 'package:jaibee1/main.dart';
-import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
-import 'package:provider/provider.dart'; // <-- Add this import for ThemeProvider
+import 'package:jaibee1/widgets/app_background.dart'; // Your background widget
+import 'package:provider/provider.dart'; // For ThemeProvider
 import 'package:jaibee1/screens/about_us_screen.dart';
+import 'package:jaibee1/widgets/custom_app_bar.dart'; // Import your global CustomAppBar
+import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -48,9 +50,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     await prefs.setString('user_goals', _goalsController.text);
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(S.of(context)!.profileSaved)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(S.of(context)!.profileSaved)),
+    );
   }
 
   int? _calculateAge(DateTime? birthDate) {
@@ -116,24 +118,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context)!;
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color buttonColor = isDark
-        ? Colors.grey[900]!
-        : const Color(0xFF4666B0);
+    final Color buttonColor = isDark ? Colors.grey[900]! : const Color(0xFF4666B0);
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(s.profileTitle),
-      //   backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-      //   foregroundColor: Colors.white,
-      //   elevation: 2,
+      // appBar: CustomAppBar(
+      //   title: s.profileTitle,
+      //   // showBackButton: true,
       // ),
       body: AppBackground(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // Personal Info
+              // Sex Dropdown
               // Card(
               //   elevation: 4,
               //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -145,7 +144,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //         Text(s.personalInfo, style: Theme.of(context).textTheme.titleMedium),
               //         const SizedBox(height: 16),
 
-              //         // Sex Dropdown
               //         Text(s.sex, style: const TextStyle(fontWeight: FontWeight.w600)),
               //         const SizedBox(height: 6),
               //         DropdownButtonFormField<String>(
@@ -198,6 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //     ),
               //   ),
               // ),
+
               const SizedBox(height: 20),
 
               // Language Selection
@@ -223,13 +222,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
-                  leading: const Icon(
-                    Icons.brightness_6,
-                    color: Colors.blueGrey,
-                  ),
-                  title: Text(
-                    s.darkMode,
-                  ), // Make sure you add this string to your localization files
+                  leading: const Icon(Icons.brightness_6, color: Colors.blueGrey),
+                  title: Text(s.darkMode),
                   trailing: Consumer<ThemeProvider>(
                     builder: (context, themeProvider, _) {
                       return Switch(
@@ -290,17 +284,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
 
               // Save Profile Button
-              // ElevatedButton.icon(
-              //   icon: const Icon(Icons.save),
-              //   onPressed: _saveProfile,
-              //   label: Text(s.saveProfile),
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-              //     foregroundColor: Colors.white,
-              //     minimumSize: const Size.fromHeight(50),
-              //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              //   ),
-              // ),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.save),
+                onPressed: _saveProfile,
+                label: Text(s.saveProfile),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: mintTheme.appBarColor,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
             ],
           ),
         ),
