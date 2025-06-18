@@ -24,43 +24,43 @@ class SAr extends S {
   String get amount => 'المبلغ';
 
   @override
-  String get pleaseEnterAmount => 'فضلًا ادخل المبلغ';
+  String get pleaseEnterAmount => 'يرجى إدخال المبلغ';
 
   @override
   String get category => 'التصنيف';
 
   @override
-  String get food => 'أكل';
+  String get food => 'الطعام';
 
   @override
-  String get transportation => 'مواصلات';
+  String get transportation => 'المواصلات';
 
   @override
-  String get entertainment => 'ترفيه';
+  String get entertainment => 'الترفيه';
 
   @override
-  String get coffee => 'قهوة';
+  String get coffee => 'القهوة';
 
   @override
-  String get income => 'دخل';
+  String get income => 'الدخل';
 
   @override
-  String get expense => 'مصاريف';
+  String get expense => 'النفقات';
 
   @override
   String get date => 'التاريخ';
 
   @override
-  String get addTransaction => 'أضف مصروف';
+  String get addTransaction => 'إضافة مصروف';
 
   @override
   String get transactionAdded => 'تمت إضافة المصروف';
 
   @override
-  String get noTransactions => 'لا توجد عمليات حتى الآن.';
+  String get noTransactions => 'لا توجد معاملات حتى الآن.';
 
   @override
-  String get transactionDeleted => 'تم حذف العملية';
+  String get transactionDeleted => 'تم حذف المعاملة';
 
   @override
   String get totalIncome => 'إجمالي الدخل';
@@ -84,31 +84,31 @@ class SAr extends S {
   String get dailyExpenses => 'المصروفات اليومية';
 
   @override
-  String get filter => 'فلترة';
+  String get filter => 'تصفية';
 
   @override
-  String get averageDaily => 'متوسط الصرف اليومي';
+  String get averageDaily => 'متوسط الإنفاق اليومي';
 
   @override
-  String get totalSpent => 'إجمالي الصرف';
+  String get totalSpent => 'إجمالي الإنفاق';
 
   @override
   String get selectPeriod => 'اختر الفترة';
 
   @override
-  String get selectCategory => 'اختر فئة';
+  String get selectCategory => 'اختر الفئة';
 
   @override
-  String get applyFilter => 'تطبيق الفلتر';
+  String get applyFilter => 'تطبيق التصفية';
 
   @override
   String get cancel => 'إلغاء';
 
   @override
-  String get addQuickTransaction => 'ضيف عملية سريعة';
+  String get addQuickTransaction => 'إضافة معاملة سريعة';
 
   @override
-  String get filterTransactions => 'فلتر العمليات';
+  String get filterTransactions => 'تصفية المعاملات';
 
   @override
   String get ok => 'حسنًا';
@@ -120,22 +120,22 @@ class SAr extends S {
   String get monthlyLimitSet => 'تم تعيين الحد الشهري بنجاح';
 
   @override
-  String get filters => 'التصفية';
+  String get filters => 'عوامل التصفية';
 
   @override
-  String get spent => 'المصروف';
+  String get spent => 'المنفق';
 
   @override
-  String get setMonthlyLimit => 'حدد الحد الشهري الي تبيه';
+  String get setMonthlyLimit => 'حدد الحد الشهري الذي ترغب به';
 
   @override
-  String get used => 'مستعمل';
+  String get used => 'المستخدم';
 
   @override
-  String get invalidAmount => 'مبلغ خطأ';
+  String get invalidAmount => 'مبلغ غير صالح';
 
   @override
-  String get montlyLimitSetter => ' حدك الشهري حددته على';
+  String get monthlyLimitSetter => 'تم تحديد الحد الشهري على';
 
   @override
   String get sar => 'ريال';
@@ -144,7 +144,7 @@ class SAr extends S {
   String get noDataMonth => 'لا توجد بيانات';
 
   @override
-  String get allTime => 'كل الأيام';
+  String get allTime => 'كافة الفترات';
 
   @override
   String get monthly => 'شهريًا';
@@ -153,28 +153,25 @@ class SAr extends S {
   String get other => 'أخرى';
 
   @override
-  String get editTransaction => 'تعديل العملية';
+  String get editTransaction => 'تعديل المعاملة';
 
   @override
   String get saveChanges => 'حفظ التغييرات';
 
   @override
-  String get transactionUpdated => 'تم تحديث العملية بنجاح';
+  String get transactionUpdated => 'تم تحديث المعاملة بنجاح';
 
   @override
-  String get pleaseSelectCategory => 'فضلًا اختر نوع العملية';
+  String get pleaseSelectCategory => 'يرجى اختيار نوع المعاملة';
 
   @override
-  String get deleteTransaction => 'حذف العملية';
-
-  @override
-  String get areYouSureDelete => 'هل أنت متأكد انك تريد حذف العملية؟';
+  String get deleteTransaction => 'حذف المعاملة';
 
   @override
   String get delete => 'حذف';
 
   @override
-  String get getAdvice => 'طلب نصيحة الذكاء الاصطناعي';
+  String get getAdvice => 'طلب نصيحة من الذكاء الاصطناعي';
 
   @override
   String get aiFinancialAdvice => 'نصائح مالية ذكية';
@@ -230,16 +227,16 @@ class SAr extends S {
   String get age => 'العمر';
 
   @override
-  String get enterAge => 'أدخل عمرك';
+  String get enterAge => 'يرجى إدخال عمرك';
 
   @override
   String get setGoals => 'تحديد أهداف الاستثمار';
 
   @override
-  String get saveProfile => 'حفظ الملف';
+  String get saveProfile => 'حفظ الملف الشخصي';
 
   @override
-  String get profileSaved => 'تم حفظ الملف الشخصي بنجاح!';
+  String get profileSaved => 'تم حفظ الملف الشخصي بنجاح';
 
   @override
   String get financialGoals => 'الأهداف المالية';
@@ -254,31 +251,31 @@ class SAr extends S {
   String get education => 'التعليم';
 
   @override
-  String get home => 'شراء منزل';
+  String get home => 'المنزل';
 
   @override
   String get travel => 'السفر';
 
   @override
-  String get monthlyInvestment => 'كم ودك تستثمر كل شهر؟';
+  String get monthlyInvestment => 'كم ترغب في استثماره شهريًا؟';
 
   @override
   String get enterAmount => 'أدخل المبلغ';
 
   @override
-  String get whatToBuy => 'وش ودك تشتري من هذا الاستثمار؟';
+  String get whatToBuy => 'ما الذي ترغب في شرائه من هذا الاستثمار؟';
 
   @override
   String get timeframe => 'الإطار الزمني (بالأشهر)';
 
   @override
-  String get enterTimeframe => 'أدخل الإطار الزمني';
+  String get enterTimeframe => 'يرجى إدخال الإطار الزمني';
 
   @override
   String get addGoal => 'إضافة هدف';
 
   @override
-  String get goalAdded => 'تمت إضافة الهدف!';
+  String get goalAdded => 'تمت إضافة الهدف';
 
   @override
   String get noGoals => 'لم تتم إضافة أي أهداف بعد.';
@@ -291,16 +288,16 @@ class SAr extends S {
   String get arabic => 'العربية';
 
   @override
-  String get english => 'الانجليزية';
+  String get english => 'الإنجليزية';
 
   @override
-  String get noDataAdvice => 'لم يتم ادخال بيانات';
+  String get noDataAdvice => 'يرجى إدخال بيانات لعرض التقارير';
 
   @override
   String get yourGoals => 'أهدافك';
 
   @override
-  String get budgets => 'الميزانية';
+  String get budgets => 'الميزانيات';
 
   @override
   String get birthDate => 'تاريخ الميلاد';
@@ -342,7 +339,7 @@ class SAr extends S {
 
   @override
   String deleteCategoryConfirm(Object categoryName) {
-    return 'هل أنت متأكد أنك تريد حذف $category؟';
+    return 'هل أنت متأكد أنك تريد حذف \"$categoryName\"؟ سيتم حذف جميع المعاملات التي تنتمي إلى هذه الفئة!';
   }
 
   @override
@@ -352,16 +349,16 @@ class SAr extends S {
   String get incomeProtected => 'فئة \"الدخل\" موجودة ولا يمكن تعديلها.';
 
   @override
-  String get selectIcon => 'اختر علامة';
+  String get selectIcon => 'اختر أيقونة';
 
   @override
   String get undo => 'تراجع';
 
   @override
-  String get categoryDeleted => 'حذف التصنيف';
+  String get categoryDeleted => 'تم حذف التصنيف';
 
   @override
-  String get daysRemaining => 'يوم متبقي على نهاية الشهر.';
+  String get daysRemaining => 'يوم متبقٍ على نهاية الشهر.';
 
   @override
   String get shopping => 'التسوق';
@@ -403,15 +400,77 @@ class SAr extends S {
   String get events => 'الفعاليات';
 
   @override
-  String get totalSavings => 'مجموع الادخارات';
+  String get totalSavings => 'إجمالي الادخار';
 
   @override
-  String get aboutUs => 'About Us';
+  String get aboutUs => 'عن التطبيق';
 
   @override
   String get aboutAppDescription =>
-      'جيبي هو تطبيق بسيط وسهل الاستخدام لتتبع الدخل والمصروفات. هدفنا هو مساعدتك على التحكم في أموالك بسهولة ويسر.';
+      'جيبي هو تطبيق بسيط وسهل الاستخدام لتتبع الدخل والمصروفات. هدفنا هو مساعدتك على التحكم في أموالك بكفاءة.';
 
   @override
-  String get developedBy => 'تم تطويره من: ';
+  String get developedBy => 'تم تطويره بواسطة';
+
+  @override
+  String get categoryBudgets => 'ميزانية الفئات';
+
+  @override
+  String get limitExceedsMonthly => 'تجاوزت الحد الشهري المسموح به';
+
+  @override
+  String get enterValidNumber => 'يرجى إدخال رقم صالح';
+
+  @override
+  String get invalidLimit => 'الحد غير صالح';
+
+  @override
+  String get invalidMonthlyLimit => 'الحد الشهري غير صالح';
+
+  @override
+  String get confirmDeletion => 'تأكيد حذف المعاملة';
+
+  @override
+  String get areYouSureDeleteTransaction =>
+      'هل أنت متأكد أنك ترغب في حذف المعاملة؟';
+
+  @override
+  String get budgetDistribution => 'توزيع الميزانية';
+
+  @override
+  String get expectedDate => 'التاريخ المتوقع';
+
+  @override
+  String get addNewGoal => 'إضافة هدف جديد';
+
+  @override
+  String get goalName => 'اسم الهدف';
+
+  @override
+  String get targetAmount => 'المبلغ المستهدف';
+
+  @override
+  String get savedAmount => 'المبلغ المُدخر';
+
+  @override
+  String get targetDate => 'تاريخ الهدف';
+
+  @override
+  String get pickDate => 'اختر التاريخ';
+
+  @override
+  String get addMilestone => 'إضافة محطة';
+
+  @override
+  String get required => 'هذا الحقل مطلوب';
+
+  @override
+  String get enterValidAmount => 'أدخل مبلغًا صالحًا';
+
+  @override
+  String get savedMoreThanTarget =>
+      'لا يمكن أن يتجاوز المبلغ المُدخر المبلغ المستهدف';
+
+  @override
+  String get description => 'وصف العملية (اختياري).';
 }

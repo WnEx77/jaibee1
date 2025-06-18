@@ -9,7 +9,7 @@ import 'package:month_year_picker/month_year_picker.dart';
 import 'package:jaibee1/models/budget.dart';
 import 'package:jaibee1/models/goal_model.dart';
 import 'package:provider/provider.dart';
-import 'package:jaibee1/providers/theme_provider.dart';
+// import 'package:jaibee1/providers/theme_provider.dart';
 import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 void main() async {
@@ -66,6 +66,7 @@ Future<void> addDefaultCategoriesIfEmpty() async {
       Category(name: 'entertainment', icon: 'movie'),
       Category(name: 'home', icon: 'home'),
       Category(name: 'bills', icon: 'credit_card'),
+      Category(name: 'other', icon: 'category'),
       // Category(name: 'savings', icon: 'savings'),
     ];
 
@@ -145,9 +146,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
           navBarColor: Color(0xFFFFFFFF),
           selectedIconColor: Color(0xFFA8E6CF),
           unselectedIconColor: Color(0xFF9EB6B3),
-          buttonColor: Color(
-            0xFF4CAF50,
-          ), // Example green button color for light theme
+          buttonColor: Color.fromARGB(255, 137, 225, 140), // Example green button color for light theme
         ),
       ],
     );
@@ -166,9 +165,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
           navBarColor: Color(0xFF071615),
           selectedIconColor: Color(0xFFA8E6CF),
           unselectedIconColor: Color(0xFF3A5A57),
-          buttonColor: Color(
-            0xFF81C784,
-          ), // Lighter green for dark theme buttons
+          buttonColor: Color.fromARGB(255, 84, 91, 84), // Lighter green for dark theme buttons
         ),
       ],
     );

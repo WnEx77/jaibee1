@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee1/screens/goals_screen.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:jaibee1/main.dart';
 import 'package:jaibee1/widgets/app_background.dart'; // Your background widget
 import 'package:provider/provider.dart'; // For ThemeProvider
 import 'package:jaibee1/screens/about_us_screen.dart';
-import 'package:jaibee1/widgets/custom_app_bar.dart'; // Import your global CustomAppBar
+// import 'package:jaibee1/widgets/custom_app_bar.dart'; // Import your global CustomAppBar
 import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -22,7 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   DateTime? _birthDate;
   final TextEditingController _goalsController = TextEditingController();
 
-  final List<String> _sexOptions = ['Male', 'Female', 'Other'];
+  // final List<String> _sexOptions = ['Male', 'Female', 'Other'];
 
   @override
   void initState() {
@@ -55,32 +55,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  int? _calculateAge(DateTime? birthDate) {
-    if (birthDate == null) return null;
-    final today = DateTime.now();
-    int age = today.year - birthDate.year;
-    if (birthDate.month > today.month ||
-        (birthDate.month == today.month && birthDate.day > today.day)) {
-      age--;
-    }
-    return age;
-  }
+  // int? _calculateAge(DateTime? birthDate) {
+  //   if (birthDate == null) return null;
+  //   final today = DateTime.now();
+  //   int age = today.year - birthDate.year;
+  //   if (birthDate.month > today.month ||
+  //       (birthDate.month == today.month && birthDate.day > today.day)) {
+  //     age--;
+  //   }
+  //   return age;
+  // }
 
-  Future<void> _selectBirthDate() async {
-    final now = DateTime.now();
-    final initialDate = _birthDate ?? DateTime(now.year - 20);
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: now,
-    );
-    if (picked != null) {
-      setState(() {
-        _birthDate = picked;
-      });
-    }
-  }
+  // Future<void> _selectBirthDate() async {
+  //   final now = DateTime.now();
+  //   final initialDate = _birthDate ?? DateTime(now.year - 20);
+  //   final picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: initialDate,
+  //     firstDate: DateTime(1900),
+  //     lastDate: now,
+  //   );
+  //   if (picked != null) {
+  //     setState(() {
+  //       _birthDate = picked;
+  //     });
+  //   }
+  // }
 
   void _changeLanguage(String langCode) {
     Locale newLocale = Locale(langCode);
@@ -119,8 +119,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final s = S.of(context)!;
     final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color buttonColor = isDark ? Colors.grey[900]! : const Color(0xFF4666B0);
 
     return Scaffold(
       // appBar: CustomAppBar(
@@ -264,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: const Icon(Icons.flag),
                 label: Text(s.setGoals),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonColor,
+                  backgroundColor: mintTheme.unselectedIconColor,
                   foregroundColor: Colors.white,
                   minimumSize: const Size.fromHeight(50),
                   shape: RoundedRectangleBorder(
@@ -289,7 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: _saveProfile,
                 label: Text(s.saveProfile),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: mintTheme.appBarColor,
+                  backgroundColor: mintTheme.buttonColor,
                   foregroundColor: Colors.white,
                   minimumSize: const Size.fromHeight(50),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

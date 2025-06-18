@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:jaibee1/models/goal_model.dart';
-import 'package:jaibee1/widgets/custom_app_bar.dart'; // Import your custom app bar
+import 'package:jaibee1/widgets/custom_app_bar.dart';
+import 'package:jaibee1/l10n/s.dart';
 
 class AddGoalScreen extends StatefulWidget {
   final Function(Goal) onAdd;
@@ -18,7 +19,6 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
   final _targetAmountController = TextEditingController();
   final _savedAmountController = TextEditingController();
   DateTime? _targetDate;
-  List<int> _milestones = [25, 50, 75];
 
   void _pickDate() async {
     final now = DateTime.now();
@@ -35,18 +35,6 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
     }
   }
 
-  void _addMilestone() {
-    setState(() {
-      _milestones.add(100);
-    });
-  }
-
-  void _removeMilestone(int index) {
-    setState(() {
-      _milestones.removeAt(index);
-    });
-  }
-
   void _submit() {
     if (_formKey.currentState!.validate() && _targetDate != null) {
       final goal = Goal(
@@ -54,7 +42,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
         targetAmount: double.parse(_targetAmountController.text.trim()),
         savedAmount: double.parse(_savedAmountController.text.trim()),
         targetDate: _targetDate!,
-        milestones: _milestones,
+        milestones: [], // empty list since milestones removed
       );
       widget.onAdd(goal);
       Navigator.pop(context);
@@ -63,9 +51,11 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizer = S.of(context)!;
+
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Add New Goal',
+      appBar: CustomAppBar(
+        title: localizer.addNewGoal,
         showBackButton: true,
       ),
       body: SingleChildScrollView(
@@ -76,22 +66,22 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Goal Name'),
+                decoration: InputDecoration(labelText: localizer.goalName),
                 validator: (value) =>
-                    value == null || value.trim().isEmpty ? 'Required' : null,
+                    value == null || value.trim().isEmpty ? localizer.required : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _targetAmountController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Target Amount'),
+                decoration: InputDecoration(labelText: localizer.targetAmount),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Required';
+                    return localizer.required;
                   }
                   final parsed = double.tryParse(value.trim());
                   if (parsed == null || parsed <= 0) {
-                    return 'Enter a valid amount';
+                    return localizer.enterValidAmount;
                   }
                   return null;
                 },
@@ -100,18 +90,18 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
               TextFormField(
                 controller: _savedAmountController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Saved Amount'),
+                decoration: InputDecoration(labelText: localizer.savedAmount),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Required';
+                    return localizer.required;
                   }
                   final parsed = double.tryParse(value.trim());
                   if (parsed == null || parsed < 0) {
-                    return 'Enter a valid amount';
+                    return localizer.enterValidAmount;
                   }
                   final target = double.tryParse(_targetAmountController.text.trim()) ?? 0;
                   if (parsed > target) {
-                    return 'Saved amount cannot exceed target amount';
+                    return localizer.savedMoreThanTarget;
                   }
                   return null;
                 },
@@ -119,46 +109,22 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const Text('Target Date:'),
+                  Text('${localizer.targetDate}:'),
                   const SizedBox(width: 12),
                   TextButton(
                     onPressed: _pickDate,
                     child: Text(
                       _targetDate != null
                           ? DateFormat.yMMMd().format(_targetDate!)
-                          : 'Pick Date',
+                          : localizer.pickDate,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _milestones
-                    .asMap()
-                    .entries
-                    .map(
-                      (entry) => Chip(
-                        label: Text('${entry.value}%'),
-                        deleteIcon: const Icon(Icons.close),
-                        onDeleted: () => _removeMilestone(entry.key),
-                      ),
-                    )
-                    .toList(),
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  onPressed: _addMilestone,
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Milestone'),
-                ),
-              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submit,
-                child: const Text('Add Goal'),
+                child: Text(localizer.addGoal),
               ),
             ],
           ),

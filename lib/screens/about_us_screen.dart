@@ -13,7 +13,7 @@ class AboutUsScreen extends StatefulWidget {
 class _AboutUsScreenState extends State<AboutUsScreen>
     with SingleTickerProviderStateMixin {
   String _appVersion = '';
-  String _appName = '';
+  // String _appName = '';
   String _packageName = '';
   String _buildNumber = '';
 
@@ -57,7 +57,7 @@ class _AboutUsScreenState extends State<AboutUsScreen>
     final info = await PackageInfo.fromPlatform();
     setState(() {
       _appVersion = info.version;
-      _appName = info.appName;
+      // _appName = info.appName;
       _packageName = info.packageName;
       _buildNumber = info.buildNumber;
     });
@@ -91,11 +91,11 @@ Widget build(BuildContext context) {
                 const CircleAvatar(
                   radius: 50,
                   backgroundImage: AssetImage('assets/images/Jaibee_logo.png'),
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.transparent,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  _appName.isNotEmpty ? _appName : 'JaiBee',
+                  'Jaibee',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: baseTextColor,

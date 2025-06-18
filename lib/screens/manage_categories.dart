@@ -181,7 +181,9 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     final localizer = S.of(context)!;
     final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
 
-    final categories = _categoriesBox.values.toList();
+    final categories = _categoriesBox.values
+    .where((c) => c.name.toLowerCase() != 'other')
+    .toList();
     final userCategories = defaultUserCategories;
 
     return AppBackground(
@@ -191,7 +193,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
           preferredSize: const Size.fromHeight(60),
           child: Container(
             decoration: BoxDecoration(
-              color: mintTheme.appBarColor ?? Colors.blue,
+              color: mintTheme.appBarColor,
               borderRadius: const BorderRadius.vertical(
                 bottom: Radius.circular(20),
               ),
@@ -251,7 +253,8 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
               const SizedBox(height: 12),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: mintTheme.unselectedIconColor,
+                  backgroundColor: mintTheme.buttonColor,
+                  foregroundColor: Colors.white,
                 ),
                 onPressed: _addCategory,
                 icon: const Icon(Icons.add),

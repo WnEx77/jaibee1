@@ -349,11 +349,11 @@ abstract class S {
   /// **'Invalid Amount'**
   String get invalidAmount;
 
-  /// No description provided for @montlyLimitSetter.
+  /// No description provided for @monthlyLimitSetter.
   ///
   /// In en, this message translates to:
-  /// **'Montly limit set at: '**
-  String get montlyLimitSetter;
+  /// **'Monthly limit set at: '**
+  String get monthlyLimitSetter;
 
   /// No description provided for @sar.
   ///
@@ -364,7 +364,7 @@ abstract class S {
   /// No description provided for @noDataMonth.
   ///
   /// In en, this message translates to:
-  /// **'No Data Month'**
+  /// **'No Data For This Month'**
   String get noDataMonth;
 
   /// No description provided for @allTime.
@@ -414,12 +414,6 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Delete'**
   String get deleteTransaction;
-
-  /// No description provided for @areYouSureDelete.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to delete this transaction?'**
-  String get areYouSureDelete;
 
   /// No description provided for @delete.
   ///
@@ -718,7 +712,7 @@ abstract class S {
   /// No description provided for @budgetsSaved.
   ///
   /// In en, this message translates to:
-  /// **'Budgets saved'**
+  /// **'Budgets Saved'**
   String get budgetsSaved;
 
   /// No description provided for @replaceAll.
@@ -874,7 +868,7 @@ abstract class S {
   /// No description provided for @totalSavings.
   ///
   /// In en, this message translates to:
-  /// **'totalSavings'**
+  /// **'Total Savings'**
   String get totalSavings;
 
   /// No description provided for @aboutUs.
@@ -894,6 +888,126 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Developed by'**
   String get developedBy;
+
+  /// No description provided for @categoryBudgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Budgets'**
+  String get categoryBudgets;
+
+  /// No description provided for @limitExceedsMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit Exceeds Monthly'**
+  String get limitExceedsMonthly;
+
+  /// No description provided for @enterValidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Valid Number'**
+  String get enterValidNumber;
+
+  /// No description provided for @invalidLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Limit'**
+  String get invalidLimit;
+
+  /// No description provided for @invalidMonthlyLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Monthly Limit'**
+  String get invalidMonthlyLimit;
+
+  /// No description provided for @confirmDeletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Deletion'**
+  String get confirmDeletion;
+
+  /// No description provided for @areYouSureDeleteTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this transaction?'**
+  String get areYouSureDeleteTransaction;
+
+  /// No description provided for @budgetDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Distribution'**
+  String get budgetDistribution;
+
+  /// No description provided for @expectedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected Date'**
+  String get expectedDate;
+
+  /// No description provided for @addNewGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Goal'**
+  String get addNewGoal;
+
+  /// No description provided for @goalName.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal Name'**
+  String get goalName;
+
+  /// No description provided for @targetAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Amount'**
+  String get targetAmount;
+
+  /// No description provided for @savedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Amount'**
+  String get savedAmount;
+
+  /// No description provided for @targetDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Date'**
+  String get targetDate;
+
+  /// No description provided for @pickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick Date'**
+  String get pickDate;
+
+  /// No description provided for @addMilestone.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Milestone'**
+  String get addMilestone;
+
+  /// No description provided for @required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
+
+  /// No description provided for @enterValidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid amount'**
+  String get enterValidAmount;
+
+  /// No description provided for @savedMoreThanTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved amount cannot exceed target amount'**
+  String get savedMoreThanTarget;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Description (Optional).'**
+  String get description;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

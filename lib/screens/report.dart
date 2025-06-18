@@ -6,10 +6,10 @@ import 'package:jaibee1/models/trancs.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/screens/FinancialAdviceScreen.dart'; // Adjust path as needed
 import 'package:jaibee1/models/goal_model.dart';
-import 'package:jaibee1/screens/edit_goal_dialog.dart';
+// import 'package:jaibee1/screens/edit_goal_dialog.dart';
 import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
 import 'package:jaibee1/providers/mint_jade_theme.dart';
-
+import 'package:jaibee1/models/category.dart'; // Adjust path as needed
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -86,7 +86,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         (v) => v + txn.amount,
         ifAbsent: () => txn.amount,
       );
-      final cat = txn.category ?? 'Other';
+      final cat = txn.category;
       categoryExpenses.update(
         cat,
         (v) => v + txn.amount,
@@ -135,77 +135,71 @@ class _ReportsScreenState extends State<ReportsScreen> {
         foregroundColor: Colors.white,
       ),
       body: AppBackground(
-        child: filteredTransactions.isEmpty
-            ? _buildEmptyState(localizer)
-            : RefreshIndicator(
-                onRefresh: () async {
-                  _filterTransactions();
-                },
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildViewToggle(localizer),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            _filterTransactions();
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildViewToggle(localizer),
+                const SizedBox(height: 16),
+                if (isMonthlyView) _buildMonthPicker(localizer),
+                const SizedBox(height: 24),
+                if (filteredTransactions.isEmpty) ...[
+                  _buildEmptyState(localizer),
+                ] else ...[
+                  _buildSummaryCard(localizer, avgExpense, totalExpense),
+                  const SizedBox(height: 24),
+                  if (dailyExpenses.isNotEmpty) ...[
+                    Text(
+                      localizer.dailyExpenses,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildLineChart(
+                      expenseSpots,
+                      dateLabels,
+                      interval,
+                      maxExpense,
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      localizer.selectCategory,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildBarChart(categoryExpenses),
+                    const SizedBox(height: 32),
+                    _buildPieChart(categoryExpenses),
+                    if (goals.isNotEmpty) ...[
+                      Text(
+                        localizer.yourGoals,
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
                       const SizedBox(height: 16),
-                      if (isMonthlyView) _buildMonthPicker(localizer),
-                      const SizedBox(height: 24),
-                      _buildSummaryCard(localizer, avgExpense, totalExpense),
-                      const SizedBox(height: 24),
-                      if (dailyExpenses.isNotEmpty) ...[
-                        Text(
-                          localizer.dailyExpenses,
-                          style: Theme.of(context).textTheme.titleLarge!
-                              .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.redAccent.shade700,
-                              ),
-                        ),
-                        const SizedBox(height: 16),
-                        _buildLineChart(
-                          expenseSpots,
-                          dateLabels,
-                          interval,
-                          maxExpense,
-                        ),
-                        const SizedBox(height: 32),
-                        Text(
-                          localizer.selectCategory,
-                          style: Theme.of(context).textTheme.titleLarge!
-                              .copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.redAccent.shade700,
-                              ),
-                        ),
-                        const SizedBox(height: 16),
-                        _buildBarChart(categoryExpenses),
-                        const SizedBox(height: 32),
-                        _buildPieChart(categoryExpenses), // Add Pie Chart here
-                        if (goals.isNotEmpty) ...[
-                          Text(
-                            localizer.yourGoals,
-                            style: Theme.of(context).textTheme.titleLarge!
-                                .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.redAccent.shade700,
-                                ),
-                          ),
-                          const SizedBox(height: 16),
-                          ...goals
-                              .map(
-                                (goal) => _buildGoalProgressCard(goal, index),
-                              )
-                              .toList(),
-                        ],
-                      ],
+                      ...goals
+                          .map((goal) => _buildGoalProgressCard(goal, index))
+                          .toList(),
                     ],
-                  ),
-                ),
-              ),
+                  ],
+                ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -220,23 +214,22 @@ class _ReportsScreenState extends State<ReportsScreen> {
             Icon(
               Icons.insert_chart_outlined,
               size: 100,
-              color: Colors.redAccent.shade200,
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
             ),
-            const SizedBox(height: 24),
             Text(
               localizer.noDataMonth,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.redAccent.shade400,
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 12),
             Text(
               localizer.noDataAdvice,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.redAccent.shade200),
+              style: TextStyle(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onBackground.withOpacity(0.6),
+              ),
             ),
           ],
         ),
@@ -245,10 +238,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Widget _buildViewToggle(S localizer) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color buttonColor = isDark
-        ? Colors.grey[900]!
-        : const Color(0xFF4666B0);
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -262,8 +252,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
           },
           borderRadius: BorderRadius.circular(12),
           selectedColor: Colors.white,
-          color: buttonColor,
-          fillColor: buttonColor,
+          color: mintTheme.buttonColor,
+          fillColor: mintTheme.buttonColor,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -280,12 +270,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Widget _buildMonthPicker(S localizer) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? Colors.grey[850] : Colors.white;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: bgColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
+        boxShadow: [
+          if (!isDark) const BoxShadow(color: Colors.black12, blurRadius: 5),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -334,16 +329,43 @@ class _ReportsScreenState extends State<ReportsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${localizer.averageDaily}: \$${avg.toStringAsFixed(2)}'),
+          Row(
+            children: [
+              Text('${localizer.averageDaily}: '),
+              Text(avg.toStringAsFixed(2)),
+              const SizedBox(width: 4),
+              Image.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
+                    : 'assets/images/Saudi_Riyal_Symbol.png',
+                width: 16,
+                height: 16,
+              ),
+            ],
+          ),
+
           const SizedBox(height: 8),
-          Text('${localizer.totalSpent}: \$${total.toStringAsFixed(2)}'),
+          Row(
+            children: [
+              Text('${localizer.totalSpent}: '),
+              Text(total.toStringAsFixed(2)),
+              const SizedBox(width: 4),
+              Image.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
+                    : 'assets/images/Saudi_Riyal_Symbol.png',
+                width: 16,
+                height: 16,
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -359,7 +381,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       height: 300,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
@@ -391,9 +413,22 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 interval: interval,
                 reservedSize: 40,
                 getTitlesWidget: (value, meta) {
-                  return Text(
-                    '\$${value.toInt()}',
-                    style: const TextStyle(fontSize: 10),
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        value.toInt().toString(),
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                      const SizedBox(width: 2),
+                      Image.asset(
+                        Theme.of(context).brightness == Brightness.dark
+                            ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
+                            : 'assets/images/Saudi_Riyal_Symbol.png',
+                        width: 10,
+                        height: 10,
+                      ),
+                    ],
                   );
                 },
               ),
@@ -410,7 +445,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             drawVerticalLine: true,
             horizontalInterval: interval,
             getDrawingHorizontalLine: (value) => FlLine(
-              color: Colors.grey.withOpacity(0.3),
+              color: Theme.of(context).dividerColor.withOpacity(0.3),
               strokeWidth: 1,
               dashArray: [5, 5],
             ),
@@ -439,7 +474,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
           ],
           borderData: FlBorderData(
             show: true,
-            border: Border.all(color: Colors.black.withOpacity(0.1)),
+            border: Border.all(
+              color: Theme.of(context).dividerColor.withOpacity(0.2),
+            ),
           ),
           minY: 0,
           maxY: maxY + interval * 2,
@@ -449,21 +486,36 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Widget _buildBarChart(Map<String, double> categoryExpenses) {
-    final sortedCategories = categoryExpenses.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final categoryBox = Hive.box<Category>('categories');
+    final existingCategoryNames = categoryBox.values
+        .map((cat) => cat.name)
+        .toSet();
+
+    // Filter and sort categories by value
+    final sortedCategories =
+        categoryExpenses.entries
+            .where((entry) => existingCategoryNames.contains(entry.key))
+            .toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
+
+    final topCategories = sortedCategories.take(5).toList();
+
+    if (topCategories.isEmpty) {
+      return const Center(child: Text("No valid categories to display."));
+    }
 
     return Container(
       height: 300,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
-          maxY: sortedCategories.first.value + 10,
+          maxY: topCategories.first.value + 10,
           barTouchData: BarTouchData(enabled: true),
           titlesData: FlTitlesData(
             bottomTitles: AxisTitles(
@@ -471,9 +523,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 showTitles: true,
                 getTitlesWidget: (value, meta) {
                   int index = value.toInt();
-                  if (index < sortedCategories.length) {
+                  if (index < topCategories.length) {
                     return Text(
-                      sortedCategories[index].key,
+                      topCategories[index].key,
                       style: const TextStyle(fontSize: 10),
                     );
                   }
@@ -486,9 +538,22 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 showTitles: true,
                 reservedSize: 40,
                 getTitlesWidget: (value, meta) {
-                  return Text(
-                    '\$${value.toInt()}',
-                    style: const TextStyle(fontSize: 10),
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        value.toInt().toString(),
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                      const SizedBox(width: 2),
+                      Image.asset(
+                        Theme.of(context).brightness == Brightness.dark
+                            ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
+                            : 'assets/images/Saudi_Riyal_Symbol.png',
+                        width: 10,
+                        height: 10,
+                      ),
+                    ],
                   );
                 },
               ),
@@ -500,12 +565,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
               sideTitles: SideTitles(showTitles: false),
             ),
           ),
-          barGroups: List.generate(sortedCategories.length, (i) {
+          barGroups: List.generate(topCategories.length, (i) {
             return BarChartGroupData(
               x: i,
               barRods: [
                 BarChartRodData(
-                  toY: sortedCategories[i].value,
+                  toY: topCategories[i].value,
                   gradient: const LinearGradient(
                     colors: [Colors.redAccent, Colors.orange],
                   ),
@@ -521,22 +586,39 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Widget _buildPieChart(Map<String, double> categoryExpenses) {
-    final total = categoryExpenses.values.fold(0.0, (a, b) => a + b);
+    final categoryBox = Hive.box<Category>('categories');
+    final existingCategoryNames = categoryBox.values
+        .map((cat) => cat.name)
+        .toSet();
+
+    final sortedEntries =
+        categoryExpenses.entries
+            .where((entry) => existingCategoryNames.contains(entry.key))
+            .toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
+
+    final topEntries = sortedEntries.take(5).toList();
+    final total = topEntries.fold(0.0, (sum, item) => sum + item.value);
+
+    if (topEntries.isEmpty) {
+      return const Center(child: Text("No valid categories to display."));
+    }
+
     return Container(
       height: 300,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: PieChart(
         PieChartData(
-          sections: categoryExpenses.entries.map((entry) {
+          sections: topEntries.map((entry) {
             final value = entry.value;
             final percentage = (value / total) * 100;
             return PieChartSectionData(
-              value: value, // This should remain a double
+              value: value,
               title: '${entry.key} (${percentage.toStringAsFixed(1)}%)',
               color:
                   Colors.primaries[categoryExpenses.keys.toList().indexOf(
@@ -608,7 +690,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
         ),

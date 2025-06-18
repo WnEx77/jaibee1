@@ -7,7 +7,6 @@ import 'package:jaibee1/models/category.dart';
 import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
 import 'package:jaibee1/providers/mint_jade_theme.dart';
 
-
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
 
@@ -18,6 +17,7 @@ class AddTransactionScreen extends StatefulWidget {
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();// 👈 NEW
 
   String _category = '';
   bool _isIncome = false;
@@ -80,6 +80,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   _buildTypeToggle(localizer),
                   const SizedBox(height: 16),
                   _buildDatePicker(localizer),
+                  const SizedBox(height: 16),
+                  _buildDescriptionField(localizer),
                   const SizedBox(height: 24),
                   _buildSubmitButton(localizer),
                 ],
@@ -227,6 +229,25 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
+  Widget _buildDescriptionField(S localizer) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.all(8),
+      child: TextFormField(
+        controller: _descriptionController,
+        maxLines: 2,
+        decoration: InputDecoration(
+          labelText: localizer.description,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          filled: true,
+          fillColor: Colors.white,
+          prefixIcon: const Icon(Icons.notes, color: Colors.blueGrey),
+        ),
+      ),
+    );
+  }
+
   void _submitForm() {
     final localizer = S.of(context)!;
 
@@ -243,12 +264,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         amount: double.tryParse(_amountController.text) ?? 0.0,
         isIncome: _isIncome,
         date: _selectedDate,
+        description: _descriptionController.text.trim().isNotEmpty
+            ? _descriptionController.text.trim()
+            : null, // 👈 New field added
       );
 
       Hive.box('transactions').add(transaction);
 
       setState(() {
         _amountController.clear();
+         _descriptionController.clear();
         _isIncome = false;
         _selectedDate = DateTime.now();
         _category = _customCategoryObjects.isNotEmpty
@@ -308,6 +333,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         return localizer.petCare;
       case 'gifts':
         return localizer.gifts;
+      case 'home':
+        return localizer.home;
       case 'savings':
         return localizer.savings;
       case 'events':

@@ -13,6 +13,7 @@ import 'package:pdf/pdf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 import 'package:jaibee1/widgets/app_background.dart';
+import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 class MonthlySummary {
   final double totalIncome;
@@ -599,14 +600,14 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String monthName = DateFormat.yMMMM().format(DateTime.now());
+    final mintJadeColors = Theme.of(context).extension<MintJadeColors>()!;
 
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF4666B0),
+            color: mintJadeColors.appBarColor,
             borderRadius: const BorderRadius.vertical(
               bottom: Radius.circular(20),
             ),
@@ -628,7 +629,10 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
             centerTitle: true,
             actions: [
               IconButton(
-                icon: const Icon(Icons.share),
+                icon: Icon(
+                  Icons.share,
+                  color: mintJadeColors.selectedIconColor,
+                ),
                 onPressed: _showShareOptions,
               ),
             ],
@@ -659,8 +663,17 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                           ),
                           TextButton.icon(
                             onPressed: _pickMonth,
-                            icon: const Icon(Icons.calendar_today, size: 16),
-                            label: const Text("Pick Month"),
+                            icon: Icon(
+                              Icons.calendar_today,
+                              size: 16,
+                              color: mintJadeColors.buttonColor,
+                            ),
+                            label: Text(
+                              "Pick Month",
+                              style: TextStyle(
+                                color: mintJadeColors.buttonColor,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -771,8 +784,8 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                       const SizedBox(height: 24),
 
                       Text(
-                        textAlign: TextAlign.left,
                         "Disclaimer",
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,

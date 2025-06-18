@@ -4,10 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:jaibee1/models/trancs.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/screens/edit_tranc.dart';
-import 'package:jaibee1/screens/budget_screen.dart'; // Import BudgetScreen
+// import 'package:jaibee1/screens/budget_screen.dart'; // Import BudgetScreen
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
 import 'package:jaibee1/models/category.dart';
+import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});
@@ -17,14 +18,14 @@ class TransactionScreen extends StatefulWidget {
 }
 
 class _TransactionScreenState extends State<TransactionScreen> {
-  static const List<String> defaultQuickCategories = [
-    'food',
-    'coffee',
-    'transportation',
-    'entertainment',
-    'income',
-    'other',
-  ];
+  // static const List<String> defaultQuickCategories = [
+  //   'food',
+  //   'coffee',
+  //   'transportation',
+  //   'entertainment',
+  //   'income',
+  //   'other',
+  // ];
 
   final Set<String> _selectedFilters = {'income'}; // Always includes 'income'
   List<String> _categoryNames = []; // Populated from Hive
@@ -81,6 +82,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
     final localizer = S.of(context)!;
     final transactionBox = Hive.box('transactions');
     final categoryBox = Hive.box<Category>('categories');
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
 
     return Scaffold(
       body: AppBackground(
@@ -170,14 +172,55 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    Text(
-                                      '\$${totalExpenses.toStringAsFixed(2)} / \$${_monthlyLimit!.toStringAsFixed(2)}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: usagePercent >= 1
-                                            ? Colors.red
-                                            : Colors.green,
-                                      ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          totalExpenses.toStringAsFixed(2),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: usagePercent >= 1
+                                                ? Colors.red
+                                                : Colors.green,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Image.asset(
+                                          'assets/images/Saudi_Riyal_Symbol.png',
+                                          width: 16,
+                                          height: 16,
+                                          color: usagePercent >= 1
+                                              ? Colors.red
+                                              : Colors.green,
+                                        ),
+                                        Text(
+                                          ' / ',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: usagePercent >= 1
+                                                ? Colors.red
+                                                : Colors.green,
+                                          ),
+                                        ),
+                                        Text(
+                                          _monthlyLimit!.toStringAsFixed(2),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: usagePercent >= 1
+                                                ? Colors.red
+                                                : Colors.green,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Image.asset(
+                                          'assets/images/Saudi_Riyal_Symbol.png',
+                                          width: 16,
+                                          height: 16,
+                                          color: usagePercent >= 1
+                                              ? Colors.red
+                                              : Colors.green,
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -286,10 +329,13 @@ class _TransactionScreenState extends State<TransactionScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    Icons.money_off,
-                                    size: 80,
-                                    color: Colors.grey.shade400,
+                                  Image.asset(
+                                    'assets/images/Saudi_Riyal_Symbol.png',
+                                    width: 80,
+                                    height: 80,
+                                    color: Colors
+                                        .grey
+                                        .shade400, // optional: to tint the image, remove if not needed
                                   ),
                                   const SizedBox(height: 16),
                                   Text(localizer.noTransactions),
@@ -320,16 +366,50 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  onDismissed: (_) {
-                                    box.delete(transaction.key);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                  confirmDismiss: (direction) async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text(localizer.confirmDeletion),
                                         content: Text(
-                                          localizer.transactionDeleted,
+                                          localizer.areYouSureDeleteTransaction,
                                         ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.of(
+                                              context,
+                                            ).pop(false),
+                                            child: Text(localizer.cancel),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(true),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                            ),
+                                            child: Text(localizer.delete),
+                                          ),
+                                        ],
                                       ),
                                     );
+
+                                    if (confirm == true) {
+                                      box.delete(transaction.key);
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            localizer.transactionDeleted,
+                                          ),
+                                        ),
+                                      );
+                                      return true; // Proceed with dismissal
+                                    }
+
+                                    return false; // Cancel dismissal
                                   },
+
                                   child: Card(
                                     elevation: 2,
                                     shape: RoundedRectangleBorder(
@@ -364,13 +444,15 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         //       ? Colors.green
                                         //       : Colors.red,
                                         // ),
-                                        backgroundColor: isIncome
-                                            ? Colors.green.shade50
-                                            : Colors.transparent,
+                                        // backgroundColor: isIncome
+                                        //     ? Colors.green.shade50
+                                        // : Colors.transparent,
+                                        backgroundColor: Colors.transparent,
                                         child: Icon(
                                           _getIconForCategory(
                                             transaction.category,
                                           ),
+                                          color: mintTheme.unselectedIconColor,
                                         ),
                                       ),
                                       title: Text(
@@ -383,16 +465,41 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         ),
                                       ),
                                       subtitle: Text(formattedDate),
-                                      trailing: Text(
-                                        (isIncome ? '+ ' : '- ') +
-                                            '\$${transaction.amount.toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: isIncome
-                                              ? Colors.green
-                                              : Colors.red,
-                                        ),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            isIncome ? '+ ' : '- ',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: isIncome
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                            ),
+                                          ),
+                                          Text(
+                                            transaction.amount.toStringAsFixed(
+                                              2,
+                                            ),
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: isIncome
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Image.asset(
+                                            'assets/images/Saudi_Riyal_Symbol.png',
+                                            width: 16,
+                                            height: 16,
+                                            color: isIncome
+                                                ? Colors.green
+                                                : Colors.red,
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -410,69 +517,69 @@ class _TransactionScreenState extends State<TransactionScreen> {
     );
   }
 
-  void _showFilterDialog(BuildContext context, S localizer) {
-    final tempSelected = Set<String>.from(_selectedFilters);
+  // void _showFilterDialog(BuildContext context, S localizer) {
+  //   final tempSelected = Set<String>.from(_selectedFilters);
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(localizer.filterTransactions),
-          content: StatefulBuilder(
-            builder: (context, setStateDialog) {
-              final allCategories = ['income', ..._categoryNames];
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text(localizer.filterTransactions),
+  //         content: StatefulBuilder(
+  //           builder: (context, setStateDialog) {
+  //             final allCategories = ['income', ..._categoryNames];
 
-              return SizedBox(
-                width: double.maxFinite,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: allCategories.map((categoryName) {
-                    final label = _getLocalizedCategory(
-                      categoryName,
-                      localizer,
-                    );
-                    return CheckboxListTile(
-                      title: Text(label),
-                      value: tempSelected.contains(categoryName),
-                      onChanged: categoryName == 'income'
-                          ? null // Disable unchecking for income
-                          : (checked) {
-                              setStateDialog(() {
-                                if (checked == true) {
-                                  tempSelected.add(categoryName);
-                                } else {
-                                  tempSelected.remove(categoryName);
-                                }
-                              });
-                            },
-                    );
-                  }).toList(),
-                ),
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(localizer.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _selectedFilters
-                    ..clear()
-                    ..add('income') // Always keep income
-                    ..addAll(tempSelected.where((c) => c != 'income'));
-                });
-                Navigator.pop(context);
-              },
-              child: Text(localizer.ok),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  //             return SizedBox(
+  //               width: double.maxFinite,
+  //               child: ListView(
+  //                 shrinkWrap: true,
+  //                 children: allCategories.map((categoryName) {
+  //                   final label = _getLocalizedCategory(
+  //                     categoryName,
+  //                     localizer,
+  //                   );
+  //                   return CheckboxListTile(
+  //                     title: Text(label),
+  //                     value: tempSelected.contains(categoryName),
+  //                     onChanged: categoryName == 'income'
+  //                         ? null // Disable unchecking for income
+  //                         : (checked) {
+  //                             setStateDialog(() {
+  //                               if (checked == true) {
+  //                                 tempSelected.add(categoryName);
+  //                               } else {
+  //                                 tempSelected.remove(categoryName);
+  //                               }
+  //                             });
+  //                           },
+  //                   );
+  //                 }).toList(),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context),
+  //             child: Text(localizer.cancel),
+  //           ),
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               setState(() {
+  //                 _selectedFilters
+  //                   ..clear()
+  //                   ..add('income') // Always keep income
+  //                   ..addAll(tempSelected.where((c) => c != 'income'));
+  //               });
+  //               Navigator.pop(context);
+  //             },
+  //             child: Text(localizer.ok),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _summaryItem({
     required String title,
@@ -481,15 +588,22 @@ class _TransactionScreenState extends State<TransactionScreen> {
   }) {
     return Column(
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-        const SizedBox(height: 4),
-        Text(
-          '\$${amount.toStringAsFixed(2)}',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
+        Text(title),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              amount.toStringAsFixed(2),
+              style: TextStyle(color: color, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 4),
+            Image.asset(
+              'assets/images/Saudi_Riyal_Symbol.png',
+              width: 16,
+              height: 16,
+              color: color,
+            ),
+          ],
         ),
       ],
     );
@@ -527,6 +641,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
         return localizer.electronics;
       case 'books':
         return localizer.books;
+      case 'other':
+        return localizer.other;
       case 'petcare':
         return localizer.petCare;
       case 'gifts':
@@ -579,7 +695,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
       case 'events':
         return Icons.event;
       case 'income':
-        return Icons.attach_money;
+        return Icons.monetization_on;
       case 'coffee':
         return Icons.coffee;
       case 'transportation':

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:jaibee1/l10n/s.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jaibee1/models/goal_model.dart';
-import 'package:jaibee1/screens/add_goal_screen.dart'; // You'll use full screen now
+import 'package:jaibee1/screens/add_goal_screen.dart';
 import 'package:jaibee1/screens/edit_goal_dialog.dart';
 import 'package:jaibee1/widgets/app_background.dart';
 import 'package:jaibee1/widgets/custom_app_bar.dart';
+import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 class GoalsScreen extends StatefulWidget {
   const GoalsScreen({Key? key}) : super(key: key);
@@ -36,19 +38,23 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final localizer = S.of(context)!;
+
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Goals',
+      appBar: CustomAppBar(
+        title: localizer.financialGoals,
+        showBackButton: true,
       ),
       body: AppBackground(
         child: ValueListenableBuilder(
           valueListenable: _goalBox.listenable(),
           builder: (context, Box<Goal> box, _) {
             if (box.values.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
-                  'No goals added yet',
-                  style: TextStyle(color: Colors.white),
+                  localizer.noGoals,
+                  style: const TextStyle(color: Colors.white),
                 ),
               );
             }
@@ -60,19 +66,122 @@ class _GoalsScreenState extends State<GoalsScreen> {
                 final goal = box.getAt(index);
                 if (goal == null) return const SizedBox.shrink();
 
-                return Card(
-                  color: Colors.white.withOpacity(0.9),
-                  elevation: 4,
+                return Container(
                   margin: const EdgeInsets.only(bottom: 16),
-                  child: ListTile(
-                    title: Text(goal.name),
-                    subtitle: Text(
-                      'Saved: \$${goal.savedAmount.toStringAsFixed(2)} / '
-                      'Target: \$${goal.targetAmount.toStringAsFixed(2)}',
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[900]
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      if (Theme.of(context).brightness == Brightness.light)
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                    ],
+                    border: Border.all(
+                      color: mintTheme.buttonColor.withOpacity(
+                        Theme.of(context).brightness == Brightness.dark
+                            ? 0.3
+                            : 0.4,
+                      ),
+                      width: 1.2,
                     ),
-                    trailing: Text(
-                      'Due: ${goal.targetDate.toLocal().toString().split(' ')[0]}',
-                      style: const TextStyle(fontSize: 12),
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    leading: CircleAvatar(
+                      backgroundColor: mintTheme.buttonColor.withOpacity(0.15),
+                      child: Icon(
+                        Icons.flag,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black87,
+                      ),
+                    ),
+                    title: Text(
+                      goal.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '${localizer.savings}: ',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey[300]
+                                      : Colors.black87,
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/Saudi_Riyal_Symbol.png',
+                                width: 12,
+                                height: 12,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                '${goal.savedAmount.toStringAsFixed(2)} / ',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey[300]
+                                      : Colors.black87,
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/Saudi_Riyal_Symbol.png',
+                                width: 12,
+                                height: 12,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                goal.targetAmount.toStringAsFixed(2),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey[300]
+                                      : Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 2),
+                          Text(
+                            '${localizer.expectedDate}: ${goal.targetDate.toLocal().toString().split(' ')[0]}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.grey[500]
+                                  : Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     onTap: () {
                       showDialog(
@@ -94,16 +203,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // ✅ Navigate to AddGoalScreen instead of dialog
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => AddGoalScreen(onAdd: _addGoal),
-            ),
+            MaterialPageRoute(builder: (_) => AddGoalScreen(onAdd: _addGoal)),
           );
         },
-        backgroundColor: const Color.fromARGB(255, 130, 148, 179),
-        label: const Text('Add New Goal'),
+        backgroundColor: mintTheme.buttonColor,
+        label: Text(localizer.addGoal),
         icon: const Icon(Icons.add),
       ),
     );

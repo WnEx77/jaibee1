@@ -135,13 +135,13 @@ class SEn extends S {
   String get invalidAmount => 'Invalid Amount';
 
   @override
-  String get montlyLimitSetter => 'Montly limit set at: ';
+  String get monthlyLimitSetter => 'Monthly limit set at: ';
 
   @override
   String get sar => 'SAR';
 
   @override
-  String get noDataMonth => 'No Data Month';
+  String get noDataMonth => 'No Data For This Month';
 
   @override
   String get allTime => 'All Time';
@@ -166,10 +166,6 @@ class SEn extends S {
 
   @override
   String get deleteTransaction => 'Delete';
-
-  @override
-  String get areYouSureDelete =>
-      'Are you sure you want to delete this transaction?';
 
   @override
   String get delete => 'Delete';
@@ -322,7 +318,7 @@ class SEn extends S {
   String get save => 'Save';
 
   @override
-  String get budgetsSaved => 'Budgets saved';
+  String get budgetsSaved => 'Budgets Saved';
 
   @override
   String get replaceAll => 'Replace All';
@@ -405,7 +401,7 @@ class SEn extends S {
   String get events => 'Events';
 
   @override
-  String get totalSavings => 'totalSavings';
+  String get totalSavings => 'Total Savings';
 
   @override
   String get aboutUs => 'About Us';
@@ -416,4 +412,65 @@ class SEn extends S {
 
   @override
   String get developedBy => 'Developed by';
+
+  @override
+  String get categoryBudgets => 'Category Budgets';
+
+  @override
+  String get limitExceedsMonthly => 'Limit Exceeds Monthly';
+
+  @override
+  String get enterValidNumber => 'Enter Valid Number';
+
+  @override
+  String get invalidLimit => 'Invalid Limit';
+
+  @override
+  String get invalidMonthlyLimit => 'Invalid Monthly Limit';
+
+  @override
+  String get confirmDeletion => 'Confirm Deletion';
+
+  @override
+  String get areYouSureDeleteTransaction =>
+      'Are you sure you want to delete this transaction?';
+
+  @override
+  String get budgetDistribution => 'Budget Distribution';
+
+  @override
+  String get expectedDate => 'Expected Date';
+
+  @override
+  String get addNewGoal => 'Add New Goal';
+
+  @override
+  String get goalName => 'Goal Name';
+
+  @override
+  String get targetAmount => 'Target Amount';
+
+  @override
+  String get savedAmount => 'Saved Amount';
+
+  @override
+  String get targetDate => 'Target Date';
+
+  @override
+  String get pickDate => 'Pick Date';
+
+  @override
+  String get addMilestone => 'Add Milestone';
+
+  @override
+  String get required => 'Required';
+
+  @override
+  String get enterValidAmount => 'Enter a valid amount';
+
+  @override
+  String get savedMoreThanTarget => 'Saved amount cannot exceed target amount';
+
+  @override
+  String get description => 'Transaction Description (Optional).';
 }

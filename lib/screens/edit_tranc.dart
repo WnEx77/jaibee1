@@ -4,7 +4,10 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/models/category.dart';
-import 'package:jaibee1/widgets/app_background.dart'; // import AppBackground
+import 'package:jaibee1/widgets/app_background.dart';
+import 'package:jaibee1/widgets/custom_app_bar.dart';
+import 'package:jaibee1/utils/category_utils.dart';
+import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -23,11 +26,12 @@ class EditTransactionScreen extends StatefulWidget {
 class _EditTransactionScreenState extends State<EditTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _amountController;
+  late TextEditingController _descriptionController; // 👈 NEW
   late String _category;
   late bool _isIncome;
   late DateTime _selectedDate;
 
-  List<String> _customCategories = [];
+  List<Category> _customCategories = [];
 
   @override
   void initState() {
@@ -35,6 +39,9 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     _amountController = TextEditingController(
       text: widget.transaction.amount.toString(),
     );
+    _descriptionController = TextEditingController(
+      text: widget.transaction.description ?? '',
+    ); // 👈 NEW
     _category = widget.transaction.category;
     _isIncome = widget.transaction.isIncome;
     _selectedDate = widget.transaction.date;
@@ -44,38 +51,31 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   void _loadCategories() {
     final box = Hive.box<Category>('categories');
     setState(() {
-      _customCategories = box.values.map((e) => e.name).toList();
+      _customCategories = box.values.toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
-      final isDark = Theme.of(context).brightness == Brightness.dark;
-      final Color appBarColor = isDark
-        ? Colors.grey[900]!
-        : const Color(0xFF4666B0);
+    final mintJade = Theme.of(context).extension<MintJadeColors>();
 
     return AppBackground(
       child: Scaffold(
-        backgroundColor: Colors.transparent, // so background shows through
-        appBar: AppBar(
-          backgroundColor: appBarColor,
-          elevation: 0,
-          title: Text(
-            S.of(context)!.editTransaction,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+        backgroundColor: Colors.transparent,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: CustomAppBar(
+            title: localizer.editTransaction,
+            showBackButton: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.delete),
+                tooltip: localizer.deleteTransaction,
+                onPressed: _confirmDelete,
+              ),
+            ],
           ),
-          centerTitle: true,
-          // actions: [
-          //   // IconButton(
-          //   //   icon: const Icon(Icons.category),
-          //   //   tooltip: S.of(context)!.manageCategories,
-          //   //   onPressed: () {
-          //   //     Navigator.pop;
-          //   //   },
-          //   // ),
-          // ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -96,7 +96,12 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                       decoration: InputDecoration(
                         labelText: localizer.amount,
                         border: const OutlineInputBorder(),
-                        icon: const Icon(Icons.attach_money),
+                        icon: Image.asset(
+                          'assets/images/Saudi_Riyal_Symbol.png',
+                          width: 24,
+                          height: 24,
+                          color: Colors.grey,
+                        ),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -122,27 +127,36 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                                 _category = newValue!;
                               });
                             },
-                      items:
-                          (_isIncome
-                                  ? ['income']
-                                  : _customCategories.isNotEmpty
-                                  ? _customCategories
-                                  : [
-                                      'food',
-                                      'transportation',
-                                      'entertainment',
-                                      'coffee',
-                                      'other',
-                                    ])
-                              .map(
-                                (value) => DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    _getLocalizedCategory(value, localizer),
-                                  ),
+                      items: (_isIncome
+                          ? [
+                              DropdownMenuItem<String>(
+                                value: 'income',
+                                child: Row(
+                                  children: [
+                                    Icon(availableIcons['savings'] ?? Icons.attach_money),
+                                    const SizedBox(width: 10),
+                                    Text(localizer.income),
+                                  ],
                                 ),
-                              )
-                              .toList(),
+                              ),
+                            ]
+                          : _customCategories.map((category) {
+                              final iconData = availableIcons[category.icon] ?? Icons.category;
+                              final localizedName = _getLocalizedCategory(
+                                category.name,
+                                localizer,
+                              );
+                              return DropdownMenuItem<String>(
+                                value: category.name,
+                                child: Row(
+                                  children: [
+                                    Icon(iconData),
+                                    const SizedBox(width: 10),
+                                    Text(localizedName),
+                                  ],
+                                ),
+                              );
+                            }).toList()),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return localizer.pleaseSelectCategory;
@@ -167,7 +181,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                       child: ListTile(
                         title: Text(
                           '${localizer.date}: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         trailing: Icon(
                           Icons.calendar_today,
@@ -178,14 +192,20 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                     ),
                     const SizedBox(height: 16),
 
+                    TextFormField( // 👈 NEW DESCRIPTION FIELD
+                      controller: _descriptionController,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        labelText: localizer.description,
+                        border: const OutlineInputBorder(),
+                        icon: const Icon(Icons.notes),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(
-                          255,
-                          110,
-                          159,
-                          210,
-                        ),
+                        backgroundColor: mintJade!.buttonColor,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
@@ -213,6 +233,9 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
         amount: double.tryParse(_amountController.text) ?? 0.0,
         isIncome: _isIncome,
         date: _selectedDate,
+        description: _descriptionController.text.trim().isNotEmpty
+            ? _descriptionController.text.trim()
+            : null,
       );
 
       Hive.box('transactions').put(widget.transactionKey, updatedTransaction);
@@ -221,7 +244,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
         SnackBar(content: Text(S.of(context)!.transactionUpdated)),
       );
 
-      Navigator.of(context).pop(); // Go back after saving
+      Navigator.of(context).pop();
     }
   }
 
@@ -230,7 +253,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(S.of(context)!.deleteTransaction),
-        content: Text(S.of(context)!.areYouSureDelete),
+        content: Text(S.of(context)!.areYouSureDeleteTransaction),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

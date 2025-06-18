@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fl_chart/fl_chart.dart'; // <- PieChart package
 import 'package:jaibee1/models/budget.dart';
 import 'package:jaibee1/models/category.dart';
 import 'package:jaibee1/widgets/app_background.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/widgets/custom_app_bar.dart';  // <-- Import your custom app bar
 import 'package:jaibee1/providers/mint_jade_theme.dart';
 
 class BudgetScreen extends StatefulWidget {
@@ -51,26 +51,48 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
   Future<void> _saveBudgets() async {
     final prefs = await SharedPreferences.getInstance();
-
     double totalCategoryLimits = 0;
 
     for (var category in _categoryBox.values) {
-      final name = category.name;
-      final controller = _controllers[name];
-      final limit = double.tryParse(controller?.text ?? '0') ?? 0;
+      final controller = _controllers[category.name];
+      final limit = double.tryParse(controller?.text ?? '') ?? -1;
+
+      if (limit < 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${localizeCategory(context, category.name)}: ${S.of(context)!.invalidLimit}',
+            ),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        return;
+      }
+
       totalCategoryLimits += limit;
     }
 
-    final monthly = double.tryParse(_monthlyLimitController.text) ?? 0;
+    final monthly = double.tryParse(_monthlyLimitController.text) ?? -1;
+    if (monthly < 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(S.of(context)!.invalidMonthlyLimit),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
 
     if (monthly != totalCategoryLimits) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            S.of(context)!.monthlyLimitValidation(
-              monthly.toStringAsFixed(0),
-              totalCategoryLimits.toStringAsFixed(0),
-            ),
+            S
+                .of(context)!
+                .monthlyLimitValidation(
+                  monthly.toStringAsFixed(0),
+                  totalCategoryLimits.toStringAsFixed(0),
+                ),
           ),
           backgroundColor: Colors.redAccent,
         ),
@@ -98,9 +120,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
     await prefs.setDouble('monthly_limit', monthly);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(S.of(context)!.budgetsSaved)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(S.of(context)!.budgetsSaved)));
   }
 
   String localizeCategory(BuildContext context, String name) {
@@ -123,6 +145,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
         return s.health;
       case 'bills':
         return s.bills;
+      case 'home':
+        return s.home;
       case 'groceries':
         return s.groceries;
       case 'beauty':
@@ -142,26 +166,52 @@ class _BudgetScreenState extends State<BudgetScreen> {
         return s.events;
       case 'fitness':
         return s.fitness;
+      case 'other':
+        return s.other;
       default:
         return name;
     }
   }
 
+  List<PieChartSectionData> _buildPieChartSections() {
+    final total = _controllers.values
+        .map((c) => double.tryParse(c.text) ?? 0)
+        .fold(0.0, (a, b) => a + b);
+
+    if (total == 0) return [];
+
+    final entries = _controllers.entries.toList();
+
+    return List.generate(entries.length, (i) {
+      final name = entries[i].key;
+      final value = double.tryParse(entries[i].value.text) ?? 0;
+      final percentage = (value / total) * 100;
+      final color = Colors.primaries[i % Colors.primaries.length];
+
+      return PieChartSectionData(
+        title:
+            '${localizeCategory(context, name)}\n${percentage.toStringAsFixed(1)}%',
+        value: value,
+        color: color,
+        radius: 60,
+        titleStyle: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+        titlePositionPercentageOffset: 0.6,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final categories = _categoryBox.values.toList();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
-    final Color buttonColor = isDark
-        ? Colors.grey[900]!
-        : mintTheme.appBarColor;  // Use appBarColor from MintJadeColors for button too
+    final pieSections = _buildPieChartSections();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      // appBar: CustomAppBar(
-      //   title: S.of(context)!.budgetTitle,  // Use your localized title or hardcoded string
-      //   showBackButton: true,
-      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: _saveBudgets,
         backgroundColor: mintTheme.buttonColor,
@@ -189,9 +239,36 @@ class _BudgetScreenState extends State<BudgetScreen> {
               ),
             ),
             const SizedBox(height: 24),
+
+            if (pieSections.isNotEmpty) ...[
+               Text(
+                S.of(context)!.budgetDistribution,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 200,
+                child: PieChart(
+                  PieChartData(
+                    sections: pieSections,
+                    centerSpaceRadius: 32,
+                    sectionsSpace: 2,
+                    borderData: FlBorderData(show: false),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+
             const Divider(),
+
             ...categories.map((category) {
               return Column(
+                key: ValueKey(category.name), // Ensures uniqueness if reused
                 children: [
                   Row(
                     children: [
@@ -213,6 +290,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
                             border: const OutlineInputBorder(),
                             isDense: true,
                           ),
+                          onChanged: (_) =>
+                              setState(() {}), // Live chart update
                         ),
                       ),
                     ],
