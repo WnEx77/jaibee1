@@ -28,7 +28,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
   // ];
 
   final Set<String> _selectedFilters = {'income'}; // Always includes 'income'
-  List<String> _categoryNames = []; // Populated from Hive
+  // List<String> _categoryNames = []; // Populated from Hive
 
   DateTime _selectedMonth = DateTime.now();
 
@@ -57,7 +57,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
         .toList();
 
     setState(() {
-      _categoryNames = categories;
+      // _categoryNames = categories;
       _selectedFilters.addAll(categories); // Select all by default
     });
   }
