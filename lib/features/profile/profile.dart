@@ -9,6 +9,8 @@ import 'package:provider/provider.dart'; // For ThemeProvider
 import 'package:jaibee1/features/about/about_us_screen.dart';
 // import 'package:jaibee1/widgets/custom_app_bar.dart'; // Import your global CustomAppBar
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+// import 'package:jaibee1/app.dart';
+import 'package:jaibee1/core/theme/theme_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -84,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _changeLanguage(String langCode) {
     Locale newLocale = Locale(langCode);
-    ExpenseTrackerApp.setLocale(context, newLocale);
+    JaibeeTrackerApp.setLocale(context, newLocale);
   }
 
   void _showLanguageDialog() {

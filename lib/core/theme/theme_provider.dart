@@ -5,12 +5,18 @@ class ThemeProvider extends ChangeNotifier {
   static const String _prefKey = 'isDarkTheme';
 
   bool _isDarkTheme = false;
-  bool get isDarkTheme => _isDarkTheme;
 
   ThemeProvider() {
     _loadThemeFromPrefs();
   }
 
+  /// Returns if dark theme is enabled
+  bool get isDarkTheme => _isDarkTheme;
+
+  /// Returns the corresponding ThemeMode (used in MaterialApp)
+  ThemeMode get themeMode => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
+
+  /// Toggle the theme and persist it
   void toggleTheme(bool isOn) {
     _isDarkTheme = isOn;
     _saveThemeToPrefs(isOn);
@@ -25,6 +31,6 @@ class ThemeProvider extends ChangeNotifier {
 
   Future<void> _saveThemeToPrefs(bool value) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool(_prefKey, value);
+    await prefs.setBool(_prefKey, value);
   }
 }
