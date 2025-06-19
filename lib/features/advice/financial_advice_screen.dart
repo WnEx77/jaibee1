@@ -289,6 +289,30 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     );
   }
 
+  Widget _summaryItem(
+    String title,
+    double value,
+    Color color, {
+    String? fallbackText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title),
+        Text(
+          fallbackText != null && value == 0
+              ? fallbackText
+              : "\$${value.toStringAsFixed(2)}",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> _generatePdfArabic(BuildContext flutterContext) async {
     final s = S.of(flutterContext);
     if (s == null || _summary == null) return;
@@ -601,6 +625,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
   @override
   Widget build(BuildContext context) {
     final mintJadeColors = Theme.of(context).extension<MintJadeColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -631,7 +656,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
               IconButton(
                 icon: Icon(
                   Icons.share,
-                  color: mintJadeColors.selectedIconColor,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
                 onPressed: _showShareOptions,
               ),
@@ -651,32 +676,32 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Month Picker Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            DateFormat.yMMMM().format(_selectedMonth),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextButton.icon(
-                            onPressed: _pickMonth,
-                            icon: Icon(
-                              Icons.calendar_today,
-                              size: 16,
-                              color: mintJadeColors.buttonColor,
-                            ),
-                            label: Text(
-                              "Pick Month",
-                              style: TextStyle(
-                                color: mintJadeColors.buttonColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Text(
+                      //       DateFormat.MMMM().format(_selectedMonth),
+                      //       style: const TextStyle(
+                      //         fontSize: 20,
+                      //         fontWeight: FontWeight.bold,
+                      //       ),
+                      //     ),
+                      //     TextButton.icon(
+                      //       onPressed: _pickMonth,
+                      //       icon: Icon(
+                      //         Icons.calendar_today,
+                      //         size: 16,
+                      //         color: mintJadeColors.unselectedIconColor,
+                      //       ),
+                      //       label: Text(
+                      //         "Pick Month",
+                      //         style: TextStyle(
+                      //           color: mintJadeColors.unselectedIconColor,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       const SizedBox(height: 12),
 
                       // Summary Card
@@ -684,11 +709,11 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: mintJadeColors.appBarColor,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
+                              color: Colors.grey.withOpacity(0.3),
                               blurRadius: 6,
                               offset: const Offset(0, 3),
                             ),
@@ -708,49 +733,21 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(S.of(context)!.income),
-                                    Text(
-                                      "\$${_summary!.totalIncome.toStringAsFixed(2)}",
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                  ],
+                                _summaryItem(
+                                  S.of(context)!.income,
+                                  _summary!.totalIncome,
+                                  Colors.green,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(S.of(context)!.expenses),
-                                    Text(
-                                      "\$${_summary!.totalExpenses.toStringAsFixed(2)}",
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ],
+                                _summaryItem(
+                                  S.of(context)!.expenses,
+                                  _summary!.totalExpenses,
+                                  Colors.red,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(S.of(context)!.limit),
-                                    Text(
-                                      _summary!.monthlyLimit != null
-                                          ? "\$${_summary!.monthlyLimit!.toStringAsFixed(2)}"
-                                          : "Not set",
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.orange,
-                                      ),
-                                    ),
-                                  ],
+                                _summaryItem(
+                                  S.of(context)!.limit,
+                                  _summary!.monthlyLimit ?? 0,
+                                  Colors.orange,
+                                  fallbackText: "Not set",
                                 ),
                               ],
                             ),
@@ -772,9 +769,12 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.yellow.shade50,
+                          color: mintJadeColors.appBarColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.amber, width: 1.5),
+                          border: Border.all(
+                            color: mintJadeColors.selectedIconColor,
+                            width: 1.5,
+                          ),
                         ),
                         child: Text(
                           _advice ?? S.of(context)!.noAdvice,
@@ -789,7 +789,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: Colors.redAccent,
+                          color: isDark ? Colors.red[300] : Colors.redAccent,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -798,9 +798,9 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                         child: Text(
                           'This advice is generated by AI for informational purposes only. The developer is not responsible for any actions taken based on it.',
                           textAlign: TextAlign.left,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
-                            color: Colors.black54,
+                            color: isDark ? Colors.grey[300] : Colors.black54,
                           ),
                         ),
                       ),
