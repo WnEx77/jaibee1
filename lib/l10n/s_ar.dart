@@ -482,4 +482,10 @@ class SAr extends S {
 
     return 'لقد خصصت $allocatedString من $totalString.';
   }
+
+  @override
+  String get getStarted => 'ابدأ';
+
+  @override
+  String get next => 'التالي';
 }

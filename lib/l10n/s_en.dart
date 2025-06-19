@@ -473,4 +473,10 @@ class SEn extends S {
   String budgetProgressInfo(double allocated, double total) {
     return 'You’ve allocated $allocated of $total.';
   }
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get next => 'Next';
 }

@@ -176,5 +176,7 @@
         "format": "compact"
       }
     }
-  }
+  },
+  "getStarted": "ابدأ",
+  "next": "التالي"
 }

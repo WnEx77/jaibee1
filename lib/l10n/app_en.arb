@@ -178,5 +178,7 @@
         "example": "200"
       }
     }
-  }
+  },
+  "getStarted": "Get Started",
+  "next": "Next"
 }

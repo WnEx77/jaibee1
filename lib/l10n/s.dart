@@ -1008,6 +1008,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'You’ve allocated {allocated} of {total}.'**
   String budgetProgressInfo(double allocated, double total);
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

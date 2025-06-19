@@ -3,7 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:month_year_picker/month_year_picker.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/theme/mint_jade_theme.dart';
 import 'features/home/jaibee_home_screen.dart';
@@ -12,10 +12,14 @@ import 'data/models/budget.dart';
 import 'data/models/category.dart';
 import 'data/models/goal_model.dart';
 import 'data/models/trancs.dart';
+import 'package:jaibee1/features/onboarding/onboarding_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+
+  final prefs = await SharedPreferences.getInstance();
+  final seenOnboarding = prefs.getBool('onboarding_completed') ?? false;
 
   Hive.registerAdapter(TransactionAdapter());
   Hive.registerAdapter(CategoryAdapter());
@@ -29,13 +33,17 @@ Future<void> main() async {
   await Hive.openBox<Goal>('goals');
   await Hive.openBox<Category>('userCategories');
 
+  await prefs.clear(); // ← to test the onboarding screen ONLY
+
   await _addDefaultCategoriesIfEmpty();
   await _addDefaultMonthlyLimitIfNotExists();
 
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeProvider(),
-      child: const JaibeeTrackerApp(),
+      child: JaibeeTrackerApp(
+        initialRoute: seenOnboarding ? 'home' : 'onboarding',
+      ),
     ),
   );
 }
@@ -64,7 +72,8 @@ Future<void> _addDefaultMonthlyLimitIfNotExists() async {
 }
 
 class JaibeeTrackerApp extends StatefulWidget {
-  const JaibeeTrackerApp({super.key});
+  final String initialRoute;
+  const JaibeeTrackerApp({super.key, required this.initialRoute});
 
   static void setLocale(BuildContext context, Locale newLocale) {
     final state = context.findAncestorStateOfType<_JaibeeTrackerAppState>();
@@ -145,7 +154,7 @@ class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeProvider.themeMode,
-      home: const JaibeeHomeScreen(),
+      home: widget.initialRoute == 'home' ? const JaibeeHomeScreen() : const OnboardingScreen(),
     );
   }
 }

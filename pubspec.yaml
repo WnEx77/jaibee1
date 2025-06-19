@@ -50,15 +50,17 @@ flutter:
   generate: true
   assets:
     # - assets/images/jaibee_logo.png
-    - assets/images/Jaibee_logo.png
-    - assets/images/background.png
-    - assets/images/background2.png
-    - assets/images/Jaibee_logo.png
-    - assets/images/WnEx_signature.png
+    # - assets/images/Jaibee_logo.png
+    - assets/images/
+    # - assets/images/background.png
+    # - assets/images/background2.png
+    # - assets/images/Jaibee_logo.png
+    # - assets/images/WnEx_signature.png
     - assets/fonts/Amiri-Regular.ttf
     - assets/fonts/Rubik-Regular.ttf
-    - assets/images/Saudi_Riyal_Symbol.png
-    - assets/images/Saudi_Riyal_Symbol_DarkMode.png
+    # - assets/images/Saudi_Riyal_Symbol.png
+    # - assets/images/Saudi_Riyal_Symbol_DarkMode.png
+    - assets/onboarding/
   fonts:
     - family: Roboto
       fonts:
