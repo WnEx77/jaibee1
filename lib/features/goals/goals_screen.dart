@@ -70,7 +70,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.grey[900]
+                        ? mintTheme.appBarColor
                         : Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
