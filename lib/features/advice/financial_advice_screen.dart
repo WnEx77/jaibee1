@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:jaibee1/models/trancs.dart';
+import 'package:jaibee1/data/models/trancs.dart';
 import 'package:jaibee1/secrets.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:flutter/services.dart';
@@ -12,8 +12,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:month_year_picker/month_year_picker.dart';
-import 'package:jaibee1/widgets/app_background.dart';
-import 'package:jaibee1/providers/mint_jade_theme.dart';
+import 'package:jaibee1/shared/widgets/app_background.dart';
+import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 
 class MonthlySummary {
   final double totalIncome;

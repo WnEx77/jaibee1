@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fl_chart/fl_chart.dart'; // <- PieChart package
-import 'package:jaibee1/models/budget.dart';
-import 'package:jaibee1/models/category.dart';
-import 'package:jaibee1/widgets/app_background.dart';
+import 'package:jaibee1/data/models/budget.dart';
+import 'package:jaibee1/data/models/category.dart';
+import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/providers/mint_jade_theme.dart';
+import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});

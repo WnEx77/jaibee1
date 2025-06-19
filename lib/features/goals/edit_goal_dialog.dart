@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/models/goal_model.dart';
+import 'package:jaibee1/data/models/goal_model.dart';
 import 'package:intl/intl.dart';
 
 class EditGoalDialog extends StatefulWidget {

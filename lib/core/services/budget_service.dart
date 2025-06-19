@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../models/budget.dart';
+import '../../data/models/budget.dart';
 
 class BudgetService {
   final Box<Budget> _budgetBox = Hive.box<Budget>('budgets');

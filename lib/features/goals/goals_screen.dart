@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:jaibee1/models/goal_model.dart';
-import 'package:jaibee1/screens/add_goal_screen.dart';
-import 'package:jaibee1/screens/edit_goal_dialog.dart';
-import 'package:jaibee1/widgets/app_background.dart';
-import 'package:jaibee1/widgets/custom_app_bar.dart';
-import 'package:jaibee1/providers/mint_jade_theme.dart';
+import 'package:jaibee1/data/models/goal_model.dart';
+import 'package:jaibee1/features/goals/add_goal_screen.dart';
+import 'package:jaibee1/features/goals/edit_goal_dialog.dart';
+import 'package:jaibee1/shared/widgets/app_background.dart';
+import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
+import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 
 class GoalsScreen extends StatefulWidget {
   const GoalsScreen({Key? key}) : super(key: key);

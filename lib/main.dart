@@ -1,41 +1,249 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/models/trancs.dart';
-import 'package:jaibee1/screens/expense_home_screen.dart';
-import 'package:jaibee1/models/category.dart';
-import 'package:month_year_picker/month_year_picker.dart';
-import 'package:jaibee1/models/budget.dart';
-import 'package:jaibee1/models/goal_model.dart';
 import 'package:provider/provider.dart';
-// import 'package:jaibee1/providers/theme_provider.dart';
-import 'package:jaibee1/providers/mint_jade_theme.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 
+// -- Your generated localization class (S) --
+import 'package:jaibee1/l10n/s.dart';
+
+// -- Models imports (just placeholders here, adjust your real imports) --
+import 'package:jaibee1/data/models/trancs.dart';
+import 'package:jaibee1/data/models/category.dart';
+import 'package:jaibee1/data/models/budget.dart';
+import 'package:jaibee1/data/models/goal_model.dart';
+
+// -- Your widgets and features --
+import 'package:jaibee1/features/transactions/add_tranc.dart';
+import 'package:jaibee1/features/transactions/tranc_screen.dart';
+import 'package:jaibee1/features/transactions/manage_categories.dart';
+import 'package:jaibee1/features/reports/report.dart';
+import 'package:jaibee1/features/profile/profile.dart';
+import 'package:jaibee1/features/budget/budget_screen.dart';
+
+import 'package:jaibee1/shared/widgets/app_background.dart';
+import 'package:jaibee1/shared/widgets/animated_screen_wrapper.dart';
+import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
+
+import 'package:jaibee1/core/utils/create_animated_route.dart';
+import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+
+// ==================== ExpenseHomeScreen ====================
+
+class ExpenseHomeScreen extends StatefulWidget {
+  const ExpenseHomeScreen({super.key});
+
+  @override
+  State<ExpenseHomeScreen> createState() => _ExpenseHomeScreenState();
+}
+
+class _ExpenseHomeScreenState extends State<ExpenseHomeScreen> {
+  late PageController _pageController;
+  int _currentPage = 0;
+
+  late List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      const AnimatedScreenWrapper(child: TransactionScreen()),
+      const AnimatedScreenWrapper(child: BudgetScreen()),
+      const AnimatedScreenWrapper(child: AddTransactionScreen()),
+      const AnimatedScreenWrapper(child: ReportsScreen()),
+      const AnimatedScreenWrapper(child: ProfileScreen()),
+      const AnimatedScreenWrapper(child: ManageCategoriesScreen()),
+    ];
+    _pageController = PageController(initialPage: _currentPage);
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentPage = index;
+    });
+  }
+
+  void _onNavItemTapped(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isRtl = Localizations.localeOf(context).languageCode == 'ar';
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+
+    return Directionality(
+      textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+      child: AppBackground(
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          backgroundColor: Colors.transparent,
+          appBar: CustomAppBar(
+            title: S.of(context)!.appTitle,
+            showBackButton: _currentPage == 6,
+            onBackPressed: () => _onNavItemTapped(0),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.category),
+                tooltip: S.of(context)!.manageCategories,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    createAnimatedRoute(const ManageCategoriesScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: _onPageChanged,
+            children: _screens,
+            physics: const NeverScrollableScrollPhysics(),
+          ),
+          bottomNavigationBar: _currentPage != 5
+              ? Container(
+                  decoration: BoxDecoration(
+                    color: mintTheme.navBarColor,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 12,
+                        offset: const Offset(0, -3),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildNavItem(
+                        icon: Icons.list,
+                        label: S.of(context)!.transactions,
+                        index: 0,
+                        isSelected: _currentPage == 0,
+                        selectedColor: mintTheme.selectedIconColor,
+                        unselectedColor: mintTheme.unselectedIconColor,
+                      ),
+                      _buildNavItem(
+                        icon: Icons.account_balance_wallet,
+                        label: S.of(context)!.budgets,
+                        index: 1,
+                        isSelected: _currentPage == 1,
+                        selectedColor: mintTheme.selectedIconColor,
+                        unselectedColor: mintTheme.unselectedIconColor,
+                      ),
+                      GestureDetector(
+                        onTap: () => _onNavItemTapped(2),
+                        child: Container(
+                          height: 48,
+                          width: 48,
+                          decoration: BoxDecoration(
+                            color: mintTheme.appBarColor,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                      _buildNavItem(
+                        icon: Icons.bar_chart,
+                        label: S.of(context)!.reports,
+                        index: 3,
+                        isSelected: _currentPage == 3,
+                        selectedColor: mintTheme.selectedIconColor,
+                        unselectedColor: mintTheme.unselectedIconColor,
+                      ),
+                      _buildNavItem(
+                        icon: Icons.person,
+                        label: S.of(context)!.profile,
+                        index: 4,
+                        isSelected: _currentPage == 4,
+                        selectedColor: mintTheme.selectedIconColor,
+                        unselectedColor: mintTheme.unselectedIconColor,
+                      ),
+                    ],
+                  ),
+                )
+              : null,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+    required bool isSelected,
+    required Color selectedColor,
+    required Color unselectedColor,
+  }) {
+    return GestureDetector(
+      onTap: () => _onNavItemTapped(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: isSelected
+            ? BoxDecoration(
+                color: selectedColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(30),
+              )
+            : null,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: isSelected ? selectedColor : unselectedColor),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? selectedColor : unselectedColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ==================== main() and supporting code ====================
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
 
-  // Register adapters...
+  // Register adapters
   Hive.registerAdapter(TransactionAdapter());
   Hive.registerAdapter(CategoryAdapter());
   Hive.registerAdapter(BudgetAdapter());
   Hive.registerAdapter(GoalAdapter());
 
-  // Delete Hive boxes as you do:
-  // await Hive.deleteBoxFromDisk('categories');
-  // await Hive.deleteBoxFromDisk('transactions');
-  // await Hive.deleteBoxFromDisk('budgets');
-  // await Hive.deleteBoxFromDisk('settings');
-
-  // Clear monthly limit from SharedPreferences:
-  // final prefs = await SharedPreferences.getInstance();
-  // await prefs.remove('monthly_limit');
-
-  // Open boxes again
+  // Open boxes
   await Hive.openBox('transactions');
   await Hive.openBox<Category>('categories');
   await Hive.openBox<double>('settings');
@@ -56,15 +264,8 @@ void main() async {
 
 Future<void> addDefaultCategoriesIfEmpty() async {
   final categoriesBox = Hive.box<Category>('categories');
-  // final userCategoriesBox = Hive.box<Category>('userCategories');
 
-  // If categories box is empty, populate it from userCategories box
   if (categoriesBox.isEmpty) {
-    // if (userCategoriesBox.isNotEmpty) {
-    //   await categoriesBox.addAll(userCategoriesBox.values);
-    // } else
-
-    // Fallback: if both are empty, populate userCategories first
     final defaultUserCategories = [
       Category(name: 'shopping', icon: 'shopping_cart'),
       Category(name: 'transport', icon: 'directions_car'),
@@ -73,10 +274,8 @@ Future<void> addDefaultCategoriesIfEmpty() async {
       Category(name: 'home', icon: 'home'),
       Category(name: 'bills', icon: 'credit_card'),
       Category(name: 'other', icon: 'category'),
-      // Category(name: 'savings', icon: 'savings'),
     ];
 
-    // await userCategoriesBox.addAll(defaultUserCategories);
     await categoriesBox.addAll(defaultUserCategories);
   }
 }
@@ -88,7 +287,7 @@ Future<void> addDefaultMonthlyLimitIfNotExists() async {
   }
 }
 
-// providers/theme_provider.dart
+// ==================== ThemeProvider ====================
 
 class ThemeProvider extends ChangeNotifier {
   static const _themeKey = 'isDarkTheme';
@@ -101,7 +300,6 @@ class ThemeProvider extends ChangeNotifier {
   ThemeMode get themeMode => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
 
   Future<void> loadThemeFromHive() async {
-    // Default to false (light) if not set or value != 1
     _isDarkTheme = (_settingsBox.get(_themeKey) ?? 0) == 1;
     notifyListeners();
   }
@@ -113,14 +311,14 @@ class ThemeProvider extends ChangeNotifier {
   }
 }
 
-// main app widget
+// ==================== ExpenseTrackerApp ====================
 
 class ExpenseTrackerApp extends StatefulWidget {
   const ExpenseTrackerApp({super.key});
 
   static void setLocale(BuildContext context, Locale newLocale) {
-    final _ExpenseTrackerAppState? state = context
-        .findAncestorStateOfType<_ExpenseTrackerAppState>();
+    final _ExpenseTrackerAppState? state =
+        context.findAncestorStateOfType<_ExpenseTrackerAppState>();
     state?.setLocale(newLocale);
   }
 
@@ -152,7 +350,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
           navBarColor: Color(0xFFFFFFFF),
           selectedIconColor: Color(0xFFA8E6CF),
           unselectedIconColor: Color(0xFF9EB6B3),
-          buttonColor: Color.fromARGB(255, 137, 225, 140), // Example green button color for light theme
+          buttonColor: Color.fromARGB(255, 137, 225, 140),
         ),
       ],
     );
@@ -171,7 +369,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
           navBarColor: Color(0xFF071615),
           selectedIconColor: Color(0xFFA8E6CF),
           unselectedIconColor: Color(0xFF3A5A57),
-          buttonColor: Color.fromARGB(255, 84, 91, 84), // Lighter green for dark theme buttons
+          buttonColor: Color.fromARGB(255, 84, 91, 84),
         ),
       ],
     );
@@ -191,77 +389,14 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
       localeResolutionCallback: (locale, supportedLocales) {
         if (locale == null) return supportedLocales.first;
         for (var supportedLocale in supportedLocales) {
-          if (supportedLocale.languageCode == locale.languageCode) {
-            return supportedLocale;
-          }
+          if (supportedLocale.languageCode == locale.languageCode) return supportedLocale;
         }
         return supportedLocales.first;
       },
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeProvider.themeMode,
-      home: const SplashScreen(),
-    );
-  }
-}
-
-// Splash screen (no changes needed)
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
-    _controller.forward();
-
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pushReplacement(_createFadeRoute());
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Route _createFadeRoute() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          const ExpenseHomeScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
-      },
-      transitionDuration: const Duration(milliseconds: 1200),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Center(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Image.asset('assets/images/Jaibee_logo.png', width: 150),
-        ),
-      ),
+      home: const ExpenseHomeScreen(),
     );
   }
 }

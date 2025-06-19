@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jaibee1/screens/goals_screen.dart';
+import 'package:jaibee1/features/goals/goals_screen.dart';
 import 'package:jaibee1/l10n/s.dart';
 // import 'package:intl/intl.dart';
 import 'package:jaibee1/main.dart';
-import 'package:jaibee1/widgets/app_background.dart'; // Your background widget
+import 'package:jaibee1/shared/widgets/app_background.dart'; // Your background widget
 import 'package:provider/provider.dart'; // For ThemeProvider
-import 'package:jaibee1/screens/about_us_screen.dart';
+import 'package:jaibee1/features/about/about_us_screen.dart';
 // import 'package:jaibee1/widgets/custom_app_bar.dart'; // Import your global CustomAppBar
-import 'package:jaibee1/providers/mint_jade_theme.dart';
+import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

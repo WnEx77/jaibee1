@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:hive/hive.dart';
-import 'package:jaibee1/models/trancs.dart';
+import 'package:jaibee1/data/models/trancs.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/screens/FinancialAdviceScreen.dart'; // Adjust path as needed
-import 'package:jaibee1/models/goal_model.dart';
+import 'package:jaibee1/features/advice/financial_advice_screen.dart'; // Adjust path as needed
+import 'package:jaibee1/data/models/goal_model.dart';
 // import 'package:jaibee1/screens/edit_goal_dialog.dart';
-import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
-import 'package:jaibee1/providers/mint_jade_theme.dart';
-import 'package:jaibee1/models/category.dart'; // Adjust path as needed
+import 'package:jaibee1/shared/widgets/app_background.dart'; // Import your background widget
+import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee1/data/models/category.dart'; // Adjust path as needed
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});

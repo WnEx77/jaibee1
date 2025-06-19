@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:jaibee1/models/trancs.dart';
+import 'package:jaibee1/data/models/trancs.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/screens/edit_tranc.dart';
+import 'package:jaibee1/features/transactions/edit_tranc.dart';
 // import 'package:jaibee1/screens/budget_screen.dart'; // Import BudgetScreen
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jaibee1/widgets/app_background.dart'; // Import your background widget
-import 'package:jaibee1/models/category.dart';
-import 'package:jaibee1/providers/mint_jade_theme.dart';
+import 'package:jaibee1/shared/widgets/app_background.dart'; // Import your background widget
+import 'package:jaibee1/data/models/category.dart';
+import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});

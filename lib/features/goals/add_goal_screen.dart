@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:jaibee1/models/goal_model.dart';
-import 'package:jaibee1/widgets/custom_app_bar.dart';
+import 'package:jaibee1/data/models/goal_model.dart';
+import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 import 'package:jaibee1/l10n/s.dart';
 
 class AddGoalScreen extends StatefulWidget {

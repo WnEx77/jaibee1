@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:jaibee1/models/category.dart';
-import 'package:jaibee1/widgets/app_background.dart';
+import 'package:jaibee1/data/models/category.dart';
+import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/providers/mint_jade_theme.dart'; // <-- Add your theme extension import
+import 'package:jaibee1/core/theme/mint_jade_theme.dart'; // <-- Add your theme extension import
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});

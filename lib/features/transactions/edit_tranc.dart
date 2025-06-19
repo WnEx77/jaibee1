@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:jaibee1/models/trancs.dart';
+import 'package:jaibee1/data/models/trancs.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/models/category.dart';
-import 'package:jaibee1/widgets/app_background.dart';
-import 'package:jaibee1/widgets/custom_app_bar.dart';
+import 'package:jaibee1/data/models/category.dart';
+import 'package:jaibee1/shared/widgets/app_background.dart';
+import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 // import 'package:jaibee1/utils/category_utils.dart';
-import 'package:jaibee1/providers/mint_jade_theme.dart';
+import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
