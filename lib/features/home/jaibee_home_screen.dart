@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/features/transactions/add_tranc.dart';
-import 'package:jaibee1/features/transactions/tranc_screen.dart';
+import 'package:jaibee1/features/transactions/add_transaction.dart';
+import 'package:jaibee1/features/transactions/transaction_screen.dart';
 import 'package:jaibee1/features/transactions/manage_categories.dart';
 import 'package:jaibee1/features/reports/report.dart';
 import 'package:jaibee1/features/profile/profile.dart';

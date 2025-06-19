@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:jaibee1/data/models/trancs.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/features/transactions/edit_tranc.dart';
+import 'package:jaibee1/features/transactions/edit_transaction.dart';
 // import 'package:jaibee1/screens/budget_screen.dart'; // Import BudgetScreen
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart'; // Import your background widget
