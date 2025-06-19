@@ -468,4 +468,9 @@ class SEn extends S {
 
   @override
   String get description => 'Transaction Description (Optional).';
+
+  @override
+  String budgetProgressInfo(double allocated, double total) {
+    return 'You’ve allocated $allocated of $total.';
+  }
 }

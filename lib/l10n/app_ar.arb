@@ -163,5 +163,18 @@
   "enterValidAmount": "أدخل مبلغًا صالحًا",
   "savedMoreThanTarget": "لا يمكن أن يتجاوز المبلغ المُدخر المبلغ المستهدف",
   "description": "وصف العملية (اختياري).",
-  "aboutUs": "عن التطبيق"
+  "aboutUs": "عن التطبيق",
+  "budgetProgressInfo": "لقد خصصت {allocated} من {total}.",
+  "@budgetProgressInfo": {
+    "placeholders": {
+      "allocated": {
+        "type": "double",
+        "format": "compact"
+      },
+      "total": {
+        "type": "double",
+        "format": "compact"
+      }
+    }
+  }
 }

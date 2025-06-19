@@ -26,14 +26,14 @@ void main() async {
   Hive.registerAdapter(GoalAdapter());
 
   // Delete Hive boxes as you do:
-  await Hive.deleteBoxFromDisk('categories');
-  await Hive.deleteBoxFromDisk('transactions');
-  await Hive.deleteBoxFromDisk('budgets');
-  await Hive.deleteBoxFromDisk('settings');
+  // await Hive.deleteBoxFromDisk('categories');
+  // await Hive.deleteBoxFromDisk('transactions');
+  // await Hive.deleteBoxFromDisk('budgets');
+  // await Hive.deleteBoxFromDisk('settings');
 
   // Clear monthly limit from SharedPreferences:
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.remove('monthly_limit');
+  // final prefs = await SharedPreferences.getInstance();
+  // await prefs.remove('monthly_limit');
 
   // Open boxes again
   await Hive.openBox('transactions');

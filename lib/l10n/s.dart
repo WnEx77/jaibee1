@@ -1002,6 +1002,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Transaction Description (Optional).'**
   String get description;
+
+  /// Message showing how much of the monthly budget has been allocated
+  ///
+  /// In en, this message translates to:
+  /// **'You’ve allocated {allocated} of {total}.'**
+  String budgetProgressInfo(double allocated, double total);
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

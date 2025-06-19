@@ -468,4 +468,18 @@ class SAr extends S {
 
   @override
   String get description => 'وصف العملية (اختياري).';
+
+  @override
+  String budgetProgressInfo(double allocated, double total) {
+    final intl.NumberFormat allocatedNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String allocatedString = allocatedNumberFormat.format(allocated);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String totalString = totalNumberFormat.format(total);
+
+    return 'لقد خصصت $allocatedString من $totalString.';
+  }
 }

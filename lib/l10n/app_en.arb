@@ -163,5 +163,20 @@
   "required": "Required",
   "enterValidAmount": "Enter a valid amount",
   "savedMoreThanTarget": "Saved amount cannot exceed target amount",
-  "description": "Transaction Description (Optional)."
+  "description": "Transaction Description (Optional).",
+  
+  "budgetProgressInfo": "You’ve allocated {allocated} of {total}.",
+  "@budgetProgressInfo": {
+    "description": "Message showing how much of the monthly budget has been allocated",
+    "placeholders": {
+      "allocated": {
+        "type": "double",
+        "example": "100"
+      },
+      "total": {
+        "type": "double",
+        "example": "200"
+      }
+    }
+  }
 }

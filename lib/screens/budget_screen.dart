@@ -45,9 +45,13 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
   Future<void> _loadMonthlyLimit() async {
     final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getDouble('monthly_limit');
+
     setState(() {
-      _monthlyLimit = prefs.getDouble('monthly_limit') ?? 0;
-      _monthlyLimitController.text = _monthlyLimit!.toStringAsFixed(0);
+      _monthlyLimit = stored;
+      _monthlyLimitController.text = (stored != null && stored > 0)
+          ? stored.toStringAsFixed(0)
+          : '';
     });
   }
 
@@ -84,7 +88,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
     // Validate monthly limit
     final monthlyText = _monthlyLimitController.text.trim();
-    final monthly = double.tryParse(monthlyText);
+    final monthly = monthlyText.isEmpty ? null : double.tryParse(monthlyText);
+
     if (monthly == null || monthly < 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -190,17 +195,34 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
     final entries = _controllers.entries.toList();
 
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final baseColor = mintTheme.buttonColor;
+
+    List<Color> generateShades(Color base, int count) {
+      final hslBase = HSLColor.fromColor(base);
+
+      return List.generate(count, (i) {
+        final lightness = (0.9 - i * 0.08).clamp(
+          0.2,
+          0.85,
+        ); // Spread across light to dark
+        final hsl = hslBase.withLightness(lightness);
+        return hsl.toColor();
+      });
+    }
+
+    final List<Color> pieColors = generateShades(baseColor, entries.length);
+
     return List.generate(entries.length, (i) {
       final name = entries[i].key;
       final value = double.tryParse(entries[i].value.text) ?? 0;
       final percentage = (value / total) * 100;
-      final color = Colors.primaries[i % Colors.primaries.length];
 
       return PieChartSectionData(
         title:
             '${localizeCategory(context, name)}\n${percentage.toStringAsFixed(1)}%',
         value: value,
-        color: color,
+        color: pieColors[i % pieColors.length],
         radius: 60,
         titleStyle: const TextStyle(
           fontSize: 12,
@@ -217,6 +239,19 @@ class _BudgetScreenState extends State<BudgetScreen> {
     final categories = _categoryBox.values.toList();
     final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
     final pieSections = _buildPieChartSections();
+
+    // Calculate totals
+    final totalCategoryLimits = _controllers.values
+        .map((c) => double.tryParse(c.text) ?? 0)
+        .fold(0.0, (a, b) => a + b);
+
+    final monthlyLimitValue =
+        double.tryParse(_monthlyLimitController.text.trim()) ?? 0;
+    final isMismatch =
+        monthlyLimitValue > 0 && totalCategoryLimits != monthlyLimitValue;
+    final progressRatio = monthlyLimitValue > 0
+        ? (totalCategoryLimits / monthlyLimitValue).clamp(0.0, 1.0)
+        : 0.0;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -242,41 +277,72 @@ class _BudgetScreenState extends State<BudgetScreen> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: S.of(context)!.enterMonthlyLimitHint,
-                border: const OutlineInputBorder(),
-                isDense: true,
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            if (pieSections.isNotEmpty) ...[
-              Text(
-                S.of(context)!.budgetDistribution,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 200,
-                child: PieChart(
-                  PieChartData(
-                    sections: pieSections,
-                    centerSpaceRadius: 32,
-                    sectionsSpace: 2,
-                    borderData: FlBorderData(show: false),
+                filled: true,
+                fillColor: _isInvalidInput(_monthlyLimitController.text)
+                    ? Colors.red.withOpacity(0.05)
+                    : Colors.transparent,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isInvalidInput(_monthlyLimitController.text)
+                        ? Colors.redAccent
+                        : Colors.grey,
                   ),
                 ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isInvalidInput(_monthlyLimitController.text)
+                        ? Colors.redAccent
+                        : Colors.grey,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _isInvalidInput(_monthlyLimitController.text)
+                        ? Colors.red
+                        : Theme.of(context).primaryColor,
+                    width: 2.0,
+                  ),
+                ),
+                isDense: true,
               ),
-              const SizedBox(height: 24),
+              onChanged: (_) => setState(() {}),
+            ),
+
+            if (isMismatch) ...[
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                value: progressRatio.clamp(
+                  0.0,
+                  1.0,
+                ), // Prevent overflow in visual length
+                minHeight: 8,
+                backgroundColor: Colors.grey.shade300,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  progressRatio > 1.0
+                      ? Colors.red
+                      : (progressRatio < 1.0 ? Colors.orange : Colors.red),
+                ),
+              ),
+
+              const SizedBox(height: 4),
+              Text(
+                S
+                    .of(context)!
+                    .budgetProgressInfo(totalCategoryLimits, monthlyLimitValue),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              const SizedBox(height: 16),
             ],
 
+            const SizedBox(height: 24),
             const Divider(),
 
             ...categories.map((category) {
               return Column(
-                key: ValueKey(category.name), // Ensures uniqueness if reused
+                key: ValueKey(category.name),
                 children: [
                   Row(
                     children: [
@@ -344,6 +410,29 @@ class _BudgetScreenState extends State<BudgetScreen> {
                 ],
               );
             }).toList(),
+
+            if (pieSections.isNotEmpty) ...[
+              Text(
+                S.of(context)!.budgetDistribution,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 200,
+                child: PieChart(
+                  PieChartData(
+                    sections: pieSections,
+                    centerSpaceRadius: 32,
+                    sectionsSpace: 2,
+                    borderData: FlBorderData(show: false),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ],
         ),
       ),
