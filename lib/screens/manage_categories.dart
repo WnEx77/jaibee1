@@ -164,9 +164,9 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
 
     final exists = _categoriesBox.values.any((c) => c.name == selected.name);
     if (exists) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizer.categoryExists)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(localizer.categoryExists)));
       return;
     }
 
@@ -182,8 +182,8 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
 
     final categories = _categoriesBox.values
-    .where((c) => c.name.toLowerCase() != 'other')
-    .toList();
+        .where((c) => c.name != 'Other')
+        .toList();
     final userCategories = defaultUserCategories;
 
     return AppBackground(
@@ -269,17 +269,20 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                   itemBuilder: (ctx, index) {
                     final cat = categories[index];
                     final isProtected = cat.name.toLowerCase() == 'income';
-                    final iconData =
-                        availableIcons[cat.icon] ?? Icons.category;
-                    final localizedName =
-                        _getLocalizedCategory(cat.name, localizer);
+                    final iconData = availableIcons[cat.icon] ?? Icons.category;
+                    final localizedName = _getLocalizedCategory(
+                      cat.name,
+                      localizer,
+                    );
 
                     return isProtected
                         ? ListTile(
                             leading: Icon(iconData),
                             title: Text(localizedName),
-                            trailing:
-                                const Icon(Icons.lock, color: Colors.grey),
+                            trailing: const Icon(
+                              Icons.lock,
+                              color: Colors.grey,
+                            ),
                           )
                         : Dismissible(
                             key: Key(cat.name),
@@ -287,18 +290,24 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                             background: Container(
                               color: Colors.red,
                               alignment: Alignment.centerRight,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child:
-                                  const Icon(Icons.delete, color: Colors.white),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
                             ),
                             confirmDismiss: (_) async {
                               final confirmed = await showDialog<bool>(
                                 context: context,
                                 builder: (ctx) => AlertDialog(
                                   title: Text(localizer.deleteCategory),
-                                  content: Text(localizer
-                                      .deleteCategoryConfirm(localizedName)),
+                                  content: Text(
+                                    localizer.deleteCategoryConfirm(
+                                      localizedName,
+                                    ),
+                                  ),
                                   actions: [
                                     TextButton(
                                       onPressed: () =>
@@ -306,12 +315,12 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                                       child: Text(localizer.cancel),
                                     ),
                                     TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(ctx, true),
+                                      onPressed: () => Navigator.pop(ctx, true),
                                       child: Text(
                                         localizer.delete,
-                                        style:
-                                            const TextStyle(color: Colors.red),
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                        ),
                                       ),
                                     ),
                                   ],

@@ -36,7 +36,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
         orElse: () => Budget(category: category.name, limit: 0.0),
       );
       _controllers[category.name] = TextEditingController(
-        text: existingBudget.limit.toStringAsFixed(0),
+        text: existingBudget.limit > 0
+            ? existingBudget.limit.toStringAsFixed(0)
+            : '',
       );
     }
   }
@@ -49,15 +51,23 @@ class _BudgetScreenState extends State<BudgetScreen> {
     });
   }
 
+  bool _isInvalidInput(String? text) {
+    if (text == null || text.trim().isEmpty)
+      return false; // Empty is OK, treated as 0
+    return double.tryParse(text.trim()) == null;
+  }
+
   Future<void> _saveBudgets() async {
     final prefs = await SharedPreferences.getInstance();
     double totalCategoryLimits = 0;
 
+    // Validate each category input
     for (var category in _categoryBox.values) {
       final controller = _controllers[category.name];
-      final limit = double.tryParse(controller?.text ?? '') ?? -1;
+      final text = controller?.text.trim() ?? '';
+      final limit = double.tryParse(text.isEmpty ? '0' : text);
 
-      if (limit < 0) {
+      if (limit == null || limit < 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -72,8 +82,10 @@ class _BudgetScreenState extends State<BudgetScreen> {
       totalCategoryLimits += limit;
     }
 
-    final monthly = double.tryParse(_monthlyLimitController.text) ?? -1;
-    if (monthly < 0) {
+    // Validate monthly limit
+    final monthlyText = _monthlyLimitController.text.trim();
+    final monthly = double.tryParse(monthlyText);
+    if (monthly == null || monthly < 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(S.of(context)!.invalidMonthlyLimit),
@@ -83,6 +95,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
       return;
     }
 
+    // Check if category limits match the monthly limit
     if (monthly != totalCategoryLimits) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -100,26 +113,21 @@ class _BudgetScreenState extends State<BudgetScreen> {
       return;
     }
 
+    // Save category budgets using category name as the key
     for (var category in _categoryBox.values) {
       final name = category.name;
       final controller = _controllers[name];
-      final limit = double.tryParse(controller?.text ?? '0') ?? 0;
+      final text = controller?.text.trim() ?? '';
+      final limit = double.tryParse(text.isEmpty ? '0' : text) ?? 0;
 
-      final existing = _budgetBox.values.firstWhere(
-        (b) => b.category == name,
-        orElse: () => Budget(category: name, limit: 0),
-      );
-
-      if (existing.isInBox) {
-        existing.limit = limit;
-        existing.save();
-      } else {
-        _budgetBox.add(Budget(category: name, limit: limit));
-      }
+      final budget = Budget(category: name, limit: limit);
+      _budgetBox.put(name, budget); // Use category name as key
     }
 
+    // Save monthly limit to SharedPreferences
     await prefs.setDouble('monthly_limit', monthly);
 
+    // Notify user of successful save
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(S.of(context)!.budgetsSaved)));
@@ -241,7 +249,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
             const SizedBox(height: 24),
 
             if (pieSections.isNotEmpty) ...[
-               Text(
+              Text(
                 S.of(context)!.budgetDistribution,
                 style: const TextStyle(
                   fontSize: 16,
@@ -287,11 +295,47 @@ class _BudgetScreenState extends State<BudgetScreen> {
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             labelText: S.of(context)!.limitLabel,
-                            border: const OutlineInputBorder(),
+                            filled: true,
+                            fillColor:
+                                _isInvalidInput(
+                                  _controllers[category.name]?.text,
+                                )
+                                ? Colors.red.withOpacity(0.05)
+                                : Colors.transparent,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color:
+                                    _isInvalidInput(
+                                      _controllers[category.name]?.text,
+                                    )
+                                    ? Colors.redAccent
+                                    : Colors.grey,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color:
+                                    _isInvalidInput(
+                                      _controllers[category.name]?.text,
+                                    )
+                                    ? Colors.redAccent
+                                    : Colors.grey,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color:
+                                    _isInvalidInput(
+                                      _controllers[category.name]?.text,
+                                    )
+                                    ? Colors.red
+                                    : Theme.of(context).primaryColor,
+                                width: 2.0,
+                              ),
+                            ),
                             isDense: true,
                           ),
-                          onChanged: (_) =>
-                              setState(() {}), // Live chart update
+                          onChanged: (_) => setState(() {}),
                         ),
                       ),
                     ],

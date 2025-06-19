@@ -11,28 +11,34 @@ import 'package:jaibee1/models/goal_model.dart';
 import 'package:provider/provider.dart';
 // import 'package:jaibee1/providers/theme_provider.dart';
 import 'package:jaibee1/providers/mint_jade_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive
   await Hive.initFlutter();
 
-  // Register adapters
+  // Register adapters...
   Hive.registerAdapter(TransactionAdapter());
   Hive.registerAdapter(CategoryAdapter());
   Hive.registerAdapter(BudgetAdapter());
   Hive.registerAdapter(GoalAdapter());
 
-  // to reset the default categories, for testing purposes only
+  // Delete Hive boxes as you do:
   await Hive.deleteBoxFromDisk('categories');
+  await Hive.deleteBoxFromDisk('transactions');
+  await Hive.deleteBoxFromDisk('budgets');
+  await Hive.deleteBoxFromDisk('settings');
 
-  // Open boxes
+  // Clear monthly limit from SharedPreferences:
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('monthly_limit');
+
+  // Open boxes again
   await Hive.openBox('transactions');
   await Hive.openBox<Category>('categories');
-  await Hive.openBox<double>(
-    'settings',
-  ); // For monthlyLimit and theme preference
+  await Hive.openBox<double>('settings');
   await Hive.openBox<Budget>('budgets');
   await Hive.openBox<Goal>('goals');
   await Hive.openBox<Category>('userCategories');

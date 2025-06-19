@@ -291,7 +291,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now(),
       locale: Localizations.localeOf(context),
     );
     if (picked != null && picked != _selectedDate) {
