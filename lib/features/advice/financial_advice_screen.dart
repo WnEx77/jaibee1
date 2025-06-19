@@ -11,7 +11,7 @@ import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:month_year_picker/month_year_picker.dart';
+// import 'package:month_year_picker/month_year_picker.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 
@@ -229,23 +229,23 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     }
   }
 
-  Future<void> _pickMonth() async {
-    final DateTime now = DateTime.now();
-    final DateTime? picked = await showMonthYearPicker(
-      context: context,
-      initialDate: _selectedMonth,
-      firstDate: DateTime(now.year - 3),
-      lastDate: DateTime(now.year + 1),
-    );
+  // Future<void> _pickMonth() async {
+  //   final DateTime now = DateTime.now();
+  //   final DateTime? picked = await showMonthYearPicker(
+  //     context: context,
+  //     initialDate: _selectedMonth,
+  //     firstDate: DateTime(now.year - 3),
+  //     lastDate: DateTime(now.year + 1),
+  //   );
 
-    if (picked != null) {
-      setState(() {
-        _selectedMonth = DateTime(picked.year, picked.month);
-        _loading = true;
-      });
-      await _loadAdvice();
-    }
-  }
+  //   if (picked != null) {
+  //     setState(() {
+  //       _selectedMonth = DateTime(picked.year, picked.month);
+  //       _loading = true;
+  //     });
+  //     await _loadAdvice();
+  //   }
+  // }
 
   void _showShareOptions() {
     showModalBottomSheet(
