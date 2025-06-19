@@ -84,7 +84,7 @@ class _AboutUsScreenState extends State<AboutUsScreen>
                 children: [
                   const SizedBox(height: 20),
                   Image.asset(
-                    'assets/images/Jaibee_logo.png',
+                    'assets/images/logo.png',
                     width: 100, // equivalent to diameter of radius 50
                     height: 100,
                     fit: BoxFit.cover,

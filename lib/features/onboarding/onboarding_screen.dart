@@ -22,7 +22,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingPageModel(
       title: 'Welcome to Jaibee',
       description: 'Take control of your finances with AI-powered insights.',
-      imageAsset: 'assets/images/Jaibee_logo.png', // Use your logo or intro image
+      imageAsset: 'assets/images/logo.png', // Use your logo or intro image
     ),
     OnboardingPageModel(
       title: 'Track Your Spending',

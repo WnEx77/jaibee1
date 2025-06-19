@@ -321,7 +321,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
 
     // Load logo
     final ByteData logoBytes = await rootBundle.load(
-      'assets/images/Jaibee_logo-removebg-preview.png',
+      'assets/images/logo-removebg-preview.png',
     );
     final Uint8List logoUint8List = logoBytes.buffer.asUint8List();
     final pw.MemoryImage logo = pw.MemoryImage(logoUint8List);
@@ -481,7 +481,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
 
     // Load logo
     final ByteData logoBytes = await rootBundle.load(
-      'assets/images/Jaibee_logo-removebg-preview.png',
+      'assets/images/logo-removebg-preview.png',
     );
     final Uint8List logoUint8List = logoBytes.buffer.asUint8List();
     final pw.MemoryImage logo = pw.MemoryImage(logoUint8List);
