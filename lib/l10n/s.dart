@@ -1020,6 +1020,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// No description provided for @noInternetConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Please check your network settings.'**
+  String get noInternetConnection;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -180,5 +180,7 @@
     }
   },
   "getStarted": "Get Started",
-  "next": "Next"
+  "next": "Next",
+  "noInternetConnection": "No internet connection. Please check your network settings.",
+  "retry": "Retry"
 }

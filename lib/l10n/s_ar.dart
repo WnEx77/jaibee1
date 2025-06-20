@@ -488,4 +488,11 @@ class SAr extends S {
 
   @override
   String get next => 'التالي';
+
+  @override
+  String get noInternetConnection =>
+      'لا يوجد اتصال بالإنترنت. يرجى التحقق من إعدادات الشبكة الخاصة بك.';
+
+  @override
+  String get retry => 'إعادة المحاولة';
 }

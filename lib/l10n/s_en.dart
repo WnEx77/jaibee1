@@ -479,4 +479,11 @@ class SEn extends S {
 
   @override
   String get next => 'Next';
+
+  @override
+  String get noInternetConnection =>
+      'No internet connection. Please check your network settings.';
+
+  @override
+  String get retry => 'Retry';
 }

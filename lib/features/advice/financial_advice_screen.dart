@@ -14,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:month_year_picker/month_year_picker.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+// import 'package:jaibee1/core/utils/connection_checker.dart';
 
 class MonthlySummary {
   final double totalIncome;
@@ -185,6 +187,15 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
 
   Future<void> _loadAdvice() async {
     try {
+      // ✅ Check internet connection
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        setState(() {
+          _error = S.of(context)!.noInternetConnection;
+          _loading = false;
+        });
+        return;
+      }
       final locale = Localizations.localeOf(context);
 
       final transactionsBox = Hive.box('transactions');
@@ -223,7 +234,8 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = e.toString();
+        // _error = 'Something went wrong: ${e.toString()}';
+        _error = S.of(context)!.noInternetConnection;
         _loading = false;
       });
     }
@@ -670,38 +682,43 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
           child: _loading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
-              ? Center(child: Text("Error: $_error"))
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/error.png',
+                        height: 300,
+                        width: 300,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        _error!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.refresh),
+                        label: Text(S.of(context)!.retry),
+                        onPressed: () {
+                          setState(() {
+                            _loading = true;
+                            _error = null;
+                          });
+                          _loadAdvice();
+                        },
+                      ),
+                    ],
+                  ),
+                )
               : SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Month Picker Row
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   children: [
-                      //     Text(
-                      //       DateFormat.MMMM().format(_selectedMonth),
-                      //       style: const TextStyle(
-                      //         fontSize: 20,
-                      //         fontWeight: FontWeight.bold,
-                      //       ),
-                      //     ),
-                      //     TextButton.icon(
-                      //       onPressed: _pickMonth,
-                      //       icon: Icon(
-                      //         Icons.calendar_today,
-                      //         size: 16,
-                      //         color: mintJadeColors.unselectedIconColor,
-                      //       ),
-                      //       label: Text(
-                      //         "Pick Month",
-                      //         style: TextStyle(
-                      //           color: mintJadeColors.unselectedIconColor,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                       const SizedBox(height: 12),
 
                       // Summary Card
