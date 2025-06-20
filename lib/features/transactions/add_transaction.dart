@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/data/models/trancs.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:jaibee1/l10n/s.dart';
+
+import 'package:jaibee1/data/models/trancs.dart';
 import 'package:jaibee1/data/models/category.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart'; // Import your background widget
+import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
-// import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
-import 'package:flutter/cupertino.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -18,14 +18,12 @@ class AddTransactionScreen extends StatefulWidget {
 
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _descriptionController =
-      TextEditingController(); // 👈 NEW
+  final _amountController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
   String _category = '';
   bool _isIncome = false;
   DateTime _selectedDate = DateTime.now();
-
   List<Category> _customCategoryObjects = [];
 
   @override
@@ -36,32 +34,20 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   void _loadCategories() {
     final box = Hive.box<Category>('categories');
-    setState(() {
-      _customCategoryObjects = box.values.toList();
-
-      if (_customCategoryObjects.isNotEmpty && !_isIncome) {
-        _category = _customCategoryObjects.first.name;
-      } else if (_isIncome) {
-        _category = 'income';
-      }
-    });
+    _customCategoryObjects = box.values.toList();
+    if (_customCategoryObjects.isNotEmpty && !_isIncome) {
+      _category = _customCategoryObjects.first.name;
+    } else if (_isIncome) {
+      _category = 'income';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
-
-    if (_isIncome && _category != 'income') {
-      _category = 'income';
-    }
+    if (_isIncome && _category != 'income') _category = 'income';
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(localizer.addTransaction),
-      //   centerTitle: true,
-      //   // backgroundColor: Colors.transparent,
-      //   // foregroundColor: Colors.white,
-      // ),
       body: AppBackground(
         child: SafeArea(
           child: Padding(
@@ -101,59 +87,26 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
         : 'assets/images/Saudi_Riyal_Symbol.png';
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
-          width: 1.2,
-        ),
-      ),
+    return _styledContainer(
       child: TextFormField(
         controller: _amountController,
-        decoration: InputDecoration(
-          labelText: localizer.amount,
-          labelStyle: TextStyle(
-            color: isDark ? Colors.white70 : Colors.black87,
-            fontWeight: FontWeight.w500,
-          ),
-          border: InputBorder.none,
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Image.asset(
-              iconAsset,
-              width: 24,
-              height: 24,
-              fit: BoxFit.contain,
-            ),
-          ),
-          hintText: localizer.enterAmount,
-          hintStyle: TextStyle(
-            color: isDark ? Colors.white38 : Colors.grey[500],
-          ),
-        ),
+        keyboardType: TextInputType.number,
+        validator: (value) => (value == null || value.isEmpty)
+            ? localizer.pleaseEnterAmount
+            : null,
         style: TextStyle(
           color: isDark ? Colors.white : Colors.black,
           fontSize: 16,
         ),
-        keyboardType: TextInputType.number,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return localizer.pleaseEnterAmount;
-          }
-          return null;
-        },
+        decoration: InputDecoration(
+          labelText: localizer.amount,
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Image.asset(iconAsset, width: 24, height: 24),
+          ),
+          hintText: localizer.enterAmount,
+          border: InputBorder.none,
+        ),
       ),
     );
   }
@@ -164,138 +117,99 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ? [Category(name: 'income', icon: 'attach_money')]
         : _customCategoryObjects;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
+    return _styledContainer(
+      child: DropdownButtonFormField<String>(
+        value: _category.isNotEmpty ? _category : null,
+        items: categories.map((cat) {
+          return DropdownMenuItem<String>(
+            value: cat.name,
+            child: Row(
+              children: [
+                Icon(
+                  _getCategoryIcon(cat),
+                  size: 22,
+                  color: isDark ? Colors.tealAccent : Colors.teal,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  _getLocalizedCategory(cat.name, localizer),
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+        onChanged: _isIncome ? null : (val) => setState(() => _category = val!),
+        decoration: InputDecoration(
+          labelText: localizer.category,
+          border: InputBorder.none,
+        ),
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.10),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-        border: Border.all(
-          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
-          width: 1.2,
-        ),
-      ),
-      child: Theme(
-        data: Theme.of(context).copyWith(
-          canvasColor: isDark ? Colors.grey[900] : Colors.white,
-          dialogBackgroundColor: isDark ? Colors.grey[900] : Colors.white,
-          cardColor: isDark ? Colors.grey[900] : Colors.white,
-          splashColor: Colors.teal.withOpacity(0.08),
-          highlightColor: Colors.teal.withOpacity(0.04),
-          popupMenuTheme: PopupMenuThemeData(
-            color: isDark ? Colors.grey[900] : Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-            elevation: 8,
-          ),
-        ),
-        child: DropdownButtonFormField<String>(
-          value: _category.isNotEmpty ? _category : null,
-          decoration: InputDecoration(
-            labelText: localizer.category,
-            labelStyle: TextStyle(
-              color: isDark ? Colors.white70 : Colors.black87,
-              fontWeight: FontWeight.w500,
-            ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 8,
-            ),
-          ),
-          borderRadius: BorderRadius.circular(18),
-          dropdownColor: isDark ? Colors.grey[900] : Colors.white,
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black,
-            fontSize: 16,
-          ),
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: isDark ? Colors.tealAccent : Colors.teal,
-            size: 28,
-          ),
-          onChanged: _isIncome
-              ? null
-              : (String? newValue) {
-                  setState(() {
-                    _category = newValue!;
-                  });
-                },
-          items: categories.map((categoryObj) {
-            return DropdownMenuItem<String>(
-              value: categoryObj.name,
-              child: Row(
-                children: [
-                  Icon(
-                    _getCategoryIcon(categoryObj),
-                    size: 22,
-                    color: isDark ? Colors.tealAccent : Colors.teal,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    _getLocalizedCategory(categoryObj.name, localizer),
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, size: 28),
       ),
     );
   }
 
   Widget _buildTypeToggle(S localizer) {
-    return Row(
-      children: [
-        Expanded(
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: !_isIncome ? Colors.red : Colors.grey.shade300,
-              foregroundColor: !_isIncome ? Colors.white : Colors.black,
-            ),
-            onPressed: () {
-              setState(() {
-                _isIncome = false;
-                _category = _customCategoryObjects.isNotEmpty
-                    ? _customCategoryObjects.first.name
-                    : '';
-              });
-            },
-            icon: const Icon(Icons.arrow_downward),
-            label: Text(localizer.expense),
-          ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selectedTextColor = isDark ? Colors.black : Colors.white;
+    final unselectedTextColor = isDark ? Colors.white : Colors.black;
+
+    return Center(
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? Colors.grey[850] : Colors.grey[200],
+          borderRadius: BorderRadius.circular(14),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _isIncome ? Colors.green : Colors.grey.shade300,
-              foregroundColor: _isIncome ? Colors.white : Colors.black,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: ToggleButtons(
+          isSelected: [_isIncome == false, _isIncome == true],
+          onPressed: (int index) {
+            setState(() {
+              _isIncome = index == 1;
+              _category = _isIncome
+                  ? 'income'
+                  : (_customCategoryObjects.isNotEmpty
+                        ? _customCategoryObjects.first.name
+                        : '');
+            });
+          },
+          borderRadius: BorderRadius.circular(12),
+          borderWidth: 1.5,
+          selectedColor: selectedTextColor,
+          fillColor: _isIncome ? Colors.green : Colors.red,
+          color: unselectedTextColor,
+          constraints: const BoxConstraints(minWidth: 120, minHeight: 45),
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.arrow_downward),
+                const SizedBox(width: 6),
+                Text(
+                  localizer.expense,
+                  style: TextStyle(
+                    color: !_isIncome ? selectedTextColor : unselectedTextColor,
+                  ),
+                ),
+              ],
             ),
-            onPressed: () {
-              setState(() {
-                _isIncome = true;
-                _category = 'income';
-              });
-            },
-            icon: const Icon(Icons.arrow_upward),
-            label: Text(localizer.income),
-          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.arrow_upward),
+                const SizedBox(width: 6),
+                Text(
+                  localizer.income,
+                  style: TextStyle(
+                    color: _isIncome ? selectedTextColor : unselectedTextColor,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -310,65 +224,40 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
-  Widget _buildSubmitButton(S localizer) {
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
-    return FilledButton.icon(
-      style: FilledButton.styleFrom(
-        backgroundColor: mintTheme.buttonColor,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-      ),
-      onPressed: _submitForm,
-      icon: const Icon(Icons.add),
-      label: Text(localizer.addTransaction),
-    );
-  }
-
   Widget _buildDescriptionField(S localizer) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
-          width: 1.2,
-        ),
-      ),
+    return _styledContainer(
       child: TextFormField(
         controller: _descriptionController,
         maxLines: 2,
+        style: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+          fontSize: 16,
+        ),
         decoration: InputDecoration(
           labelText: localizer.description,
-          labelStyle: TextStyle(
-            color: isDark ? Colors.white70 : Colors.black87,
-            fontWeight: FontWeight.w500,
-          ),
-          border: InputBorder.none,
           prefixIcon: Icon(
             Icons.notes_rounded,
             color: isDark ? Colors.tealAccent : Colors.teal,
           ),
           hintText: localizer.enterDescription,
-          hintStyle: TextStyle(
-            color: isDark ? Colors.white38 : Colors.grey[500],
-          ),
-        ),
-        style: TextStyle(
-          color: isDark ? Colors.white : Colors.black,
-          fontSize: 16,
+          border: InputBorder.none,
         ),
       ),
+    );
+  }
+
+  Widget _buildSubmitButton(S localizer) {
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    return FilledButton.icon(
+      onPressed: _submitForm,
+      style: FilledButton.styleFrom(
+        backgroundColor: mintTheme.buttonColor,
+        foregroundColor: Colors.white, // Set text/icon color here
+        padding: const EdgeInsets.symmetric(vertical: 14),
+      ),
+      icon: const Icon(Icons.add),
+      label: Text(localizer.addTransaction),
     );
   }
 
@@ -390,7 +279,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         date: _selectedDate,
         description: _descriptionController.text.trim().isNotEmpty
             ? _descriptionController.text.trim()
-            : null, // 👈 New field added
+            : null,
       );
 
       Hive.box('transactions').add(transaction);
@@ -413,7 +302,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime tempSelectedDate = _selectedDate;
-
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     await showCupertinoModalPopup<void>(
@@ -440,18 +328,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   minimumDate: DateTime(2000),
                   maximumDate: DateTime.now(),
                   mode: CupertinoDatePickerMode.date,
-                  onDateTimeChanged: (DateTime newDate) {
-                    tempSelectedDate = newDate;
-                  },
+                  onDateTimeChanged: (newDate) => tempSelectedDate = newDate,
                 ),
               ),
             ),
             CupertinoButton(
               child: const Text('Done'),
               onPressed: () {
-                setState(() {
-                  _selectedDate = tempSelectedDate;
-                });
+                setState(() => _selectedDate = tempSelectedDate);
                 Navigator.of(context).pop();
               },
             ),
@@ -461,95 +345,98 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
-  String _getLocalizedCategory(String name, S localizer) {
-    switch (name.toLowerCase()) {
-      case 'food':
-        return localizer.food;
-      case 'transport':
-      case 'transportation':
-        return localizer.transport;
-      case 'entertainment':
-        return localizer.entertainment;
-      case 'coffee':
-        return localizer.coffee;
-      case 'income':
-        return localizer.income;
-      case 'shopping':
-        return localizer.shopping;
-      case 'health':
-        return localizer.health;
-      case 'bills':
-        return localizer.bills;
-      case 'groceries':
-        return localizer.groceries;
-      case 'beauty':
-        return localizer.beauty;
-      case 'electronics':
-        return localizer.electronics;
-      case 'books':
-        return localizer.books;
-      case 'pet care':
-        return localizer.petCare;
-      case 'gifts':
-        return localizer.gifts;
-      case 'home':
-        return localizer.home;
-      case 'savings':
-        return localizer.savings;
-      case 'events':
-        return localizer.events;
-      case 'fitness':
-        return localizer.fitness;
-      case 'other':
-        return localizer.other;
-      default:
-        return name;
-    }
+  Widget _styledContainer({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(
+          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+          width: 1.2,
+        ),
+      ),
+      child: child,
+    );
   }
 
-  /// Map the category or its emoji icon string to a Flutter IconData.
+  Widget _toggleButton(
+    String label,
+    bool isSelected,
+    IconData icon,
+    VoidCallback onPressed,
+  ) {
+    return Expanded(
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isSelected ? Colors.green : Colors.grey.shade300,
+          foregroundColor: isSelected ? Colors.white : Colors.black,
+        ),
+        onPressed: onPressed,
+        icon: Icon(icon),
+        label: Text(label),
+      ),
+    );
+  }
+
+  String _getLocalizedCategory(String name, S localizer) {
+    final map = {
+      'food': localizer.food,
+      'transport': localizer.transport,
+      'transportation': localizer.transport,
+      'entertainment': localizer.entertainment,
+      'coffee': localizer.coffee,
+      'income': localizer.income,
+      'shopping': localizer.shopping,
+      'health': localizer.health,
+      'bills': localizer.bills,
+      'groceries': localizer.groceries,
+      'beauty': localizer.beauty,
+      'electronics': localizer.electronics,
+      'books': localizer.books,
+      'pet care': localizer.petCare,
+      'gifts': localizer.gifts,
+      'home': localizer.home,
+      'savings': localizer.savings,
+      'events': localizer.events,
+      'fitness': localizer.fitness,
+      'other': localizer.other,
+    };
+    return map[name.toLowerCase()] ?? name;
+  }
+
   IconData _getCategoryIcon(Category category) {
-    switch (category.icon) {
-      case 'shopping_cart':
-        return Icons.shopping_cart;
-      case 'local_hospital':
-        return Icons.local_hospital;
-      case 'directions_car':
-        return Icons.directions_car;
-      case 'restaurant':
-        return Icons.restaurant;
-      case 'school':
-        return Icons.school;
-      case 'movie':
-        return Icons.movie;
-      case 'fitness_center':
-        return Icons.fitness_center;
-      case 'flight':
-        return Icons.flight;
-      case 'home':
-        return Icons.home;
-      case 'credit_card':
-        return Icons.credit_card;
-      case 'local_mall':
-        return Icons.local_mall;
-      case 'spa':
-        return Icons.spa;
-      case 'computer':
-        return Icons.computer;
-      case 'book':
-        return Icons.book;
-      case 'pets':
-        return Icons.pets;
-      case 'cake':
-        return Icons.cake;
-      case 'savings':
-        return Icons.savings;
-      case 'event':
-        return Icons.event;
-      case 'attach_money':
-        return Icons.attach_money;
-      default:
-        return Icons.category;
-    }
+    const iconMap = {
+      'shopping_cart': Icons.shopping_cart,
+      'local_hospital': Icons.local_hospital,
+      'directions_car': Icons.directions_car,
+      'restaurant': Icons.restaurant,
+      'school': Icons.school,
+      'movie': Icons.movie,
+      'fitness_center': Icons.fitness_center,
+      'flight': Icons.flight,
+      'home': Icons.home,
+      'credit_card': Icons.credit_card,
+      'local_mall': Icons.local_mall,
+      'spa': Icons.spa,
+      'computer': Icons.computer,
+      'book': Icons.book,
+      'pets': Icons.pets,
+      'cake': Icons.cake,
+      'savings': Icons.savings,
+      'event': Icons.event,
+      'attach_money': Icons.attach_money,
+    };
+    return iconMap[category.icon] ?? Icons.category;
   }
 }
