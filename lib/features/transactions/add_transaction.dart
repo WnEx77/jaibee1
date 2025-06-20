@@ -97,6 +97,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   Widget _buildAmountField(S localizer) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconAsset = isDark
+        ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
+        : 'assets/images/Saudi_Riyal_Symbol.png';
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
@@ -125,13 +129,24 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             fontWeight: FontWeight.w500,
           ),
           border: InputBorder.none,
-          prefixIcon: Icon(Icons.attach_money, color: isDark ? Colors.tealAccent : Colors.teal),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Image.asset(
+              iconAsset,
+              width: 24,
+              height: 24,
+              fit: BoxFit.contain,
+            ),
+          ),
           hintText: localizer.enterAmount,
           hintStyle: TextStyle(
             color: isDark ? Colors.white38 : Colors.grey[500],
           ),
         ),
-        style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
+        style: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+          fontSize: 16,
+        ),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -192,12 +207,22 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               fontWeight: FontWeight.w500,
             ),
             border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 8,
+              horizontal: 8,
+            ),
           ),
           borderRadius: BorderRadius.circular(18),
           dropdownColor: isDark ? Colors.grey[900] : Colors.white,
-          style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
-          icon: Icon(Icons.keyboard_arrow_down_rounded, color: isDark ? Colors.tealAccent : Colors.teal, size: 28),
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 16,
+          ),
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: isDark ? Colors.tealAccent : Colors.teal,
+            size: 28,
+          ),
           onChanged: _isIncome
               ? null
               : (String? newValue) {
@@ -330,7 +355,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             fontWeight: FontWeight.w500,
           ),
           border: InputBorder.none,
-          prefixIcon: Icon(Icons.notes_rounded, color: isDark ? Colors.tealAccent : Colors.teal),
+          prefixIcon: Icon(
+            Icons.notes_rounded,
+            color: isDark ? Colors.tealAccent : Colors.teal,
+          ),
           hintText: localizer.enterDescription,
           hintStyle: TextStyle(
             color: isDark ? Colors.white38 : Colors.grey[500],
