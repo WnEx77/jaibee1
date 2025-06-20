@@ -484,15 +484,43 @@ class SAr extends S {
   }
 
   @override
-  String get getStarted => 'ابدأ';
-
-  @override
-  String get next => 'التالي';
-
-  @override
   String get noInternetConnection =>
       'لا يوجد اتصال بالإنترنت. يرجى التحقق من إعدادات الشبكة الخاصة بك.';
 
   @override
   String get retry => 'إعادة المحاولة';
+
+  @override
+  String get welcomeTitle => 'مرحبًا بك في جيبي';
+
+  @override
+  String get welcomeDescription =>
+      'تحكّم في أموالك باستخدام رؤى مدعومة بالذكاء الاصطناعي.';
+
+  @override
+  String get trackTitle => 'تتبع نفقاتك';
+
+  @override
+  String get trackDescription =>
+      'قم بتسجيل ومراجعة جميع معاملاتك اليومية بسهولة.';
+
+  @override
+  String get budgetTitle => 'حدد الميزانيات والأهداف';
+
+  @override
+  String get budgetDescription =>
+      'ابقَ على المسار الصحيح من خلال تحديد ميزانيات وأهداف ادخار واضحة.';
+
+  @override
+  String get adviceTitle => 'نصائح ذكية بالذكاء الاصطناعي';
+
+  @override
+  String get adviceDescription =>
+      'احصل على نصائح مالية مخصصة بناءً على عاداتك.';
+
+  @override
+  String get getStarted => 'ابدأ الآن';
+
+  @override
+  String get next => 'التالي';
 }

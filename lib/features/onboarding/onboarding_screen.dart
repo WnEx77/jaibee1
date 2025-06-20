@@ -5,6 +5,7 @@ import '../home/jaibee_home_screen.dart';
 import 'onboarding_page_model.dart';
 import '../../core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
+import '../../../main.dart'; // Make sure JaibeeTrackerApp is accessible
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -17,48 +18,85 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int _currentIndex = 0;
 
-  final List<OnboardingPageModel> _pages = [
-    // Welcome screen as the first page
-    OnboardingPageModel(
-      title: 'Welcome to Jaibee',
-      description: 'Take control of your finances with AI-powered insights.',
-      imageAsset: 'assets/images/logo.png', // Use your logo or intro image
-    ),
-    OnboardingPageModel(
-      title: 'Track Your Spending',
-      description: 'Easily record and review all your daily transactions.',
-      imageAsset: 'assets/onboarding/track.png',
-    ),
-    OnboardingPageModel(
-      title: 'Set Budgets and Goals',
-      description: 'Stay on track by defining clear budgets and savings goals.',
-      imageAsset: 'assets/onboarding/budget.png',
-    ),
-    OnboardingPageModel(
-      title: 'Smart AI Advice',
-      description: 'Get personalized financial tips based on your habits.',
-      imageAsset: 'assets/onboarding/advice.png',
-    ),
-  ];
+  late final List<OnboardingPageModel> _pages;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _pages = [
+      OnboardingPageModel(
+        title: S.of(context)!.welcomeTitle,
+        description: S.of(context)!.welcomeDescription,
+        imageAsset: 'assets/images/logo.png',
+      ),
+      OnboardingPageModel(
+        title: S.of(context)!.trackTitle,
+        description: S.of(context)!.trackDescription,
+        imageAsset: 'assets/onboarding/track.png',
+      ),
+      OnboardingPageModel(
+        title: S.of(context)!.budgetTitle,
+        description: S.of(context)!.budgetDescription,
+        imageAsset: 'assets/onboarding/budget.png',
+      ),
+      OnboardingPageModel(
+        title: S.of(context)!.adviceTitle,
+        description: S.of(context)!.adviceDescription,
+        imageAsset: 'assets/onboarding/advice.png',
+      ),
+    ];
+  }
 
   void _finishOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_completed', true);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const JaibeeHomeScreen()),
-    );
+    if (context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const JaibeeHomeScreen()),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final mintJade = theme.extension<MintJadeColors>()!;
+    final isFirstPage = _currentIndex == 0;
 
     return Scaffold(
       body: AppBackground(
         child: Column(
           children: [
+            if (isFirstPage)
+              Padding(
+                padding: const EdgeInsets.only(top: 48, left: 16, right: 16, bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        JaibeeTrackerApp.setLocale(context, const Locale('en'));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: mintJade.buttonColor,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('🇺🇸 English'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        JaibeeTrackerApp.setLocale(context, const Locale('ar'));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: mintJade.buttonColor,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('🇸🇦 العربية'),
+                    ),
+                  ],
+                ),
+              ),
             Expanded(
               child: PageView.builder(
                 controller: _controller,

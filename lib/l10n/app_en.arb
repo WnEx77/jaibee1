@@ -179,8 +179,16 @@
       }
     }
   },
-  "getStarted": "Get Started",
-  "next": "Next",
   "noInternetConnection": "No internet connection. Please check your network settings.",
-  "retry": "Retry"
+  "retry": "Retry",
+  "welcomeTitle": "Welcome to Jaibee",
+  "welcomeDescription": "Take control of your finances with AI-powered insights.",
+  "trackTitle": "Track Your Spending",
+  "trackDescription": "Easily record and review all your daily transactions.",
+  "budgetTitle": "Set Budgets and Goals",
+  "budgetDescription": "Stay on track by defining clear budgets and savings goals.",
+  "adviceTitle": "Smart AI Advice",
+  "adviceDescription": "Get personalized financial tips based on your habits.",
+  "getStarted": "Get Started",
+  "next": "Next"
 }

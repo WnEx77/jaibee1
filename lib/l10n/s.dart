@@ -1009,18 +1009,6 @@ abstract class S {
   /// **'You’ve allocated {allocated} of {total}.'**
   String budgetProgressInfo(double allocated, double total);
 
-  /// No description provided for @getStarted.
-  ///
-  /// In en, this message translates to:
-  /// **'Get Started'**
-  String get getStarted;
-
-  /// No description provided for @next.
-  ///
-  /// In en, this message translates to:
-  /// **'Next'**
-  String get next;
-
   /// No description provided for @noInternetConnection.
   ///
   /// In en, this message translates to:
@@ -1032,6 +1020,66 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Jaibee'**
+  String get welcomeTitle;
+
+  /// No description provided for @welcomeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Take control of your finances with AI-powered insights.'**
+  String get welcomeDescription;
+
+  /// No description provided for @trackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Your Spending'**
+  String get trackTitle;
+
+  /// No description provided for @trackDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Easily record and review all your daily transactions.'**
+  String get trackDescription;
+
+  /// No description provided for @budgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Budgets and Goals'**
+  String get budgetTitle;
+
+  /// No description provided for @budgetDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on track by defining clear budgets and savings goals.'**
+  String get budgetDescription;
+
+  /// No description provided for @adviceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart AI Advice'**
+  String get adviceTitle;
+
+  /// No description provided for @adviceDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Get personalized financial tips based on your habits.'**
+  String get adviceDescription;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

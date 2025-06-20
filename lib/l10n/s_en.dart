@@ -475,15 +475,43 @@ class SEn extends S {
   }
 
   @override
-  String get getStarted => 'Get Started';
-
-  @override
-  String get next => 'Next';
-
-  @override
   String get noInternetConnection =>
       'No internet connection. Please check your network settings.';
 
   @override
   String get retry => 'Retry';
+
+  @override
+  String get welcomeTitle => 'Welcome to Jaibee';
+
+  @override
+  String get welcomeDescription =>
+      'Take control of your finances with AI-powered insights.';
+
+  @override
+  String get trackTitle => 'Track Your Spending';
+
+  @override
+  String get trackDescription =>
+      'Easily record and review all your daily transactions.';
+
+  @override
+  String get budgetTitle => 'Set Budgets and Goals';
+
+  @override
+  String get budgetDescription =>
+      'Stay on track by defining clear budgets and savings goals.';
+
+  @override
+  String get adviceTitle => 'Smart AI Advice';
+
+  @override
+  String get adviceDescription =>
+      'Get personalized financial tips based on your habits.';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get next => 'Next';
 }
