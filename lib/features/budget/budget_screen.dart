@@ -186,6 +186,57 @@ class _BudgetScreenState extends State<BudgetScreen> {
     }
   }
 
+    IconData _getIconForCategory(String key) {
+    switch (key.toLowerCase()) {
+      case 'shopping':
+        return Icons.shopping_cart;
+      case 'health':
+        return Icons.local_hospital;
+      case 'transport':
+        return Icons.directions_car;
+      case 'food':
+        return Icons.restaurant;
+      case 'education':
+        return Icons.school;
+      case 'entertainment':
+        return Icons.movie;
+      case 'fitness':
+        return Icons.fitness_center;
+      case 'travel':
+        return Icons.flight;
+      case 'home':
+        return Icons.home;
+      case 'bills':
+        return Icons.credit_card;
+      case 'groceries':
+        return Icons.local_mall;
+      case 'beauty':
+        return Icons.spa;
+      case 'electronics':
+        return Icons.computer;
+      case 'books':
+        return Icons.book;
+      case 'petcare': // note lowercase
+        return Icons.pets;
+      case 'gifts':
+        return Icons.cake;
+      case 'savings':
+        return Icons.savings;
+      case 'events':
+        return Icons.event;
+      case 'income':
+        return Icons.monetization_on;
+      case 'coffee':
+        return Icons.coffee;
+      case 'transportation':
+        return Icons.directions_bus;
+      case 'other':
+        return Icons.category;
+      default:
+        return Icons.category;
+    }
+  }
+
   List<PieChartSectionData> _buildPieChartSections() {
     final total = _controllers.values
         .map((c) => double.tryParse(c.text) ?? 0)
@@ -255,179 +306,177 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _saveBudgets,
         backgroundColor: mintTheme.buttonColor,
         foregroundColor: Colors.white,
-        tooltip: S.of(context)!.save,
-        child: const Icon(Icons.save),
+        icon: const Icon(Icons.save_rounded),
+        label: Text(S.of(context)!.save),
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
       ),
       body: AppBackground(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           children: [
-            const SizedBox(height: 24),
             Text(
               S.of(context)!.monthlyBudgetLimit,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _monthlyLimitController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: S.of(context)!.enterMonthlyLimitHint,
-                filled: true,
-                fillColor: _isInvalidInput(_monthlyLimitController.text)
-                    ? Colors.red.withOpacity(0.05)
-                    : Colors.transparent,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: _isInvalidInput(_monthlyLimitController.text)
-                        ? Colors.redAccent
-                        : Colors.grey,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: _isInvalidInput(_monthlyLimitController.text)
-                        ? Colors.redAccent
-                        : Colors.grey,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: _isInvalidInput(_monthlyLimitController.text)
-                        ? Colors.red
-                        : Theme.of(context).primaryColor,
-                    width: 2.0,
-                  ),
-                ),
-                isDense: true,
+            const SizedBox(height: 12),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              onChanged: (_) => setState(() {}),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: TextField(
+                  controller: _monthlyLimitController,
+                  keyboardType: TextInputType.number,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  decoration: InputDecoration(
+                    labelText: S.of(context)!.enterMonthlyLimitHint,
+                    prefixIcon: const Icon(Icons.account_balance_wallet_rounded),
+                    filled: true,
+                    fillColor: _isInvalidInput(_monthlyLimitController.text)
+                        ? Colors.red.withOpacity(0.05)
+                        : Colors.grey.withOpacity(0.05),
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
             ),
-
             if (isMismatch) ...[
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: progressRatio.clamp(
-                  0.0,
-                  1.0,
-                ), // Prevent overflow in visual length
-                minHeight: 8,
-                backgroundColor: Colors.grey.shade300,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  progressRatio > 1.0
-                      ? Colors.red
-                      : (progressRatio < 1.0 ? Colors.orange : Colors.red),
+              const SizedBox(height: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: progressRatio.clamp(0.0, 1.0),
+                  minHeight: 10,
+                  backgroundColor: Colors.grey.shade200,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    progressRatio > 1.0
+                        ? Colors.red
+                        : (progressRatio < 1.0 ? Colors.orange : Colors.green),
+                  ),
                 ),
               ),
-
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               Text(
                 S
                     .of(context)!
                     .budgetProgressInfo(totalCategoryLimits, monthlyLimitValue),
                 style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: 13,
+                  color: progressRatio > 1.0
+                      ? Colors.red
+                      : (progressRatio < 1.0
+                          ? Colors.orange
+                          : mintTheme.buttonColor),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 16),
             ],
-
-            const SizedBox(height: 24),
-            const Divider(),
-
+            const SizedBox(height: 12),
+            Divider(
+              thickness: 1.2,
+              color: Colors.grey.shade300,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              S.of(context)!.categoryBudgets,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
             ...categories.map((category) {
-              return Column(
-                key: ValueKey(category.name),
-                children: [
-                  Row(
+              return Card(
+                elevation: 1,
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
                     children: [
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          localizeCategory(context, category.name),
-                          style: const TextStyle(fontSize: 16),
-                        ),
+                    Icon(
+                      _getIconForCategory(category.name),
+                      color: mintTheme.buttonColor,
+                      size: 36,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                      localizeCategory(context, category.name),
+                      style: Theme.of(context).textTheme.bodyLarge,
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        flex: 3,
-                        child: TextField(
-                          controller: _controllers[category.name],
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText: S.of(context)!.limitLabel,
-                            filled: true,
-                            fillColor:
-                                _isInvalidInput(
-                                  _controllers[category.name]?.text,
-                                )
-                                ? Colors.red.withOpacity(0.05)
-                                : Colors.transparent,
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color:
-                                    _isInvalidInput(
-                                      _controllers[category.name]?.text,
-                                    )
-                                    ? Colors.redAccent
-                                    : Colors.grey,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color:
-                                    _isInvalidInput(
-                                      _controllers[category.name]?.text,
-                                    )
-                                    ? Colors.redAccent
-                                    : Colors.grey,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color:
-                                    _isInvalidInput(
-                                      _controllers[category.name]?.text,
-                                    )
-                                    ? Colors.red
-                                    : Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            isDense: true,
-                          ),
-                          onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 3,
+                      child: TextField(
+                      controller: _controllers[category.name],
+                      keyboardType: TextInputType.number,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      decoration: InputDecoration(
+                        labelText: S.of(context)!.limitLabel,
+                        filled: true,
+                        fillColor: _isInvalidInput(
+                            _controllers[category.name]?.text,
+                          )
+                          ? Colors.red.withOpacity(0.05)
+                          : Colors.grey.withOpacity(0.05),
+                        border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
                         ),
+                        isDense: true,
                       ),
+                      onChanged: (_) => setState(() {}),
+                      ),
+                    ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                ],
+                ),
               );
             }).toList(),
-
             if (pieSections.isNotEmpty) ...[
+              const SizedBox(height: 24),
               Text(
                 S.of(context)!.budgetDistribution,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 200,
-                child: PieChart(
-                  PieChartData(
-                    sections: pieSections,
-                    centerSpaceRadius: 32,
-                    sectionsSpace: 2,
-                    borderData: FlBorderData(show: false),
+              const SizedBox(height: 16),
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SizedBox(
+                    height: 220,
+                    child: PieChart(
+                      PieChartData(
+                        sections: pieSections,
+                        centerSpaceRadius: 40,
+                        sectionsSpace: 3,
+                        borderData: FlBorderData(show: false),
+                      ),
+                    ),
                   ),
                 ),
               ),
