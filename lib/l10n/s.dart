@@ -1098,6 +1098,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Please enter a transaction description (optional).'**
   String get enterDescription;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contactUs;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

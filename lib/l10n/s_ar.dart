@@ -532,4 +532,7 @@ class SAr extends S {
 
   @override
   String get enterDescription => 'يرجى إدخال وصف المعاملة (اختياري).';
+
+  @override
+  String get contactUs => 'تواصل معنا';
 }

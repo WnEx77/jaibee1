@@ -524,4 +524,7 @@ class SEn extends S {
   @override
   String get enterDescription =>
       'Please enter a transaction description (optional).';
+
+  @override
+  String get contactUs => 'Contact Us';
 }

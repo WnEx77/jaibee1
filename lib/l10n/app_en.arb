@@ -193,5 +193,6 @@
   "next": "Next",
   "couldNotOpenLink": "Could not open the link",
   "buyMeACoffee": "Buy me a coffee",
-  "enterDescription": "Please enter a transaction description (optional)."
+  "enterDescription": "Please enter a transaction description (optional).",
+  "contactUs": "Contact Us"
 }

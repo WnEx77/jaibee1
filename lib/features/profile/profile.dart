@@ -273,6 +273,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                 ),
               ),
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.email_outlined,
+                    color: Colors.blueGrey,
+                  ),
+                  title: Text(S.of(context)!.contactUs),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () async {
+                    final Uri emailLaunchUri = Uri(
+                      scheme: 'mailto',
+                      path: 'amoharib77@gmail.com',
+                      query: 'subject=Contact%20Support',
+                    );
+                    if (await canLaunchUrl(emailLaunchUri)) {
+                      await launchUrl(emailLaunchUri);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Could not launch email client'),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
 
               const SizedBox(height: 20),
 
