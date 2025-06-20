@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:jaibee1/data/models/goal_model.dart';
 import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 import 'package:jaibee1/l10n/s.dart';
+import 'package:flutter/cupertino.dart';
+
 
 class AddGoalScreen extends StatefulWidget {
   final Function(Goal) onAdd;
@@ -22,17 +24,43 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
 
   void _pickDate() async {
     final now = DateTime.now();
-    final picked = await showDatePicker(
+    DateTime initialDate = _targetDate ?? now;
+    DateTime pickedDate = initialDate;
+
+    await showCupertinoModalPopup(
       context: context,
-      initialDate: _targetDate ?? now,
-      firstDate: now,
-      lastDate: DateTime(now.year + 5),
+      builder: (context) => Container(
+        height: 300,
+        color: Colors.white,
+        child: Column(
+          children: [
+            Container(
+              alignment: Alignment.centerRight,
+              child: CupertinoButton(
+                child: Text('Done', style: TextStyle(color: Colors.teal)),
+                onPressed: () {
+                  setState(() {
+                    _targetDate = pickedDate;
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+            Expanded(
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                initialDateTime: initialDate,
+                minimumDate: now,
+                maximumDate: DateTime(now.year + 5),
+                onDateTimeChanged: (date) {
+                  pickedDate = date;
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
-    if (picked != null) {
-      setState(() {
-        _targetDate = picked;
-      });
-    }
   }
 
   void _submit() {
@@ -42,7 +70,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
         targetAmount: double.parse(_targetAmountController.text.trim()),
         savedAmount: double.parse(_savedAmountController.text.trim()),
         targetDate: _targetDate!,
-        milestones: [], // empty list since milestones removed
+        milestones: [],
       );
       widget.onAdd(goal);
       Navigator.pop(context);
@@ -52,6 +80,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -59,74 +88,126 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
         showBackButton: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: localizer.goalName),
-                validator: (value) =>
-                    value == null || value.trim().isEmpty ? localizer.required : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _targetAmountController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: localizer.targetAmount),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return localizer.required;
-                  }
-                  final parsed = double.tryParse(value.trim());
-                  if (parsed == null || parsed <= 0) {
-                    return localizer.enterValidAmount;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _savedAmountController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: localizer.savedAmount),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return localizer.required;
-                  }
-                  final parsed = double.tryParse(value.trim());
-                  if (parsed == null || parsed < 0) {
-                    return localizer.enterValidAmount;
-                  }
-                  final target = double.tryParse(_targetAmountController.text.trim()) ?? 0;
-                  if (parsed > target) {
-                    return localizer.savedMoreThanTarget;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              Row(
+        padding: const EdgeInsets.all(20),
+        child: Card(
+          elevation: 6,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          child: Padding(
+            padding: const EdgeInsets.all(22),
+            child: Form(
+              key: _formKey,
+              child: Column(
                 children: [
-                  Text('${localizer.targetDate}:'),
-                  const SizedBox(width: 12),
-                  TextButton(
-                    onPressed: _pickDate,
-                    child: Text(
-                      _targetDate != null
-                          ? DateFormat.yMMMd().format(_targetDate!)
-                          : localizer.pickDate,
+                  Icon(Icons.flag, color: Colors.teal, size: 48),
+                  const SizedBox(height: 16),
+                  Text(
+                    localizer.addNewGoal,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: Colors.teal[800],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: localizer.goalName,
+                      prefixIcon: Icon(Icons.title),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    validator: (value) =>
+                        value == null || value.trim().isEmpty ? localizer.required : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _targetAmountController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: localizer.targetAmount,
+                      prefixIcon: Icon(Icons.attach_money),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return localizer.required;
+                      }
+                      final parsed = double.tryParse(value.trim());
+                      if (parsed == null || parsed <= 0) {
+                        return localizer.enterValidAmount;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _savedAmountController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: localizer.savedAmount,
+                      prefixIcon: Icon(Icons.savings),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return localizer.required;
+                      }
+                      final parsed = double.tryParse(value.trim());
+                      if (parsed == null || parsed < 0) {
+                        return localizer.enterValidAmount;
+                      }
+                      final target = double.tryParse(_targetAmountController.text.trim()) ?? 0;
+                      if (parsed > target) {
+                        return localizer.savedMoreThanTarget;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: _pickDate,
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          labelText: localizer.targetDate,
+                          prefixIcon: Icon(Icons.calendar_today),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          suffixIcon: Icon(Icons.edit_calendar),
+                        ),
+                        controller: TextEditingController(
+                          text: _targetDate != null
+                              ? DateFormat.yMMMd().format(_targetDate!)
+                              : '',
+                        ),
+                        validator: (_) =>
+                            _targetDate == null ? localizer.required : null,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      icon: Icon(Icons.add_circle_outline),
+                      label: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Text(
+                          localizer.addGoal,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 3,
+                      ),
+                      onPressed: _submit,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submit,
-                child: Text(localizer.addGoal),
-              ),
-            ],
+            ),
           ),
         ),
       ),
