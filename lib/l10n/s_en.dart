@@ -543,4 +543,7 @@ class SEn extends S {
 
   @override
   String get ofLimit => 'of Limit';
+
+  @override
+  String get clickForMoreInfo => 'Click for more info';
 }

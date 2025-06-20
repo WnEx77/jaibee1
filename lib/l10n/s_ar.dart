@@ -551,4 +551,7 @@ class SAr extends S {
 
   @override
   String get ofLimit => 'من الحد';
+
+  @override
+  String get clickForMoreInfo => 'انقر لمزيد من المعلومات';
 }

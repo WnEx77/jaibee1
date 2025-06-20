@@ -300,6 +300,15 @@ class _TransactionScreenState extends State<TransactionScreen> {
                           // ),
                           ],
                         ),
+                        const SizedBox(height: 8),
+                        Text(
+                          localizer.clickForMoreInfo,
+                          style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                          ),
+                        ),
                         ],
                       ),
                       ),

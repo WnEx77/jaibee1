@@ -199,5 +199,6 @@
   "ofExpenses": "of Expenses",
   "categoryProgress": "Category Progress",
   "noLimitSet": "No limit set for this category.",
-  "ofLimit": "of Limit"
+  "ofLimit": "of Limit",
+  "clickForMoreInfo": "Click for more info"
 }

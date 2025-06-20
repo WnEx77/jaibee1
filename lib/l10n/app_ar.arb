@@ -197,5 +197,6 @@
   "ofExpenses": "من المصروفات",
   "categoryProgress": "تقدم الفئة",
   "noLimitSet": "لا يوجد حد محدد لهذه الفئة.",
-  "ofLimit": "من الحد"
+  "ofLimit": "من الحد",
+  "clickForMoreInfo": "انقر لمزيد من المعلومات"
 }

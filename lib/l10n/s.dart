@@ -1134,6 +1134,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'of Limit'**
   String get ofLimit;
+
+  /// No description provided for @clickForMoreInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Click for more info'**
+  String get clickForMoreInfo;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
