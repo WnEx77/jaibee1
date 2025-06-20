@@ -1092,6 +1092,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Buy me a coffee'**
   String get buyMeACoffee;
+
+  /// No description provided for @enterDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a transaction description (optional).'**
+  String get enterDescription;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

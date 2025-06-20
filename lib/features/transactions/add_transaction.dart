@@ -9,7 +9,6 @@ import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 // import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
 import 'package:flutter/cupertino.dart';
 
-
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
 
@@ -20,8 +19,8 @@ class AddTransactionScreen extends StatefulWidget {
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();// 👈 NEW
-  
+  final TextEditingController _descriptionController =
+      TextEditingController(); // 👈 NEW
 
   String _category = '';
   bool _isIncome = false;
@@ -97,19 +96,42 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Widget _buildAmountField(S localizer) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(
+          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+          width: 1.2,
+        ),
+      ),
       child: TextFormField(
         controller: _amountController,
         decoration: InputDecoration(
           labelText: localizer.amount,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.white,
-          prefixIcon: const Icon(Icons.attach_money, color: Colors.blueGrey),
+          labelStyle: TextStyle(
+            color: isDark ? Colors.white70 : Colors.black87,
+            fontWeight: FontWeight.w500,
+          ),
+          border: InputBorder.none,
+          prefixIcon: Icon(Icons.attach_money, color: isDark ? Colors.tealAccent : Colors.teal),
+          hintText: localizer.enterAmount,
+          hintStyle: TextStyle(
+            color: isDark ? Colors.white38 : Colors.grey[500],
+          ),
         ),
+        style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -122,45 +144,90 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Widget _buildCategoryDropdown(S localizer) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final categories = _isIncome
-        ? [Category(name: 'income', icon: 'attach_money')] // FIXED
+        ? [Category(name: 'income', icon: 'attach_money')]
         : _customCategoryObjects;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       padding: const EdgeInsets.all(8),
-      child: DropdownButtonFormField<String>(
-        value: _category.isNotEmpty ? _category : null,
-        decoration: InputDecoration(
-          labelText: localizer.category,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.white,
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.10),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+        border: Border.all(
+          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+          width: 1.2,
         ),
-        onChanged: _isIncome
-            ? null
-            : (String? newValue) {
-                setState(() {
-                  _category = newValue!;
-                });
-              },
-        items: categories.map((categoryObj) {
-          return DropdownMenuItem<String>(
-            value: categoryObj.name,
-            child: Row(
-              children: [
-                Icon(
-                  _getCategoryIcon(categoryObj),
-                  size: 24,
-                  color: Colors.blueGrey,
-                ),
-                const SizedBox(width: 8),
-                Text(_getLocalizedCategory(categoryObj.name, localizer)),
-              ],
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: isDark ? Colors.grey[900] : Colors.white,
+          dialogBackgroundColor: isDark ? Colors.grey[900] : Colors.white,
+          cardColor: isDark ? Colors.grey[900] : Colors.white,
+          splashColor: Colors.teal.withOpacity(0.08),
+          highlightColor: Colors.teal.withOpacity(0.04),
+          popupMenuTheme: PopupMenuThemeData(
+            color: isDark ? Colors.grey[900] : Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
             ),
-          );
-        }).toList(),
+            elevation: 8,
+          ),
+        ),
+        child: DropdownButtonFormField<String>(
+          value: _category.isNotEmpty ? _category : null,
+          decoration: InputDecoration(
+            labelText: localizer.category,
+            labelStyle: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          ),
+          borderRadius: BorderRadius.circular(18),
+          dropdownColor: isDark ? Colors.grey[900] : Colors.white,
+          style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
+          icon: Icon(Icons.keyboard_arrow_down_rounded, color: isDark ? Colors.tealAccent : Colors.teal, size: 28),
+          onChanged: _isIncome
+              ? null
+              : (String? newValue) {
+                  setState(() {
+                    _category = newValue!;
+                  });
+                },
+          items: categories.map((categoryObj) {
+            return DropdownMenuItem<String>(
+              value: categoryObj.name,
+              child: Row(
+                children: [
+                  Icon(
+                    _getCategoryIcon(categoryObj),
+                    size: 22,
+                    color: isDark ? Colors.tealAccent : Colors.teal,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    _getLocalizedCategory(categoryObj.name, localizer),
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -233,19 +300,45 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Widget _buildDescriptionField(S localizer) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[900] : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(
+          color: isDark ? Colors.grey[800]! : Colors.grey[200]!,
+          width: 1.2,
+        ),
+      ),
       child: TextFormField(
         controller: _descriptionController,
         maxLines: 2,
         decoration: InputDecoration(
           labelText: localizer.description,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.white,
-          prefixIcon: const Icon(Icons.notes, color: Colors.blueGrey),
+          labelStyle: TextStyle(
+            color: isDark ? Colors.white70 : Colors.black87,
+            fontWeight: FontWeight.w500,
+          ),
+          border: InputBorder.none,
+          prefixIcon: Icon(Icons.notes_rounded, color: isDark ? Colors.tealAccent : Colors.teal),
+          hintText: localizer.enterDescription,
+          hintStyle: TextStyle(
+            color: isDark ? Colors.white38 : Colors.grey[500],
+          ),
+        ),
+        style: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+          fontSize: 16,
         ),
       ),
     );
@@ -276,7 +369,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
       setState(() {
         _amountController.clear();
-         _descriptionController.clear();
+        _descriptionController.clear();
         _isIncome = false;
         _selectedDate = DateTime.now();
         _category = _customCategoryObjects.isNotEmpty
@@ -290,46 +383,55 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-Future<void> _selectDate(BuildContext context) async {
-  DateTime tempSelectedDate = _selectedDate;
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime tempSelectedDate = _selectedDate;
 
-  await showCupertinoModalPopup<void>(
-    context: context,
-    builder: (_) => Container(
-      height: 400,
-      padding: const EdgeInsets.only(top: 16),
-      color: Colors.white,
-      child: Column(
-        children: [
-          Expanded(
-            child: CupertinoDatePicker(
-              initialDateTime: tempSelectedDate,
-              minimumDate: DateTime(2000),
-              maximumDate: DateTime.now(),
-              mode: CupertinoDatePickerMode.date,
-              onDateTimeChanged: (DateTime newDate) {
-                tempSelectedDate = newDate;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (_) => Container(
+        height: 400,
+        padding: const EdgeInsets.only(top: 16),
+        color: isDark ? Colors.grey[900] : Colors.white,
+        child: Column(
+          children: [
+            Expanded(
+              child: CupertinoTheme(
+                data: CupertinoThemeData(
+                  brightness: isDark ? Brightness.dark : Brightness.light,
+                  textTheme: CupertinoTextThemeData(
+                    dateTimePickerTextStyle: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 22,
+                    ),
+                  ),
+                ),
+                child: CupertinoDatePicker(
+                  initialDateTime: tempSelectedDate,
+                  minimumDate: DateTime(2000),
+                  maximumDate: DateTime.now(),
+                  mode: CupertinoDatePickerMode.date,
+                  onDateTimeChanged: (DateTime newDate) {
+                    tempSelectedDate = newDate;
+                  },
+                ),
+              ),
+            ),
+            CupertinoButton(
+              child: const Text('Done'),
+              onPressed: () {
+                setState(() {
+                  _selectedDate = tempSelectedDate;
+                });
+                Navigator.of(context).pop();
               },
             ),
-          ),
-          CupertinoButton(
-            child: const Text('Done'),
-            onPressed: () {
-              setState(() {
-                _selectedDate = tempSelectedDate;
-              });
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
-
-
-
-
+    );
+  }
 
   String _getLocalizedCategory(String name, S localizer) {
     switch (name.toLowerCase()) {
@@ -370,6 +472,8 @@ Future<void> _selectDate(BuildContext context) async {
         return localizer.events;
       case 'fitness':
         return localizer.fitness;
+      case 'other':
+        return localizer.other;
       default:
         return name;
     }

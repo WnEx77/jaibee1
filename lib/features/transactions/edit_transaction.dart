@@ -62,23 +62,36 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 Future<void> _selectDate(BuildContext context) async {
   DateTime tempSelectedDate = _selectedDate;
 
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+
   await showCupertinoModalPopup<void>(
     context: context,
     builder: (_) => Container(
       height: 400,
       padding: const EdgeInsets.only(top: 16),
-      color: Colors.white,
+      color: isDark ? Colors.grey[900] : Colors.white,
       child: Column(
         children: [
           Expanded(
-            child: CupertinoDatePicker(
-              initialDateTime: tempSelectedDate,
-              minimumDate: DateTime(2000),
-              maximumDate: DateTime.now(),
-              mode: CupertinoDatePickerMode.date,
-              onDateTimeChanged: (DateTime newDate) {
-                tempSelectedDate = newDate;
-              },
+            child: CupertinoTheme(
+              data: CupertinoThemeData(
+                brightness: isDark ? Brightness.dark : Brightness.light,
+                textTheme: CupertinoTextThemeData(
+                  dateTimePickerTextStyle: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: 22,
+                  ),
+                ),
+              ),
+              child: CupertinoDatePicker(
+                initialDateTime: tempSelectedDate,
+                minimumDate: DateTime(2000),
+                maximumDate: DateTime.now(),
+                mode: CupertinoDatePickerMode.date,
+                onDateTimeChanged: (DateTime newDate) {
+                  tempSelectedDate = newDate;
+                },
+              ),
             ),
           ),
           CupertinoButton(

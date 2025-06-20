@@ -520,4 +520,8 @@ class SEn extends S {
 
   @override
   String get buyMeACoffee => 'Buy me a coffee';
+
+  @override
+  String get enterDescription =>
+      'Please enter a transaction description (optional).';
 }

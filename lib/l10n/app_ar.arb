@@ -190,5 +190,6 @@
   "getStarted": "ابدأ الآن",
   "next": "التالي",
   "couldNotOpenLink": "تعذر فتح الرابط",
-  "buyMeACoffee": "لدعم مطور التطبيق"
+  "buyMeACoffee": "لدعم مطور التطبيق",
+  "enterDescription": "يرجى إدخال وصف المعاملة (اختياري)."
 }

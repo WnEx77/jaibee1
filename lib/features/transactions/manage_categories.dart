@@ -110,26 +110,23 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     }
   }
 
-  String _getLocalizedCategory(String key, S localizer) {
-    switch (key.toLowerCase()) {
+  String _getLocalizedCategory(String name, S localizer) {
+    switch (name.toLowerCase()) {
+      case 'food':
+        return localizer.food;
+      case 'transport':
+      case 'transportation':
+        return localizer.transport;
+      case 'entertainment':
+        return localizer.entertainment;
+      case 'coffee':
+        return localizer.coffee;
+      case 'income':
+        return localizer.income;
       case 'shopping':
         return localizer.shopping;
       case 'health':
         return localizer.health;
-      case 'transport':
-        return localizer.transport;
-      case 'food':
-        return localizer.food;
-      case 'education':
-        return localizer.education;
-      case 'entertainment':
-        return localizer.entertainment;
-      case 'fitness':
-        return localizer.fitness;
-      case 'travel':
-        return localizer.travel;
-      case 'home':
-        return localizer.home;
       case 'bills':
         return localizer.bills;
       case 'groceries':
@@ -140,16 +137,22 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
         return localizer.electronics;
       case 'books':
         return localizer.books;
-      case 'petcare':
+      case 'pet care':
         return localizer.petCare;
       case 'gifts':
         return localizer.gifts;
+      case 'home':
+        return localizer.home;
       case 'savings':
         return localizer.savings;
       case 'events':
         return localizer.events;
+      case 'fitness':
+        return localizer.fitness;
+      case 'other':
+        return localizer.other;
       default:
-        return key;
+        return name;
     }
   }
 
@@ -182,7 +185,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
 
     final categories = _categoriesBox.values
-        .where((c) => c.name != 'Other')
+        .where((c) => c.name != 'other')
         .toList();
     final userCategories = defaultUserCategories;
 

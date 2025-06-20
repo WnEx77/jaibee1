@@ -529,4 +529,7 @@ class SAr extends S {
 
   @override
   String get buyMeACoffee => 'لدعم مطور التطبيق';
+
+  @override
+  String get enterDescription => 'يرجى إدخال وصف المعاملة (اختياري).';
 }

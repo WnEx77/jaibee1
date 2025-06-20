@@ -192,5 +192,6 @@
   "getStarted": "Get Started",
   "next": "Next",
   "couldNotOpenLink": "Could not open the link",
-  "buyMeACoffee": "Buy me a coffee"
+  "buyMeACoffee": "Buy me a coffee",
+  "enterDescription": "Please enter a transaction description (optional)."
 }

@@ -26,6 +26,9 @@ Future<void> main() async {
   Hive.registerAdapter(BudgetAdapter());
   Hive.registerAdapter(GoalAdapter());
 
+  // Place this before opening the 'categories' box, if you want to delete it before use.
+  await Hive.deleteBoxFromDisk('categories');
+
   await Hive.openBox('transactions');
   await Hive.openBox<Category>('categories');
   await Hive.openBox<double>('settings');
@@ -34,6 +37,7 @@ Future<void> main() async {
   await Hive.openBox<Category>('userCategories');
 
   await prefs.clear(); // ← to test the onboarding screen ONLY
+
   // Remove this line in production
 
   await _addDefaultCategoriesIfEmpty();
