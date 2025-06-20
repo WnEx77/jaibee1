@@ -76,14 +76,14 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
             onBackPressed: () => _onNavItemTapped(0),
             actions: [
               IconButton(
-                icon: const Icon(Icons.category),
-                tooltip: S.of(context)!.manageCategories,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    createAnimatedRoute(const ManageCategoriesScreen()),
-                  );
-                },
+              icon: const Icon(Icons.tune), // Changed from Icons.category to Icons.tune for a better "manage" feel
+              tooltip: S.of(context)!.manageCategories,
+              onPressed: () {
+                Navigator.push(
+                context,
+                createAnimatedRoute(const ManageCategoriesScreen()),
+                );
+              },
               ),
             ],
           ),
