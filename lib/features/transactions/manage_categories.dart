@@ -138,6 +138,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
       case 'books':
         return localizer.books;
       case 'pet care':
+      case 'petcare':
         return localizer.petCare;
       case 'gifts':
         return localizer.gifts;
@@ -151,6 +152,10 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
         return localizer.fitness;
       case 'other':
         return localizer.other;
+      case 'travel':
+        return localizer.travel;
+      case 'education':
+        return localizer.education;
       default:
         return name;
     }
