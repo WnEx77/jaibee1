@@ -112,7 +112,7 @@ abstract class S {
   /// No description provided for @transactions.
   ///
   /// In en, this message translates to:
-  /// **'Transactions'**
+  /// **'Activity'**
   String get transactions;
 
   /// No description provided for @reports.

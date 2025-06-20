@@ -76,14 +76,16 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
             onBackPressed: () => _onNavItemTapped(0),
             actions: [
               IconButton(
-              icon: const Icon(Icons.tune), // Changed from Icons.category to Icons.tune for a better "manage" feel
-              tooltip: S.of(context)!.manageCategories,
-              onPressed: () {
-                Navigator.push(
-                context,
-                createAnimatedRoute(const ManageCategoriesScreen()),
-                );
-              },
+                icon: const Icon(
+                  Icons.tune,
+                ), // Changed from Icons.category to Icons.tune for a better "manage" feel
+                tooltip: S.of(context)!.manageCategories,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    createAnimatedRoute(const ManageCategoriesScreen()),
+                  );
+                },
               ),
             ],
           ),
@@ -112,30 +114,61 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                     horizontal: 12,
                     vertical: 4,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      _buildNavItem(
-                        icon: Icons.list,
-                        label: S.of(context)!.transactions,
-                        index: 0,
-                        isSelected: _currentPage == 0,
-                        selectedColor: mintTheme.selectedIconColor,
-                        unselectedColor: mintTheme.unselectedIconColor,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                            child: _buildNavItem(
+                              icon: Icons.list,
+                              label: S.of(context)!.transactions,
+                              index: 0,
+                              isSelected: _currentPage == 0,
+                              selectedColor: mintTheme.selectedIconColor,
+                              unselectedColor: mintTheme.unselectedIconColor,
+                            ),
+                          ),
+                          Expanded(
+                            child: _buildNavItem(
+                              icon: Icons.account_balance_wallet,
+                              label: S.of(context)!.budgets,
+                              index: 1,
+                              isSelected: _currentPage == 1,
+                              selectedColor: mintTheme.selectedIconColor,
+                              unselectedColor: mintTheme.unselectedIconColor,
+                            ),
+                          ),
+                          const Spacer(), // Middle spacer for add button
+                          Expanded(
+                            child: _buildNavItem(
+                              icon: Icons.bar_chart,
+                              label: S.of(context)!.reports,
+                              index: 3,
+                              isSelected: _currentPage == 3,
+                              selectedColor: mintTheme.selectedIconColor,
+                              unselectedColor: mintTheme.unselectedIconColor,
+                            ),
+                          ),
+                          Expanded(
+                            child: _buildNavItem(
+                              icon: Icons.person,
+                              label: S.of(context)!.profile,
+                              index: 4,
+                              isSelected: _currentPage == 4,
+                              selectedColor: mintTheme.selectedIconColor,
+                              unselectedColor: mintTheme.unselectedIconColor,
+                            ),
+                          ),
+                        ],
                       ),
-                      _buildNavItem(
-                        icon: Icons.account_balance_wallet,
-                        label: S.of(context)!.budgets,
-                        index: 1,
-                        isSelected: _currentPage == 1,
-                        selectedColor: mintTheme.selectedIconColor,
-                        unselectedColor: mintTheme.unselectedIconColor,
-                      ),
+                      // Center Floating Button
                       GestureDetector(
                         onTap: () => _onNavItemTapped(2),
                         child: Container(
-                          height: 48,
-                          width: 48,
+                          height: 56,
+                          width: 56,
                           decoration: BoxDecoration(
                             color: mintTheme.appBarColor,
                             shape: BoxShape.circle,
@@ -153,22 +186,6 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                             size: 28,
                           ),
                         ),
-                      ),
-                      _buildNavItem(
-                        icon: Icons.bar_chart,
-                        label: S.of(context)!.reports,
-                        index: 3,
-                        isSelected: _currentPage == 3,
-                        selectedColor: mintTheme.selectedIconColor,
-                        unselectedColor: mintTheme.unselectedIconColor,
-                      ),
-                      _buildNavItem(
-                        icon: Icons.person,
-                        label: S.of(context)!.profile,
-                        index: 4,
-                        isSelected: _currentPage == 4,
-                        selectedColor: mintTheme.selectedIconColor,
-                        unselectedColor: mintTheme.unselectedIconColor,
                       ),
                     ],
                   ),

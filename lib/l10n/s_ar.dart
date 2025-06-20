@@ -207,7 +207,7 @@ class SAr extends S {
   String get exportAsPdf => 'تصدير كملف PDF';
 
   @override
-  String get profile => 'الملف الشخصي';
+  String get profile => 'حسابي';
 
   @override
   String get profileTitle => 'الملف الشخصي';

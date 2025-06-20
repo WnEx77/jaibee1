@@ -2,7 +2,7 @@
   "@@locale": "en",
   "appTitle": "Jaibee",
   "changeLanguage": "Change Language",
-  "transactions": "Transactions",
+  "transactions": "Activity",
   "reports": "Reports",
   "amount": "Amount",
   "pleaseEnterAmount": "Please enter an amount",

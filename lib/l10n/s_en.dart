@@ -15,7 +15,7 @@ class SEn extends S {
   String get changeLanguage => 'Change Language';
 
   @override
-  String get transactions => 'Transactions';
+  String get transactions => 'Activity';
 
   @override
   String get reports => 'Reports';
