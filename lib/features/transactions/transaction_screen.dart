@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart'; // Import your background widget
 import 'package:jaibee1/data/models/category.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee1/features/transactions/category_progress_screen.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});
@@ -143,370 +144,382 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
                 return Column(
                   children: [
-                    // 🔼 Monthly summary card remains unchanged
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: Card(
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                  // 🔼 Monthly summary card with navigation
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                    ),
+                    child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CategoryProgressScreen(
+                        selectedMonth: _selectedMonth,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 16,
-                          ),
-                          child: Column(
+                      ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 16,
+                      ),
+                      child: Column(
+                        children: [
+                        if (_monthlyLimit != null) ...[
+                          Row(
+                          mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                            localizer.monthlyLimit,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            ),
+                            Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              if (_monthlyLimit != null) ...[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      localizer.monthlyLimit,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          totalExpenses.toStringAsFixed(2),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: usagePercent >= 1
-                                                ? Colors.red
-                                                : Colors.green,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Image.asset(
-                                          'assets/images/Saudi_Riyal_Symbol.png',
-                                          width: 16,
-                                          height: 16,
-                                          color: usagePercent >= 1
-                                              ? Colors.red
-                                              : Colors.green,
-                                        ),
-                                        Text(
-                                          ' / ',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: usagePercent >= 1
-                                                ? Colors.red
-                                                : Colors.green,
-                                          ),
-                                        ),
-                                        Text(
-                                          _monthlyLimit!.toStringAsFixed(2),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: usagePercent >= 1
-                                                ? Colors.red
-                                                : Colors.green,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Image.asset(
-                                          'assets/images/Saudi_Riyal_Symbol.png',
-                                          width: 16,
-                                          height: 16,
-                                          color: usagePercent >= 1
-                                              ? Colors.red
-                                              : Colors.green,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: LinearProgressIndicator(
-                                    value: usagePercent,
-                                    minHeight: 10,
-                                    backgroundColor: Colors.grey.shade300,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      usagePercent < 0.6
-                                          ? Colors.green
-                                          : usagePercent < 0.9
-                                          ? Colors.orange
-                                          : Colors.red,
-                                    ),
-                                  ),
-                                ),
-                                if (_selectedMonth.month ==
-                                        DateTime.now().month &&
-                                    _selectedMonth.year == DateTime.now().year)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '${DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day - DateTime.now().day} ${localizer.daysRemaining}',
-                                        style: TextStyle(
-                                          color: Colors.grey.shade600,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-
-                                const SizedBox(height: 12),
-                              ],
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  _summaryItem(
-                                    title: localizer.totalIncome,
-                                    amount: totalIncome,
-                                    color: Colors.green,
-                                  ),
-                                  _summaryItem(
-                                    title: localizer.totalExpenses,
-                                    amount: totalExpenses,
-                                    color: Colors.red,
-                                  ),
-                                  _summaryItem(
-                                    title: localizer.balance,
-                                    amount: balance,
-                                    color: balance >= 0
-                                        ? Colors.green
-                                        : Colors.red,
-                                  ),
-                                  // _summaryItem(
-                                  //   title: localizer
-                                  //       .totalSavings, // Add to localization
-                                  //   amount: totalSavings,
-                                  //   color: Colors.blue,
-                                  // ),
-                                ],
+                              Text(
+                              totalExpenses.toStringAsFixed(2),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: usagePercent >= 1
+                                  ? Colors.red
+                                  : Colors.green,
+                              ),
+                              ),
+                              const SizedBox(width: 4),
+                              Image.asset(
+                              'assets/images/Saudi_Riyal_Symbol.png',
+                              width: 16,
+                              height: 16,
+                              color: usagePercent >= 1
+                                ? Colors.red
+                                : Colors.green,
+                              ),
+                              Text(
+                              ' / ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: usagePercent >= 1
+                                  ? Colors.red
+                                  : Colors.green,
+                              ),
+                              ),
+                              Text(
+                              _monthlyLimit!.toStringAsFixed(2),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: usagePercent >= 1
+                                  ? Colors.red
+                                  : Colors.green,
+                              ),
+                              ),
+                              const SizedBox(width: 4),
+                              Image.asset(
+                              'assets/images/Saudi_Riyal_Symbol.png',
+                              width: 16,
+                              height: 16,
+                              color: usagePercent >= 1
+                                ? Colors.red
+                                : Colors.green,
                               ),
                             ],
+                            ),
+                          ],
                           ),
-                        ),
-                      ),
-                    ),
-
-                    // 🔼 Month navigation remains unchanged
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back_ios),
-                            onPressed: _previousMonth,
-                          ),
-                          Text(
-                            DateFormat.yMMM().format(_selectedMonth),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                          const SizedBox(height: 6),
+                          ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: LinearProgressIndicator(
+                            value: usagePercent,
+                            minHeight: 10,
+                            backgroundColor: Colors.grey.shade300,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                            usagePercent < 0.6
+                              ? Colors.green
+                              : usagePercent < 0.9
+                                ? Colors.orange
+                                : Colors.red,
                             ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.arrow_forward_ios),
-                            onPressed: _nextMonth,
                           ),
+                          if (_selectedMonth.month ==
+                              DateTime.now().month &&
+                            _selectedMonth.year ==
+                              DateTime.now().year)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '${DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day - DateTime.now().day} ${localizer.daysRemaining}',
+                              style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        Row(
+                          mainAxisAlignment:
+                            MainAxisAlignment.spaceAround,
+                          children: [
+                          _summaryItem(
+                            title: localizer.totalIncome,
+                            amount: totalIncome,
+                            color: Colors.green,
+                          ),
+                          _summaryItem(
+                            title: localizer.totalExpenses,
+                            amount: totalExpenses,
+                            color: Colors.red,
+                          ),
+                          _summaryItem(
+                            title: localizer.balance,
+                            amount: balance,
+                            color: balance >= 0
+                              ? Colors.green
+                              : Colors.red,
+                          ),
+                          // _summaryItem(
+                          //   title: localizer
+                          //       .totalSavings, // Add to localization
+                          //   amount: totalSavings,
+                          //   color: Colors.blue,
+                          // ),
+                          ],
+                        ),
                         ],
                       ),
+                      ),
                     ),
+                    ),
+                  ),
 
-                    // 🔼 Transaction list
-                    Expanded(
-                      child: filteredTransactions.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/Saudi_Riyal_Symbol.png',
-                                    width: 80,
-                                    height: 80,
-                                    color: Colors
-                                        .grey
-                                        .shade400, // optional: to tint the image, remove if not needed
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(localizer.noTransactions),
-                                ],
-                              ),
-                            )
-                          : ListView.builder(
-                              padding: const EdgeInsets.all(16),
-                              itemCount: filteredTransactions.length,
-                              itemBuilder: (context, index) {
-                                final transaction = filteredTransactions[index];
-                                final isIncome = transaction.isIncome;
-                                final formattedDate = DateFormat.yMMMd().format(
-                                  transaction.date,
-                                );
+                  // 🔼 Month navigation remains unchanged
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                    ),
+                    child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                      icon: const Icon(Icons.arrow_back_ios),
+                      onPressed: _previousMonth,
+                      ),
+                      Text(
+                      DateFormat.yMMM().format(_selectedMonth),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      ),
+                      IconButton(
+                      icon: const Icon(Icons.arrow_forward_ios),
+                      onPressed: _nextMonth,
+                      ),
+                    ],
+                    ),
+                  ),
 
-                                return Dismissible(
-                                  key: Key(transaction.key.toString()),
-                                  direction: DismissDirection.endToStart,
-                                  background: Container(
-                                    color: Colors.red,
-                                    alignment: Alignment.centerRight,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                    ),
-                                    child: const Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  confirmDismiss: (direction) async {
-                                    final confirm = await showDialog<bool>(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Text(localizer.confirmDeletion),
-                                        content: Text(
-                                          localizer.areYouSureDeleteTransaction,
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.of(
-                                              context,
-                                            ).pop(false),
-                                            child: Text(localizer.cancel),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(true),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.red,
-                                            ),
-                                            child: Text(localizer.delete),
-                                          ),
-                                        ],
-                                      ),
-                                    );
+                  // 🔼 Transaction list
+                  Expanded(
+                    child: filteredTransactions.isEmpty
+                      ? Center(
+                        child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                          'assets/images/Saudi_Riyal_Symbol.png',
+                          width: 80,
+                          height: 80,
+                          color: Colors
+                            .grey
+                            .shade400, // optional: to tint the image, remove if not needed
+                          ),
+                          const SizedBox(height: 16),
+                          Text(localizer.noTransactions),
+                        ],
+                        ),
+                      )
+                      : ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: filteredTransactions.length,
+                        itemBuilder: (context, index) {
+                        final transaction = filteredTransactions[index];
+                        final isIncome = transaction.isIncome;
+                        final formattedDate = DateFormat.yMMMd().format(
+                          transaction.date,
+                        );
 
-                                    if (confirm == true) {
-                                      box.delete(transaction.key);
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            localizer.transactionDeleted,
-                                          ),
-                                        ),
-                                      );
-                                      return true; // Proceed with dismissal
-                                    }
-
-                                    return false; // Cancel dismissal
-                                  },
-
-                                  child: Card(
-                                    elevation: 2,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
-                                    child: ListTile(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                EditTransactionScreen(
-                                                  transaction: transaction,
-                                                  transactionKey:
-                                                      transaction.key as int,
-                                                ),
-                                          ),
-                                        );
-                                      },
-                                      leading: CircleAvatar(
-                                        // backgroundColor: isIncome
-                                        //     ? Colors.green.shade50
-                                        //     : Colors.red.shade50,
-                                        // child: Icon(
-                                        //   isIncome
-                                        //       ? Icons.arrow_downward
-                                        //       : Icons.arrow_upward,
-                                        //   color: isIncome
-                                        //       ? Colors.green
-                                        //       : Colors.red,
-                                        // ),
-                                        // backgroundColor: isIncome
-                                        //     ? Colors.green.shade50
-                                        // : Colors.transparent,
-                                        backgroundColor: Colors.transparent,
-                                        child: Icon(
-                                          _getIconForCategory(
-                                            transaction.category,
-                                          ),
-                                          color: mintTheme.unselectedIconColor,
-                                        ),
-                                      ),
-                                      title: Text(
-                                        _getLocalizedCategory(
-                                          transaction.category,
-                                          localizer,
-                                        ),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      subtitle: Text(formattedDate),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            isIncome ? '+ ' : '- ',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: isIncome
-                                                  ? Colors.green
-                                                  : Colors.red,
-                                            ),
-                                          ),
-                                          Text(
-                                            transaction.amount.toStringAsFixed(
-                                              2,
-                                            ),
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: isIncome
-                                                  ? Colors.green
-                                                  : Colors.red,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Image.asset(
-                                            'assets/images/Saudi_Riyal_Symbol.png',
-                                            width: 16,
-                                            height: 16,
-                                            color: isIncome
-                                                ? Colors.green
-                                                : Colors.red,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
+                        return Dismissible(
+                          key: Key(transaction.key.toString()),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                          ),
+                          child: const Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                          ),
+                          confirmDismiss: (direction) async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                            title: Text(localizer.confirmDeletion),
+                            content: Text(
+                              localizer.areYouSureDeleteTransaction,
                             ),
-                    ),
+                            actions: [
+                              TextButton(
+                              onPressed: () => Navigator.of(
+                                context,
+                              ).pop(false),
+                              child: Text(localizer.cancel),
+                              ),
+                              ElevatedButton(
+                              onPressed: () =>
+                                Navigator.of(context).pop(true),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              child: Text(localizer.delete),
+                              ),
+                            ],
+                            ),
+                          );
+
+                          if (confirm == true) {
+                            box.delete(transaction.key);
+                            ScaffoldMessenger.of(
+                            context,
+                            ).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                              localizer.transactionDeleted,
+                              ),
+                            ),
+                            );
+                            return true; // Proceed with dismissal
+                          }
+
+                          return false; // Cancel dismissal
+                          },
+
+                          child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 8,
+                          ),
+                          child: ListTile(
+                            onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                              builder: (_) =>
+                                EditTransactionScreen(
+                                  transaction: transaction,
+                                  transactionKey:
+                                    transaction.key as int,
+                                ),
+                              ),
+                            );
+                            },
+                            leading: CircleAvatar(
+                            // backgroundColor: isIncome
+                            //     ? Colors.green.shade50
+                            //     : Colors.red.shade50,
+                            // child: Icon(
+                            //   isIncome
+                            //       ? Icons.arrow_downward
+                            //       : Icons.arrow_upward,
+                            //   color: isIncome
+                            //       ? Colors.green
+                            //       : Colors.red,
+                            // ),
+                            // backgroundColor: isIncome
+                            //     ? Colors.green.shade50
+                            // : Colors.transparent,
+                            backgroundColor: Colors.transparent,
+                            child: Icon(
+                              _getIconForCategory(
+                              transaction.category,
+                              ),
+                              color: mintTheme.unselectedIconColor,
+                            ),
+                            ),
+                            title: Text(
+                            _getLocalizedCategory(
+                              transaction.category,
+                              localizer,
+                            ),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            ),
+                            subtitle: Text(formattedDate),
+                            trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                              isIncome ? '+ ' : '- ',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: isIncome
+                                  ? Colors.green
+                                  : Colors.red,
+                              ),
+                              ),
+                              Text(
+                              transaction.amount.toStringAsFixed(
+                                2,
+                              ),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: isIncome
+                                  ? Colors.green
+                                  : Colors.red,
+                              ),
+                              ),
+                              const SizedBox(width: 4),
+                              Image.asset(
+                              'assets/images/Saudi_Riyal_Symbol.png',
+                              width: 16,
+                              height: 16,
+                              color: isIncome
+                                ? Colors.green
+                                : Colors.red,
+                              ),
+                            ],
+                            ),
+                          ),
+                          ),
+                        );
+                        },
+                      ),
+                  ),
                   ],
                 );
               },

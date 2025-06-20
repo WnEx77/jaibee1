@@ -192,5 +192,10 @@
   "couldNotOpenLink": "تعذر فتح الرابط",
   "buyMeACoffee": "لدعم مطور التطبيق",
   "enterDescription": "يرجى إدخال وصف المعاملة (اختياري).",
-  "contactUs": "تواصل معنا"
+  "contactUs": "تواصل معنا",
+  "noCategories": "لا توجد فئات مخصصة حتى الآن. يمكنك إضافة فئات جديدة من خلال إعدادات التطبيق.",
+  "ofExpenses": "من المصروفات",
+  "categoryProgress": "تقدم الفئة",
+  "noLimitSet": "لا يوجد حد محدد لهذه الفئة.",
+  "ofLimit": "من الحد"
 }

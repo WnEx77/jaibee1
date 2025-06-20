@@ -527,4 +527,20 @@ class SEn extends S {
 
   @override
   String get contactUs => 'Contact Us';
+
+  @override
+  String get noCategories =>
+      'No custom categories yet. You can add new categories from the app settings.';
+
+  @override
+  String get ofExpenses => 'of Expenses';
+
+  @override
+  String get categoryProgress => 'Category Progress';
+
+  @override
+  String get noLimitSet => 'No limit set for this category.';
+
+  @override
+  String get ofLimit => 'of Limit';
 }

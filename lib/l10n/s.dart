@@ -1104,6 +1104,36 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Contact Us'**
   String get contactUs;
+
+  /// No description provided for @noCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'No custom categories yet. You can add new categories from the app settings.'**
+  String get noCategories;
+
+  /// No description provided for @ofExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'of Expenses'**
+  String get ofExpenses;
+
+  /// No description provided for @categoryProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Progress'**
+  String get categoryProgress;
+
+  /// No description provided for @noLimitSet.
+  ///
+  /// In en, this message translates to:
+  /// **'No limit set for this category.'**
+  String get noLimitSet;
+
+  /// No description provided for @ofLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'of Limit'**
+  String get ofLimit;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

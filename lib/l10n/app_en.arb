@@ -194,5 +194,10 @@
   "couldNotOpenLink": "Could not open the link",
   "buyMeACoffee": "Buy me a coffee",
   "enterDescription": "Please enter a transaction description (optional).",
-  "contactUs": "Contact Us"
+  "contactUs": "Contact Us",
+  "noCategories": "No custom categories yet. You can add new categories from the app settings.",
+  "ofExpenses": "of Expenses",
+  "categoryProgress": "Category Progress",
+  "noLimitSet": "No limit set for this category.",
+  "ofLimit": "of Limit"
 }

@@ -535,4 +535,20 @@ class SAr extends S {
 
   @override
   String get contactUs => 'تواصل معنا';
+
+  @override
+  String get noCategories =>
+      'لا توجد فئات مخصصة حتى الآن. يمكنك إضافة فئات جديدة من خلال إعدادات التطبيق.';
+
+  @override
+  String get ofExpenses => 'من المصروفات';
+
+  @override
+  String get categoryProgress => 'تقدم الفئة';
+
+  @override
+  String get noLimitSet => 'لا يوجد حد محدد لهذه الفئة.';
+
+  @override
+  String get ofLimit => 'من الحد';
 }
