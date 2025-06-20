@@ -224,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              // const SizedBox(height: 20),
 
               // Dark Mode Toggle
               Card(
@@ -331,20 +331,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
 
               // Save Profile Button
-              ElevatedButton.icon(
-                icon: const Icon(Icons.save),
-                onPressed: _saveProfile,
-                label: Text(s.saveProfile),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: mintTheme.buttonColor,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
+              // ElevatedButton.icon(
+              //   icon: const Icon(Icons.save),
+              //   onPressed: _saveProfile,
+              //   label: Text(s.saveProfile),
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: mintTheme.buttonColor,
+              //     foregroundColor: Colors.white,
+              //     minimumSize: const Size.fromHeight(50),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(10),
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
 
               ElevatedButton.icon(
                 icon: Image.asset(
