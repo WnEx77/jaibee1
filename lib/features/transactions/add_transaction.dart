@@ -6,6 +6,9 @@ import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/data/models/category.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart'; // Import your background widget
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+// import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
+import 'package:flutter/cupertino.dart';
+
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -18,6 +21,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();// 👈 NEW
+  
 
   String _category = '';
   bool _isIncome = false;
@@ -286,20 +290,46 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
-      locale: Localizations.localeOf(context),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
+Future<void> _selectDate(BuildContext context) async {
+  DateTime tempSelectedDate = _selectedDate;
+
+  await showCupertinoModalPopup<void>(
+    context: context,
+    builder: (_) => Container(
+      height: 400,
+      padding: const EdgeInsets.only(top: 16),
+      color: Colors.white,
+      child: Column(
+        children: [
+          Expanded(
+            child: CupertinoDatePicker(
+              initialDateTime: tempSelectedDate,
+              minimumDate: DateTime(2000),
+              maximumDate: DateTime.now(),
+              mode: CupertinoDatePickerMode.date,
+              onDateTimeChanged: (DateTime newDate) {
+                tempSelectedDate = newDate;
+              },
+            ),
+          ),
+          CupertinoButton(
+            child: const Text('Done'),
+            onPressed: () {
+              setState(() {
+                _selectedDate = tempSelectedDate;
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+
+
+
 
   String _getLocalizedCategory(String name, S localizer) {
     switch (name.toLowerCase()) {

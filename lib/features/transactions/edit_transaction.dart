@@ -9,6 +9,8 @@ import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 // import 'package:jaibee1/utils/category_utils.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:flutter/cupertino.dart';
+
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -57,20 +59,42 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     });
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
-      locale: Localizations.localeOf(context),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
+Future<void> _selectDate(BuildContext context) async {
+  DateTime tempSelectedDate = _selectedDate;
+
+  await showCupertinoModalPopup<void>(
+    context: context,
+    builder: (_) => Container(
+      height: 400,
+      padding: const EdgeInsets.only(top: 16),
+      color: Colors.white,
+      child: Column(
+        children: [
+          Expanded(
+            child: CupertinoDatePicker(
+              initialDateTime: tempSelectedDate,
+              minimumDate: DateTime(2000),
+              maximumDate: DateTime.now(),
+              mode: CupertinoDatePickerMode.date,
+              onDateTimeChanged: (DateTime newDate) {
+                tempSelectedDate = newDate;
+              },
+            ),
+          ),
+          CupertinoButton(
+            child: const Text('Done'),
+            onPressed: () {
+              setState(() {
+                _selectedDate = tempSelectedDate;
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   void _saveTransaction() {
     if (_formKey.currentState!.validate()) {
