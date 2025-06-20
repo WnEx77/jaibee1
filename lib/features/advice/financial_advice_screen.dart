@@ -687,10 +687,13 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/images/error.png',
+                        Theme.of(context).brightness == Brightness.dark
+                            ? 'assets/images/error_DarkMode.png'
+                            : 'assets/images/error.png',
                         height: 300,
                         width: 300,
                       ),
+
                       const SizedBox(height: 16),
                       Text(
                         _error!,
@@ -704,6 +707,13 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                       ElevatedButton.icon(
                         icon: const Icon(Icons.refresh),
                         label: Text(S.of(context)!.retry),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: mintJadeColors.buttonColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                         onPressed: () {
                           setState(() {
                             _loading = true;

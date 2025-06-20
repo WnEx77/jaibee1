@@ -190,5 +190,7 @@
   "adviceTitle": "Smart AI Advice",
   "adviceDescription": "Get personalized financial tips based on your habits.",
   "getStarted": "Get Started",
-  "next": "Next"
+  "next": "Next",
+  "couldNotOpenLink": "Could not open the link",
+  "buyMeACoffee": "Buy me a coffee"
 }

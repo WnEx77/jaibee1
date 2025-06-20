@@ -1080,6 +1080,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// No description provided for @couldNotOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link'**
+  String get couldNotOpenLink;
+
+  /// No description provided for @buyMeACoffee.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy me a coffee'**
+  String get buyMeACoffee;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

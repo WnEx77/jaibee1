@@ -11,6 +11,8 @@ import 'package:jaibee1/features/about/about_us_screen.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 // import 'package:jaibee1/app.dart';
 import 'package:jaibee1/core/theme/theme_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:jaibee1/features/webview/webview_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -52,9 +54,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     await prefs.setString('user_goals', _goalsController.text);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(S.of(context)!.profileSaved)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(S.of(context)!.profileSaved)));
   }
 
   // int? _calculateAge(DateTime? birthDate) {
@@ -90,30 +92,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showLanguageDialog() {
-    final s = S.of(context)!;
     showDialog(
       context: context,
-      builder: (context) {
-        return SimpleDialog(
-          title: Text(s.changeLanguage),
+      builder: (_) => AlertDialog(
+        title: Text(S.of(context)!.changeLanguage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SimpleDialogOption(
-              child: Text(s.english),
-              onPressed: () {
-                _changeLanguage('en');
+            ListTile(
+              title: const Text('🇺🇸 English'),
+              onTap: () {
                 Navigator.pop(context);
+                JaibeeTrackerApp.setLocale(context, const Locale('en'));
               },
             ),
-            SimpleDialogOption(
-              child: Text(s.arabic),
-              onPressed: () {
-                _changeLanguage('ar');
+            ListTile(
+              title: const Text('🇸🇦 العربية'),
+              onTap: () {
                 Navigator.pop(context);
+                JaibeeTrackerApp.setLocale(context, const Locale('ar'));
               },
             ),
           ],
-        );
-      },
+        ),
+      ),
+    );
+  }
+
+  void _launchBuyMeACoffee() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            const InAppWebViewScreen(url: 'https://buymeacoffee.com/wnex77'),
+      ),
     );
   }
 
@@ -196,7 +208,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //     ),
               //   ),
               // ),
-
               const SizedBox(height: 20),
 
               // Language Selection
@@ -222,7 +233,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
-                  leading: const Icon(Icons.brightness_6, color: Colors.blueGrey),
+                  leading: const Icon(
+                    Icons.brightness_6,
+                    color: Colors.blueGrey,
+                  ),
                   title: Text(s.darkMode),
                   trailing: Consumer<ThemeProvider>(
                     builder: (context, themeProvider, _) {
@@ -243,7 +257,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
-                  leading: const Icon(Icons.account_circle_outlined, color: Colors.blueGrey),
+                  leading: const Icon(
+                    Icons.account_circle_outlined,
+                    color: Colors.blueGrey,
+                  ),
                   title: Text(s.aboutUs),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
@@ -292,8 +309,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   backgroundColor: mintTheme.buttonColor,
                   foregroundColor: Colors.white,
                   minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
+              ),
+              const SizedBox(height: 20),
+
+              ElevatedButton.icon(
+                icon: Image.asset(
+                  'assets/images/buy-me-a-coffee.png',
+                  height: 30,
+                  width: 30,
+                ),
+                label: Text(S.of(context)!.buyMeACoffee),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.brown,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: _launchBuyMeACoffee,
               ),
             ],
           ),

@@ -514,4 +514,10 @@ class SEn extends S {
 
   @override
   String get next => 'Next';
+
+  @override
+  String get couldNotOpenLink => 'Could not open the link';
+
+  @override
+  String get buyMeACoffee => 'Buy me a coffee';
 }

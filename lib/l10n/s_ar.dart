@@ -523,4 +523,10 @@ class SAr extends S {
 
   @override
   String get next => 'التالي';
+
+  @override
+  String get couldNotOpenLink => 'تعذر فتح الرابط';
+
+  @override
+  String get buyMeACoffee => 'لدعم مطور التطبيق';
 }
