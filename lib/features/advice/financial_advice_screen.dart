@@ -202,17 +202,26 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadAdvice());
   }
 
+  Future<double?> _getMonthlyLimitFromBudgetsBox() async {
+    final budgetsBox = Hive.box<Budget>('budgets');
+    final monthlyBudget = budgetsBox.get('__monthly__');
+    return monthlyBudget?.limit;
+  }
+
   Future<void> _loadAdvice() async {
     try {
       // ✅ Check internet connection
       final connectivityResult = await Connectivity().checkConnectivity();
-      final prefs = await SharedPreferences.getInstance();
-      final double? monthlyLimit = prefs.getDouble('monthly_limit');
+
+      // Get monthly limit from budgets box instead of prefs
+      final double? monthlyLimit = await _getMonthlyLimitFromBudgetsBox();
+
       final budgetsBox = Hive.box<Budget>('budgets');
       final List<Map<String, dynamic>> budgets = budgetsBox.values
-          .whereType()
+          .whereType<Budget>()
           .map((b) => {'category': b.category, 'limit': b.limit})
           .toList();
+
       if (connectivityResult == ConnectivityResult.none) {
         setState(() {
           _error = S.of(context)!.noInternetConnection;
@@ -230,10 +239,10 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
         monthlyLimit: monthlyLimit,
       );
 
+      // Still get sex, age, goals from prefs if needed
+      final prefs = await SharedPreferences.getInstance();
       final String? sex = prefs.getString('user_sex');
       final int? age = prefs.getInt('user_age');
-
-      // ✅ Get and decode goals
       final String? goalsJson = prefs.getString('user_goals_list');
       final List<Map<String, dynamic>> goals = goalsJson != null
           ? List<Map<String, dynamic>>.from(jsonDecode(goalsJson))
@@ -257,8 +266,8 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Something went wrong: ${e.toString()}';
-        // _error = S.of(context)!.noInternetConnection;
+        // _error = 'Something went wrong: ${e.toString()}';
+        _error = S.of(context)!.noInternetConnection;
         _loading = false;
       });
     }
@@ -701,8 +710,8 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
           child: _loading
               ? Center(
                   child: SizedBox(
-                    height: 180,
-                    width: 180,
+                    height: 60,
+                    width: 60,
                     child: Lottie.asset(
                       'assets/animations/loading.json',
                       repeat: true,

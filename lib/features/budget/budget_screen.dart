@@ -45,13 +45,12 @@ class _BudgetScreenState extends State<BudgetScreen> {
   }
 
   Future<void> _loadMonthlyLimit() async {
-    final prefs = await SharedPreferences.getInstance();
-    final stored = prefs.getDouble('monthly_limit');
-
+    // Load the monthly limit from the budgets box (special key: '__monthly__')
+    final monthlyBudget = _budgetBox.get('__monthly__');
     setState(() {
-      _monthlyLimit = stored;
-      _monthlyLimitController.text = (stored != null && stored > 0)
-          ? stored.toStringAsFixed(0)
+      _monthlyLimit = monthlyBudget?.limit;
+      _monthlyLimitController.text = (_monthlyLimit != null && _monthlyLimit! > 0)
+          ? _monthlyLimit!.toStringAsFixed(0)
           : '';
     });
   }
@@ -62,8 +61,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
     return double.tryParse(text.trim()) == null;
   }
 
+
   Future<void> _saveBudgets() async {
-    final prefs = await SharedPreferences.getInstance();
     double totalCategoryLimits = 0;
 
     // Validate each category input
@@ -130,8 +129,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
       _budgetBox.put(name, budget); // Use category name as key
     }
 
-    // Save monthly limit to SharedPreferences
-    await prefs.setDouble('monthly_limit', monthly);
+    // Save monthly limit to budgets box with special key '__monthly__'
+    final monthlyBudget = Budget(category: '__monthly__', limit: monthly);
+    await _budgetBox.put('__monthly__', monthlyBudget);
 
     // Notify user of successful save
     ScaffoldMessenger.of(

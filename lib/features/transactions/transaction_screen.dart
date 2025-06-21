@@ -13,6 +13,7 @@ import 'package:jaibee1/features/transactions/category_progress_screen.dart';
 import 'package:jaibee1/features/reports/export_report_screen.dart';
 import 'package:jaibee1/core/utils/category_utils.dart'; // Import your category utility functions
 import 'package:another_flushbar/flushbar.dart';
+import 'package:jaibee1/data/models/budget.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});
@@ -47,9 +48,10 @@ class _TransactionScreenState extends State<TransactionScreen> {
   }
 
   Future<void> _loadMonthlyLimit() async {
-    final prefs = await SharedPreferences.getInstance();
+    final budgetBox = Hive.box<Budget>('budgets');
+    final monthlyBudget = budgetBox.get('__monthly__');
     setState(() {
-      _monthlyLimit = prefs.getDouble('monthly_limit');
+      _monthlyLimit = monthlyBudget?.limit;
     });
   }
 
