@@ -1140,6 +1140,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Click for more info'**
   String get clickForMoreInfo;
+
+  /// No description provided for @exportTransactionsAsPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Transactions as PDF'**
+  String get exportTransactionsAsPdf;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -11,6 +11,8 @@ import 'package:jaibee1/features/webview/webview_screen.dart';
 import 'package:jaibee1/core/theme/theme_provider.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
+import 'package:jaibee1/features/reports/export_report_screen.dart'; // Add this import
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -119,7 +121,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
-                  leading: const Icon(Icons.brightness_6, color: Colors.blueGrey),
+                  leading: const Icon(
+                    Icons.brightness_6,
+                    color: Colors.blueGrey,
+                  ),
                   title: Text(s.darkMode),
                   trailing: Consumer<ThemeProvider>(
                     builder: (context, themeProvider, _) {
@@ -149,6 +154,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Icons.email_outlined,
                 label: s.contactUs,
                 onTap: _contactSupport,
+              ),
+
+              _buildCardTile(
+                icon: Icons.picture_as_pdf,
+                label: s.exportTransactionsAsPdf,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ExportReportScreen(),
+                    ),
+                  );
+                },
               ),
 
               const SizedBox(height: 20),

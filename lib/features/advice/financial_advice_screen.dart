@@ -156,7 +156,7 @@ Future<String> fetchFinancialAdvice(String prompt) async {
   );
 
   if (response.statusCode == 200) {
-    final jsonResponse = json.decode(response.body);
+    final jsonResponse = json.decode(utf8.decode(response.bodyBytes));
     return jsonResponse['choices'][0]['message']['content'];
   } else {
     throw Exception(
@@ -332,15 +332,13 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     final pdf = pw.Document();
 
     // Load logo
-    final ByteData logoBytes = await rootBundle.load(
-      'assets/images/logo-removebg-preview.png',
-    );
+    final ByteData logoBytes = await rootBundle.load('assets/images/logo.png');
     final Uint8List logoUint8List = logoBytes.buffer.asUint8List();
     final pw.MemoryImage logo = pw.MemoryImage(logoUint8List);
 
     // Load Arabic font
     final arabicFontData = await rootBundle.load(
-      'assets/fonts/Amiri-Regular.ttf',
+      'assets/fonts/NotoSansArabic-Regular.ttf',
     );
     final arabicFont = pw.Font.ttf(arabicFontData);
 
@@ -492,9 +490,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     final pdf = pw.Document();
 
     // Load logo
-    final ByteData logoBytes = await rootBundle.load(
-      'assets/images/logo-removebg-preview.png',
-    );
+    final ByteData logoBytes = await rootBundle.load('assets/images/logo.png');
     final Uint8List logoUint8List = logoBytes.buffer.asUint8List();
     final pw.MemoryImage logo = pw.MemoryImage(logoUint8List);
 

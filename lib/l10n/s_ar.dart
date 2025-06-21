@@ -554,4 +554,7 @@ class SAr extends S {
 
   @override
   String get clickForMoreInfo => 'انقر لمزيد من المعلومات';
+
+  @override
+  String get exportTransactionsAsPdf => 'طباعة المصاريف كملف PDF';
 }

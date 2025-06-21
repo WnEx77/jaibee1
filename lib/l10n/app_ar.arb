@@ -198,5 +198,6 @@
   "categoryProgress": "تقدم الفئة",
   "noLimitSet": "لا يوجد حد محدد لهذه الفئة.",
   "ofLimit": "من الحد",
-  "clickForMoreInfo": "انقر لمزيد من المعلومات"
+  "clickForMoreInfo": "انقر لمزيد من المعلومات",
+  "exportTransactionsAsPdf": "طباعة المصاريف كملف PDF"
 }

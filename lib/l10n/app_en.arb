@@ -200,5 +200,6 @@
   "categoryProgress": "Category Progress",
   "noLimitSet": "No limit set for this category.",
   "ofLimit": "of Limit",
-  "clickForMoreInfo": "Click for more info"
+  "clickForMoreInfo": "Click for more info",
+  "exportTransactionsAsPdf": "Export Transactions as PDF"
 }

@@ -546,4 +546,7 @@ class SEn extends S {
 
   @override
   String get clickForMoreInfo => 'Click for more info';
+
+  @override
+  String get exportTransactionsAsPdf => 'Export Transactions as PDF';
 }
