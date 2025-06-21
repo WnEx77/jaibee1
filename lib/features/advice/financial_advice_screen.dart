@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:jaibee1/data/models/trancs.dart';
 import 'package:jaibee1/secrets.dart';
 import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee1/data/models/budget.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -68,41 +69,50 @@ String generatePrompt(
   String? sex,
   int? age,
   List<Map<String, dynamic>> goals = const [],
+  List<Map<String, dynamic>> budgets = const [],
 }) {
   final isArabic = locale.languageCode == 'ar';
   final prompt = StringBuffer();
 
-  if (isArabic) {
-    prompt.writeln("جاوب علي بلهجة سعودية عامية، أنت مساعد مالي ذكي.");
-    if (sex != null) prompt.writeln("الجنس: $sex");
-    if (age != null) prompt.writeln("العمر: $age سنة");
+if (isArabic) {
+  prompt.writeln("جاوبني باللهجة السعودية العامية. أنت مساعد مالي ذكي، وهدفك تساعدني أوازن مصاريفي وأحقق أهدافي.");
+  
+  if (sex != null) prompt.writeln("الجنس: $sex");
+  if (age != null) prompt.writeln("العمر: $age سنة");
 
-    prompt.writeln("ملخص الشهر الحالي:");
-    prompt.writeln("الدخل: \$${summary.totalIncome.toStringAsFixed(2)}");
-    prompt.writeln("المصروفات: \$${summary.totalExpenses.toStringAsFixed(2)}");
-    prompt.writeln(
-      summary.monthlyLimit != null
-          ? "الحد الشهري للصرف: \$${summary.monthlyLimit!.toStringAsFixed(2)}"
-          : "مافيه حد شهري محدد.",
-    );
-
-    prompt.writeln("\nتفاصيل المصروفات حسب التصنيفات:");
-    summary.expensesByCategory.forEach((category, amount) {
-      prompt.writeln("- $category: \$${amount.toStringAsFixed(2)}");
-    });
-
-    if (goals.isNotEmpty) {
-      prompt.writeln("\nأهدافي المالية:");
-      for (var goal in goals) {
-        prompt.writeln(
-          "- نوع الهدف: ${goal['type']}, ابي اشتري ${goal['item']}, ابي اوفر\$${goal['monthly']} شهرياً لمدة ${goal['months']} شهور",
-        );
-      }
+  if (budgets.isNotEmpty) {
+    prompt.writeln("\nتفصيل الميزانية حسب التصنيفات:");
+    for (var budget in budgets) {
+      prompt.writeln("- ${budget['category']}: الحد المخصص هو \$${budget['limit']}");
     }
+  }
 
-    prompt.writeln(
-      "\nاعطني نصائح مالية شخصية تساعده يوازن بين مصاريفه وأهدافه المالية. اقترح عليه إذا يحتاج يعدل أهدافه أو صرفه.",
-    );
+  prompt.writeln("\nملخص الشهر الحالي:");
+  prompt.writeln("- الدخل الكلي: \$${summary.totalIncome.toStringAsFixed(2)}");
+  prompt.writeln("- مجموع المصروفات: \$${summary.totalExpenses.toStringAsFixed(2)}");
+
+  prompt.writeln(
+    summary.monthlyLimit != null
+        ? "- الحد الشهري للصرف: \$${summary.monthlyLimit!.toStringAsFixed(2)}"
+        : "- ما حددت حد شهري للصرف.",
+  );
+
+  prompt.writeln("\nتفاصيل المصاريف حسب التصنيفات:");
+  summary.expensesByCategory.forEach((category, amount) {
+    prompt.writeln("- $category: \$${amount.toStringAsFixed(2)}");
+  });
+
+  if (goals.isNotEmpty) {
+    prompt.writeln("\nأهدافي المالية الحالية:");
+    for (var goal in goals) {
+      prompt.writeln("- أبغى أوصل لهدف '${goal['item']}' عن طريق استثمار \$${goal['monthly']} شهريًا لمدة ${goal['months']} شهر (${goal['type']}).");
+    }
+  }
+
+  prompt.writeln(
+    "\nبناءً على اللي فوق، عطِني نصيحة مالية واضحة وسريعة. هل صرفي طبيعي أو أحتاج أعدل؟ وهل أهدافي مناسبة أو تحتاج تعديل؟",
+  );
+
   } else {
     prompt.writeln("You are a smart personal finance assistant.");
     if (sex != null) prompt.writeln("Sex: $sex");
@@ -196,6 +206,11 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
       final connectivityResult = await Connectivity().checkConnectivity();
       final prefs = await SharedPreferences.getInstance();
       final double? monthlyLimit = prefs.getDouble('monthly_limit');
+      final budgetsBox = Hive.box<Budget>('budgets');
+      final List<Map<String, dynamic>> budgets = budgetsBox.values
+          .whereType()
+          .map((b) => {'category': b.category, 'limit': b.limit})
+          .toList();
       if (connectivityResult == ConnectivityResult.none) {
         setState(() {
           _error = S.of(context)!.noInternetConnection;
@@ -227,7 +242,8 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
         locale,
         sex: sex,
         age: age,
-        goals: goals, // ⬅️ pass to prompt
+        goals: goals,
+        budgets: budgets,
       );
 
       final advice = await fetchFinancialAdvice(prompt);
@@ -239,8 +255,8 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
       });
     } catch (e) {
       setState(() {
-        // _error = 'Something went wrong: ${e.toString()}';
-        _error = S.of(context)!.noInternetConnection;
+        _error = 'Something went wrong: ${e.toString()}';
+        // _error = S.of(context)!.noInternetConnection;
         _loading = false;
       });
     }
@@ -761,22 +777,89 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _summaryItem(
-                                  S.of(context)!.income,
-                                  _summary!.totalIncome,
-                                  Colors.green,
+                              // Income
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                Text(S.of(context)!.income),
+                                Row(
+                                  children: [
+                                  Text(
+                                    "${_summary!.totalIncome.toStringAsFixed(2)}",
+                                    style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Image.asset(
+                                    'assets/images/Saudi_Riyal_Symbol.png',
+                                    color: Colors.green,
+                                    height: 20,
+                                    width: 20,
+                                  ),
+                                  ],
                                 ),
-                                _summaryItem(
-                                  S.of(context)!.expenses,
-                                  _summary!.totalExpenses,
-                                  Colors.red,
+                                ],
+                              ),
+                              // Expenses
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                Text(S.of(context)!.expenses),
+                                Row(
+                                  children: [
+                                  Text(
+                                    "${_summary!.totalExpenses.toStringAsFixed(2)}",
+                                    style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Image.asset(
+                                    'assets/images/Saudi_Riyal_Symbol.png',
+                                    color: Colors.red,
+                                    height: 20,
+                                    width: 20,
+                                  ),
+                                  ],
                                 ),
-                                _summaryItem(
-                                  S.of(context)!.limit,
-                                  (_summary!.monthlyLimit ?? 0),
-                                  Colors.orange,
-                                  fallbackText: S.of(context)!.notSet,
+                                ],
+                              ),
+                              // Limit
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                Text(S.of(context)!.limit),
+                                Row(
+                                  children: [
+                                  Text(
+                                    (_summary!.monthlyLimit ?? 0) == 0
+                                      ? S.of(context)!.notSet
+                                      : "${_summary!.monthlyLimit!.toStringAsFixed(2)}",
+                                    style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                    ),
+                                  ),
+                                  if ((_summary!.monthlyLimit ?? 0) != 0)
+                                    ...[
+                                    const SizedBox(width: 4),
+                                    Image.asset(
+                                      'assets/images/Saudi_Riyal_Symbol.png',
+                                      color: Colors.orange,
+                                      height: 20,
+                                      width: 20,
+                                    ),
+                                    ],
+                                  ],
                                 ),
+                                ],
+                              ),
                               ],
                             ),
                           ],
