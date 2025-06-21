@@ -205,5 +205,7 @@
   "saved": "المُدخر",
   "goal": "الهدف",
   "daysLeft": "أيام متبقية",
-  "categoryDistribution": "توزيع الفئات"
+  "categoryDistribution": "توزيع الفئات",
+  "startDate": "تاريخ البداية",
+  "endDate": "تاريخ النهاية"
 }

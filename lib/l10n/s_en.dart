@@ -567,4 +567,10 @@ class SEn extends S {
 
   @override
   String get categoryDistribution => 'Category Distribution';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
 }

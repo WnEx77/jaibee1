@@ -575,4 +575,10 @@ class SAr extends S {
 
   @override
   String get categoryDistribution => 'توزيع الفئات';
+
+  @override
+  String get startDate => 'تاريخ البداية';
+
+  @override
+  String get endDate => 'تاريخ النهاية';
 }

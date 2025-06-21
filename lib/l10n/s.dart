@@ -1182,6 +1182,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Category Distribution'**
   String get categoryDistribution;
+
+  /// No description provided for @startDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDate;
+
+  /// No description provided for @endDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDate;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

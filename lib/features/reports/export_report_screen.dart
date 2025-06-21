@@ -234,8 +234,8 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
                 const SizedBox(height: 12),
                 Text(
                   isStart
-                      ? S.of(context)!.date + ' (Start)'
-                      : S.of(context)!.date + ' (End)',
+                      ? S.of(context)!.startDate
+                      : S.of(context)!.endDate,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
@@ -325,7 +325,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
                       children: [
                         Expanded(
                           child: ListTile(
-                            title: Text(localizer.date + ' (Start)'),
+                            title: Text(localizer.startDate),
                             subtitle: Text(
                               DateFormat.yMMMd().format(_selectedRange!.start),
                               style: TextStyle(
@@ -345,7 +345,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: ListTile(
-                            title: Text(localizer.date + ' (End)'),
+                            title: Text(localizer.endDate),
                             subtitle: Text(
                               DateFormat.yMMMd().format(_selectedRange!.end),
                               style: TextStyle(

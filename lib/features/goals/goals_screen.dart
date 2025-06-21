@@ -131,11 +131,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
                                       : Colors.black87,
                                 ),
                               ),
-                              Image.asset(
-                                'assets/images/Saudi_Riyal_Symbol.png',
+                                Image.asset(
+                                Theme.of(context).brightness == Brightness.dark
+                                  ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
+                                  : 'assets/images/Saudi_Riyal_Symbol.png',
                                 width: 12,
                                 height: 12,
-                              ),
+                                ),
                               const SizedBox(width: 2),
                               Text(
                                 '${goal.savedAmount.toStringAsFixed(2)} / ',
@@ -148,11 +150,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
                                       : Colors.black87,
                                 ),
                               ),
-                              Image.asset(
-                                'assets/images/Saudi_Riyal_Symbol.png',
+                               Image.asset(
+                                Theme.of(context).brightness == Brightness.dark
+                                  ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
+                                  : 'assets/images/Saudi_Riyal_Symbol.png',
                                 width: 12,
                                 height: 12,
-                              ),
+                                ),
                               const SizedBox(width: 2),
                               Text(
                                 goal.targetAmount.toStringAsFixed(2),
