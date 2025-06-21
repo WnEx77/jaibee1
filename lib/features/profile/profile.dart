@@ -13,7 +13,6 @@ import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/features/reports/export_report_screen.dart'; // Add this import
 
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -44,26 +43,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _showLanguageDialog() {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(S.of(context)!.changeLanguage),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('🇺🇸 English'),
-              onTap: () {
-                Navigator.pop(context);
-                _changeLanguage('en');
-              },
+      builder: (_) => Directionality(
+        textDirection: TextDirection.ltr, // Always LTR for dialog
+        child: AlertDialog(
+          title: Text(
+            S.of(context)!.changeLanguage,
+            textAlign: TextAlign.center,
+          ),
+          content: SizedBox(
+            width: 220, // Make the dialog box smaller
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ListTile(
+                  leading: const Text('🇸🇦', textAlign: TextAlign.center),
+                  title: const Text('العربية', textAlign: TextAlign.center),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _changeLanguage('ar');
+                  },
+                ),
+                ListTile(
+                  leading: const Text('🇺🇸', textAlign: TextAlign.center),
+                  title: const Text('English', textAlign: TextAlign.center),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _changeLanguage('en');
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              title: const Text('🇸🇦 العربية'),
-              onTap: () {
-                Navigator.pop(context);
-                _changeLanguage('ar');
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );

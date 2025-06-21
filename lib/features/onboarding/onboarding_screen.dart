@@ -63,26 +63,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _showLanguageDialog() {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(S.of(context)!.changeLanguage),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('🇺🇸 English'),
-              onTap: () {
-                Navigator.pop(context);
-                JaibeeTrackerApp.setLocale(context, const Locale('en'));
-              },
+      builder: (_) => Directionality(
+        textDirection: TextDirection.ltr, // Always LTR for dialog
+        child: AlertDialog(
+          title: Text(
+            S.of(context)!.changeLanguage,
+            textAlign: TextAlign.center,
+          ),
+          content: SizedBox(
+            width: 220, // Make the dialog box smaller
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ListTile(
+                  leading: const Text('🇸🇦', textAlign: TextAlign.center),
+                  title: const Text('العربية', textAlign: TextAlign.center),
+                  onTap: () {
+                    Navigator.pop(context);
+                    JaibeeTrackerApp.setLocale(context, const Locale('ar'));
+                  },
+                ),
+                ListTile(
+                  leading: const Text('🇺🇸', textAlign: TextAlign.center),
+                  title: const Text('English', textAlign: TextAlign.center),
+                  onTap: () {
+                    Navigator.pop(context);
+                    JaibeeTrackerApp.setLocale(context, const Locale('en'));
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              title: const Text('🇸🇦 العربية'),
-              onTap: () {
-                Navigator.pop(context);
-                JaibeeTrackerApp.setLocale(context, const Locale('ar'));
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -102,7 +114,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 Expanded(
                   child: PageView.builder(
                     controller: _controller,
-                    onPageChanged: (index) => setState(() => _currentIndex = index),
+                    onPageChanged: (index) =>
+                        setState(() => _currentIndex = index),
                     itemCount: _pages.length,
                     itemBuilder: (_, index) {
                       final page = _pages[index];
@@ -126,7 +139,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               page.description,
                               textAlign: TextAlign.center,
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                color: mintJade.unselectedIconColor.withOpacity(0.8),
+                                color: mintJade.unselectedIconColor.withOpacity(
+                                  0.8,
+                                ),
                                 fontWeight: FontWeight.w400,
                                 height: 1.5,
                               ),
@@ -195,7 +210,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 padding: const EdgeInsets.all(16),
                 child: GestureDetector(
                   onTap: _showLanguageDialog,
-                  child: const Icon(Icons.language, color: Colors.blueGrey, size: 28),
+                  child: const Icon(
+                    Icons.language,
+                    color: Colors.blueGrey,
+                    size: 28,
+                  ),
                 ),
               ),
             ),
