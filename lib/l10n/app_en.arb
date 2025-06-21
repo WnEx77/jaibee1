@@ -223,5 +223,7 @@
   "mostSpentCategories": "Most Spent Categories",
   "goalDeleted": "Goal deleted successfully",
   "goalAddedSuccessfully": "Goal added successfully",
-  "categoryAdded": "Category added successfully"
+  "categoryAdded": "Category added successfully",
+  "amountToReachMonthlyLimit": "Amount to reach monthly limit",
+  "privacyPolicy": "Privacy Policy"
 }

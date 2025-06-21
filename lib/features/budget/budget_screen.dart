@@ -8,6 +8,7 @@ import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/core/utils/category_utils.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -72,14 +73,14 @@ class _BudgetScreenState extends State<BudgetScreen> {
       final limit = double.tryParse(text.isEmpty ? '0' : text);
 
       if (limit == null || limit < 0) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
+        Flushbar(
+          message:
               '${getLocalizedCategory(category.name, S.of(context)!)}: ${S.of(context)!.invalidLimit}',
-            ),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
+          backgroundColor: Colors.redAccent,
+          duration: const Duration(seconds: 3),
+          margin: const EdgeInsets.all(16),
+          borderRadius: BorderRadius.circular(8),
+        ).show(context);
         return;
       }
 
@@ -91,30 +92,30 @@ class _BudgetScreenState extends State<BudgetScreen> {
     final monthly = monthlyText.isEmpty ? null : double.tryParse(monthlyText);
 
     if (monthly == null || monthly < 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(S.of(context)!.invalidMonthlyLimit),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      Flushbar(
+        message: S.of(context)!.invalidMonthlyLimit,
+        backgroundColor: Colors.redAccent,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(8),
+      ).show(context);
       return;
     }
 
     // Check if category limits match the monthly limit
     if (monthly != totalCategoryLimits) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            S
-                .of(context)!
-                .monthlyLimitValidation(
-                  monthly.toStringAsFixed(0),
-                  totalCategoryLimits.toStringAsFixed(0),
-                ),
-          ),
-          backgroundColor: Colors.redAccent,
+      Flushbar(
+        message: S
+        .of(context)!
+        .monthlyLimitValidation(
+          monthly.toStringAsFixed(0),
+          totalCategoryLimits.toStringAsFixed(0),
         ),
-      );
+        backgroundColor: Colors.redAccent,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(8),
+      ).show(context);
       return;
     }
 
@@ -134,9 +135,18 @@ class _BudgetScreenState extends State<BudgetScreen> {
     await _budgetBox.put('__monthly__', monthlyBudget);
 
     // Notify user of successful save
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(S.of(context)!.budgetsSaved)));
+    Flushbar(
+      message: S.of(context)!.budgetsSaved,
+      backgroundColor: Colors.green,
+      duration: const Duration(seconds: 2),
+      margin: const EdgeInsets.all(16),
+      borderRadius: BorderRadius.circular(8),
+      icon: const Icon(
+      Icons.check_circle,
+      color: Colors.white,
+      size: 28,
+      ),
+    ).show(context);
   }
 
   List<PieChartSectionData> _buildPieChartSections() {
@@ -264,27 +274,47 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   minHeight: 10,
                   backgroundColor: Colors.grey.shade200,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    progressRatio > 1.0
+                    totalCategoryLimits > monthlyLimitValue
                         ? Colors.red
                         : (progressRatio < 1.0 ? Colors.orange : Colors.green),
                   ),
                 ),
               ),
               const SizedBox(height: 6),
-              Text(
-                S
-                    .of(context)!
-                    .budgetProgressInfo(totalCategoryLimits, monthlyLimitValue),
-                style: TextStyle(
-                  fontSize: 13,
-                  color: progressRatio > 1.0
-                      ? Colors.red
-                      : (progressRatio < 1.0
-                          ? Colors.orange
-                          : mintTheme.buttonColor),
-                  fontWeight: FontWeight.w500,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      S
+                          .of(context)!
+                          .budgetProgressInfo(totalCategoryLimits, monthlyLimitValue),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: progressRatio > 1.0
+                            ? Colors.red
+                            : (progressRatio < 1.0
+                                ? Colors.orange
+                                : mintTheme.buttonColor),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.visible,
+                      softWrap: true,
+                    ),
+                  ),
+                ],
               ),
+              // Show how much more to reach monthly limit
+              if (monthlyLimitValue > totalCategoryLimits) ...[
+                const SizedBox(height: 4),
+                Text(
+                  '${S.of(context)!.amountToReachMonthlyLimit} ${(monthlyLimitValue - totalCategoryLimits).toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.teal,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
               const SizedBox(height: 16),
             ],
             const SizedBox(height: 12),

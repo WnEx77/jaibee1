@@ -605,4 +605,10 @@ class SEn extends S {
 
   @override
   String get categoryAdded => 'Category added successfully';
+
+  @override
+  String get amountToReachMonthlyLimit => 'Amount to reach monthly limit';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
 }

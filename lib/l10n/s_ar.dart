@@ -611,4 +611,11 @@ class SAr extends S {
 
   @override
   String get categoryAdded => 'تم إضافة الفئة بنجاح';
+
+  @override
+  String get amountToReachMonthlyLimit =>
+      'المبلغ المطلوب للوصول إلى الحد الشهري';
+
+  @override
+  String get privacyPolicy => 'سياسة الخصوصية';
 }

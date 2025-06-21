@@ -13,6 +13,7 @@ import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/features/reports/export_report_screen.dart'; // Add this import
 import 'package:another_flushbar/flushbar.dart';
+import 'package:jaibee1/features/about/privacy_policy_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -52,11 +53,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.language, size: 48, color: Theme.of(context).colorScheme.primary),
+              Icon(
+                Icons.language,
+                size: 48,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               const SizedBox(height: 12),
               Text(
                 S.of(context)!.changeLanguage,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
@@ -104,10 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Text(flag, style: const TextStyle(fontSize: 22)),
               const SizedBox(width: 12),
-              Text(
-                language,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+              Text(language, style: Theme.of(context).textTheme.bodyLarge),
             ],
           ),
         ),
@@ -206,6 +210,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Icons.email_outlined,
                 label: s.contactUs,
                 onTap: _contactSupport,
+              ),
+
+              // Privacy Policy
+              _buildCardTile(
+                icon: Icons.privacy_tip_outlined,
+                label: s.privacyPolicy,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PrivacyPolicyScreen(),
+                    ),
+                  );
+                },
               ),
 
               _buildCardTile(

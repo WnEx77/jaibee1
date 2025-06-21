@@ -204,5 +204,7 @@
   "mostSpentCategories": "الفئات الأكثر إنفاقًا",
   "goalDeleted": "تم حذف الهدف بنجاح",
   "goalAddedSuccessfully": "تم إضافة الهدف بنجاح",
-  "categoryAdded": "تم إضافة الفئة بنجاح"
+  "categoryAdded": "تم إضافة الفئة بنجاح",
+  "amountToReachMonthlyLimit": "المبلغ المطلوب للوصول إلى الحد الشهري",
+  "privacyPolicy": "سياسة الخصوصية"
 }

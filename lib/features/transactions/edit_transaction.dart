@@ -280,117 +280,186 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
           onTap: () => FocusScope.of(context).unfocus(),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  key: _formKey,
-                  child: ListView(
-                    children: [
-                      TextFormField(
-                        controller: _amountController,
-                        keyboardType: TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+\.?\d{0,2}'),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 380, // Make the box smaller on wide screens
+                ),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Form(
+                      key: _formKey,
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          TextFormField(
+                            controller: _amountController,
+                            keyboardType: TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d+\.?\d{0,2}'),
+                              ),
+                            ],
+                            decoration: InputDecoration(
+                              labelText: localizer.amount,
+                              border: InputBorder.none,
+                              filled: true,
+                              fillColor: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.grey[900]
+                                  : Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.grey[800]!
+                                    : Colors.grey[200]!,
+                                width: 1.2,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: const BorderSide(color: Colors.teal, width: 1.5),
+                            ),
+                            icon: Image.asset(
+                              'assets/images/Saudi_Riyal_Symbol.png',
+                              width: 24,
+                              height: 24,
+                              color: Colors.grey,
+                            ),
                           ),
-                        ],
-                        decoration: InputDecoration(
-                          labelText: localizer.amount,
-                          border: const OutlineInputBorder(),
-                          icon: Image.asset(
-                            'assets/images/Saudi_Riyal_Symbol.png',
-                            width: 24,
-                            height: 24,
-                            color: Colors.grey,
-                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return localizer.pleaseEnterAmount;
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return localizer.pleaseEnterAmount;
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                      DropdownButtonFormField<String>(
-                        value: _category.isNotEmpty ? _category : null,
-                        decoration: InputDecoration(
-                          labelText: localizer.category,
-                          border: const OutlineInputBorder(),
-                          icon: Icon(
-                            getCategoryIcon(
-                              _customCategories.firstWhere(
-                                (cat) => cat.name == _category,
-                                orElse: () =>
-                                    Category(name: _category, icon: ''),
+                        DropdownButtonFormField<String>(
+                          value: _category.isNotEmpty ? _category : null,
+                          items: _buildCategoryItems(localizer),
+                          onChanged: _isIncome ? null : (val) => setState(() => _category = val!),
+                          decoration: InputDecoration(
+                            labelText: localizer.category,
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[900]
+                                : Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.grey[800]!
+                                    : Colors.grey[200]!,
+                                width: 1.2,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: const BorderSide(color: Colors.teal, width: 1.5),
+                            ),
+                            icon: Icon(
+                              getCategoryIcon(
+                                _customCategories.firstWhere(
+                                  (cat) => cat.name == _category,
+                                  orElse: () => Category(name: _category, icon: ''),
+                                ),
                               ),
                             ),
                           ),
+                          borderRadius: BorderRadius.circular(18),
+                          icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 28),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return localizer.pleaseSelectCategory;
+                            }
+                            return null;
+                          },
                         ),
-                        onChanged: _isIncome
-                            ? null
-                            : (val) => setState(() => _category = val!),
-                        items: _buildCategoryItems(localizer),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return localizer.pleaseSelectCategory;
-                          }
-                          return null;
-                        },
-                      ),
 
-                      const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                      ListTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        // tileColor: Colors.blue.shade50.withOpacity(0.3),
-                        leading: Icon(
-                          Icons.calendar_today,
-                          color: mintJade!.buttonColor,
-                        ),
-                        title: Text(
-                          '${localizer.date}: ${DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(_selectedDate)}',
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        onTap: () => _selectDate(context),
-                      ),
-                      const SizedBox(height: 16),
-
-                      TextFormField(
-                        controller: _descriptionController,
-                        maxLines: 2,
-                        decoration: InputDecoration(
-                          labelText: localizer.description,
-                          border: const OutlineInputBorder(),
-                          icon: const Icon(Icons.notes),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.save),
-                        label: Text(localizer.saveChanges),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: mintJade.buttonColor,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ListTile(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
+                          // tileColor: Colors.blue.shade50.withOpacity(0.3),
+                          leading: Icon(
+                            Icons.calendar_today,
+                            color: mintJade!.buttonColor,
+                          ),
+                          title: Text(
+                            '${localizer.date}: ${DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(_selectedDate)}',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          onTap: () => _selectDate(context),
                         ),
-                        onPressed: _saveTransaction,
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+
+                        TextFormField(
+                          controller: _descriptionController,
+                          maxLines: 2,
+                          decoration: InputDecoration(
+                            labelText: localizer.description,
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[900]
+                                : Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.grey[800]!
+                                    : Colors.grey[200]!,
+                                width: 1.2,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: const BorderSide(color: Colors.teal, width: 1.5),
+                            ),
+                            icon: const Icon(Icons.notes),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.save),
+                          label: Text(localizer.saveChanges),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: mintJade.buttonColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: _saveTransaction,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -398,6 +467,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
           ),
         ),
       ),
+    )
     );
   }
 }

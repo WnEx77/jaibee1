@@ -1254,6 +1254,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Category added successfully'**
   String get categoryAdded;
+
+  /// No description provided for @amountToReachMonthlyLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount to reach monthly limit'**
+  String get amountToReachMonthlyLimit;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
