@@ -12,6 +12,7 @@ import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/features/transactions/category_progress_screen.dart';
 import 'package:jaibee1/features/reports/export_report_screen.dart';
 import 'package:jaibee1/core/utils/category_utils.dart'; // Import your category utility functions
+import 'package:another_flushbar/flushbar.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});
@@ -434,15 +435,17 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
                                     if (confirm == true) {
                                       box.delete(transaction.key);
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            localizer.transactionDeleted,
-                                          ),
+                                      Flushbar(
+                                        message: localizer.transactionDeleted,
+                                        duration: const Duration(seconds: 2),
+                                        backgroundColor: Colors.red,
+                                        margin: const EdgeInsets.all(16),
+                                        borderRadius: BorderRadius.circular(12),
+                                        icon: const Icon(
+                                          Icons.check_circle,
+                                          color: Colors.white,
                                         ),
-                                      );
+                                      ).show(context);
                                       return true; // Proceed with dismissal
                                     }
 

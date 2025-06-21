@@ -12,6 +12,7 @@ import 'package:jaibee1/core/theme/theme_provider.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/features/reports/export_report_screen.dart'; // Add this import
+import 'package:another_flushbar/flushbar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -99,9 +100,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (await canLaunchUrl(emailLaunchUri)) {
       await launchUrl(emailLaunchUri);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not launch email client')),
-      );
+      // ignore: use_build_context_synchronously
+      Flushbar(
+        message: 'Could not launch email client',
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.redAccent,
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(12),
+        icon: const Icon(Icons.error_outline, color: Colors.white),
+      ).show(context);
     }
   }
 

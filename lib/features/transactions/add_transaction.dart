@@ -9,6 +9,7 @@ import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/core/utils/category_utils.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -267,9 +268,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
     if (_formKey.currentState!.validate()) {
       if (_category.isEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(localizer.pleaseSelectCategory)));
+        Flushbar(
+          message: localizer.pleaseSelectCategory,
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.redAccent,
+          margin: const EdgeInsets.all(16),
+          borderRadius: BorderRadius.circular(12),
+          icon: const Icon(Icons.error_outline, color: Colors.white),
+        ).show(context);
         return;
       }
 
@@ -295,9 +301,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             : '';
       });
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(localizer.transactionAdded)));
+      Flushbar(
+        message: localizer.transactionAdded,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.teal,
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(12),
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+      ).show(context);
     }
   }
 

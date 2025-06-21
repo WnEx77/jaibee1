@@ -11,7 +11,7 @@ import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jaibee1/core/utils/category_utils.dart';
-
+import 'package:another_flushbar/flushbar.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -60,55 +60,55 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     });
   }
 
-Future<void> _selectDate(BuildContext context) async {
-  DateTime tempSelectedDate = _selectedDate;
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime tempSelectedDate = _selectedDate;
 
-  final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  await showCupertinoModalPopup<void>(
-    context: context,
-    builder: (_) => Container(
-      height: 400,
-      padding: const EdgeInsets.only(top: 16),
-      color: isDark ? Colors.grey[900] : Colors.white,
-      child: Column(
-        children: [
-          Expanded(
-            child: CupertinoTheme(
-              data: CupertinoThemeData(
-                brightness: isDark ? Brightness.dark : Brightness.light,
-                textTheme: CupertinoTextThemeData(
-                  dateTimePickerTextStyle: TextStyle(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontSize: 22,
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (_) => Container(
+        height: 400,
+        padding: const EdgeInsets.only(top: 16),
+        color: isDark ? Colors.grey[900] : Colors.white,
+        child: Column(
+          children: [
+            Expanded(
+              child: CupertinoTheme(
+                data: CupertinoThemeData(
+                  brightness: isDark ? Brightness.dark : Brightness.light,
+                  textTheme: CupertinoTextThemeData(
+                    dateTimePickerTextStyle: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 22,
+                    ),
                   ),
                 ),
-              ),
-              child: CupertinoDatePicker(
-                initialDateTime: tempSelectedDate,
-                minimumDate: DateTime(2000),
-                maximumDate: DateTime.now(),
-                mode: CupertinoDatePickerMode.date,
-                onDateTimeChanged: (DateTime newDate) {
-                  tempSelectedDate = newDate;
-                },
+                child: CupertinoDatePicker(
+                  initialDateTime: tempSelectedDate,
+                  minimumDate: DateTime(2000),
+                  maximumDate: DateTime.now(),
+                  mode: CupertinoDatePickerMode.date,
+                  onDateTimeChanged: (DateTime newDate) {
+                    tempSelectedDate = newDate;
+                  },
+                ),
               ),
             ),
-          ),
-          CupertinoButton(
-            child: const Text('Done'),
-            onPressed: () {
-              setState(() {
-                _selectedDate = tempSelectedDate;
-              });
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
+            CupertinoButton(
+              child: const Text('Done'),
+              onPressed: () {
+                setState(() {
+                  _selectedDate = tempSelectedDate;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   void _saveTransaction() {
     if (_formKey.currentState!.validate()) {
@@ -124,11 +124,21 @@ Future<void> _selectDate(BuildContext context) async {
 
       Hive.box('transactions').put(widget.transactionKey, newTransaction);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context)!.transactionUpdated)),
-      );
+      // Show a Flushbar instead of SnackBar
+      // Make sure to add flushbar package in pubspec.yaml: flushbar: ^1.10.4
+      // import 'package:flushbar/flushbar.dart'; at the top of the file
 
-      Navigator.of(context).pop();
+      Flushbar(
+        message: S.of(context)!.transactionUpdated,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.green,
+        margin: const EdgeInsets.all(8),
+        borderRadius: BorderRadius.circular(8),
+        flushbarPosition: FlushbarPosition.BOTTOM,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+      ).show(context).then((_) {
+        Navigator.of(context).pop();
+      });
     }
   }
 
@@ -148,9 +158,15 @@ Future<void> _selectDate(BuildContext context) async {
               Hive.box('transactions').delete(widget.transactionKey);
               Navigator.of(context).pop(); // Close dialog
               Navigator.of(context).pop(); // Return to previous
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(S.of(context)!.transactionDeleted)),
-              );
+              Flushbar(
+                message: S.of(context)!.transactionDeleted,
+                duration: const Duration(seconds: 2),
+                backgroundColor: Colors.red,
+                margin: const EdgeInsets.all(8),
+                borderRadius: BorderRadius.circular(8),
+                flushbarPosition: FlushbarPosition.BOTTOM,
+                icon: const Icon(Icons.check_circle, color: Colors.white),
+              ).show(context);
             },
             child: Text(S.of(context)!.delete),
           ),
@@ -266,7 +282,8 @@ Future<void> _selectDate(BuildContext context) async {
                             getCategoryIcon(
                               _customCategories.firstWhere(
                                 (cat) => cat.name == _category,
-                                orElse: () => Category(name: _category, icon: ''),
+                                orElse: () =>
+                                    Category(name: _category, icon: ''),
                               ),
                             ),
                           ),

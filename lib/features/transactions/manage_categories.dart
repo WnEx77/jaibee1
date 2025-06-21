@@ -5,6 +5,7 @@ import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart'; // <-- Add your theme extension import
 import 'package:jaibee1/core/utils/category_utils.dart'; // <-- Import your utility functions
+import 'package:another_flushbar/flushbar.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});
@@ -122,9 +123,14 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
 
     final exists = _categoriesBox.values.any((c) => c.name == selected.name);
     if (exists) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(localizer.categoryExists)));
+      Flushbar(
+        message: localizer.categoryExists,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.redAccent,
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(12),
+        icon: const Icon(Icons.error_outline, color: Colors.white),
+      ).show(context);
       return;
     }
 
