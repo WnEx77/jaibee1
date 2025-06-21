@@ -201,5 +201,11 @@
   "noLimitSet": "No limit set for this category.",
   "ofLimit": "of Limit",
   "clickForMoreInfo": "Click for more info",
-  "exportTransactionsAsPdf": "Export Transactions as PDF"
+  "exportTransactionsAsPdf": "Export Transactions as PDF",
+  "pastDue": "Past Due",
+  "target": "Target",
+  "saved": "Saved",
+  "goal": "Goal",
+  "daysLeft": "Days Left",
+  "categoryDistribution": "Category Distribution"
 }

@@ -1146,6 +1146,42 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Export Transactions as PDF'**
   String get exportTransactionsAsPdf;
+
+  /// No description provided for @pastDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Due'**
+  String get pastDue;
+
+  /// No description provided for @target.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get target;
+
+  /// No description provided for @saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saved;
+
+  /// No description provided for @goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal'**
+  String get goal;
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Days Left'**
+  String get daysLeft;
+
+  /// No description provided for @categoryDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Category Distribution'**
+  String get categoryDistribution;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

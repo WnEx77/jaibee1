@@ -549,4 +549,22 @@ class SEn extends S {
 
   @override
   String get exportTransactionsAsPdf => 'Export Transactions as PDF';
+
+  @override
+  String get pastDue => 'Past Due';
+
+  @override
+  String get target => 'Target';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get goal => 'Goal';
+
+  @override
+  String get daysLeft => 'Days Left';
+
+  @override
+  String get categoryDistribution => 'Category Distribution';
 }

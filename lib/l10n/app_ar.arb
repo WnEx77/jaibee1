@@ -199,5 +199,11 @@
   "noLimitSet": "لا يوجد حد محدد لهذه الفئة.",
   "ofLimit": "من الحد",
   "clickForMoreInfo": "انقر لمزيد من المعلومات",
-  "exportTransactionsAsPdf": "طباعة المصاريف كملف PDF"
+  "exportTransactionsAsPdf": "طباعة المصاريف كملف PDF",
+  "pastDue": "متأخر",
+  "target": "الهدف",
+  "saved": "المُدخر",
+  "goal": "الهدف",
+  "daysLeft": "أيام متبقية",
+  "categoryDistribution": "توزيع الفئات"
 }

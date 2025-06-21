@@ -557,4 +557,22 @@ class SAr extends S {
 
   @override
   String get exportTransactionsAsPdf => 'طباعة المصاريف كملف PDF';
+
+  @override
+  String get pastDue => 'متأخر';
+
+  @override
+  String get target => 'الهدف';
+
+  @override
+  String get saved => 'المُدخر';
+
+  @override
+  String get goal => 'الهدف';
+
+  @override
+  String get daysLeft => 'أيام متبقية';
+
+  @override
+  String get categoryDistribution => 'توزيع الفئات';
 }

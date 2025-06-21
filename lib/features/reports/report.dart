@@ -10,12 +10,21 @@ import 'package:jaibee1/data/models/goal_model.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart'; // Import your background widget
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/data/models/category.dart'; // Adjust path as needed
+import 'package:jaibee1/core/utils/category_utils.dart'; // Add this import
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
 
   @override
   State<ReportsScreen> createState() => _ReportsScreenState();
+}
+
+// Helper class for chart data
+class _LineChartData {
+  final String label;
+  final double value;
+  _LineChartData({required this.label, required this.value});
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
@@ -180,7 +189,16 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     const SizedBox(height: 16),
                     _buildBarChart(categoryExpenses),
                     const SizedBox(height: 32),
+                    Text(
+                      localizer.categoryDistribution,
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     _buildPieChart(categoryExpenses),
+                    const SizedBox(height: 32),
                     if (goals.isNotEmpty) ...[
                       Text(
                         localizer.yourGoals,
@@ -193,6 +211,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       ...goals
                           .map((goal) => _buildGoalProgressCard(goal, index))
                           .toList(),
+                      const SizedBox(height: 50),
                     ],
                   ],
                 ],
@@ -377,121 +396,89 @@ class _ReportsScreenState extends State<ReportsScreen> {
     double interval,
     double maxY,
   ) {
+    final localizer = S.of(context)!;
+
+    // Prepare data for Syncfusion (x: date, y: amount)
+    final List<_LineChartData> chartData = List.generate(
+      spots.length,
+      (i) => _LineChartData(label: labels[i], value: spots[i].y),
+    );
+
+    if (chartData.isEmpty) {
+      return const Center(child: Text("No data to display."));
+    }
     return Container(
-      height: 300,
+      height: 320,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
-      child: LineChart(
-        LineChartData(
-          titlesData: FlTitlesData(
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: 1,
-                reservedSize: 40,
-                getTitlesWidget: (value, meta) {
-                  int idx = value.toInt();
-                  if (idx >= 0 && idx < labels.length) {
-                    return Text(
-                      DateFormat(
-                        'MM/dd',
-                      ).format(DateFormat('yyyy-MM-dd').parse(labels[idx])),
-                      style: const TextStyle(fontSize: 10),
-                    );
-                  }
-                  return const Text('');
-                },
-              ),
-            ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: interval,
-                reservedSize: 40,
-                getTitlesWidget: (value, meta) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        value.toInt().toString(),
-                        style: const TextStyle(fontSize: 10),
-                      ),
-                      const SizedBox(width: 2),
-                      Image.asset(
-                        Theme.of(context).brightness == Brightness.dark
-                            ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
-                            : 'assets/images/Saudi_Riyal_Symbol.png',
-                        width: 10,
-                        height: 10,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
+      child: SfCartesianChart(
+        tooltipBehavior: TooltipBehavior(enable: true),
+        primaryXAxis: CategoryAxis(
+          labelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
           ),
-          gridData: FlGridData(
-            show: true,
-            drawVerticalLine: true,
-            horizontalInterval: interval,
-            getDrawingHorizontalLine: (value) => FlLine(
-              color: Theme.of(context).dividerColor.withOpacity(0.3),
-              strokeWidth: 1,
-              dashArray: [5, 5],
-            ),
-          ),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              gradient: const LinearGradient(
-                colors: [Colors.redAccent, Colors.orange],
-              ),
-              barWidth: 4,
-              belowBarData: BarAreaData(
-                show: true,
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.redAccent.withOpacity(0.3),
-                    Colors.orange.withOpacity(0.1),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              dotData: const FlDotData(show: false),
-            ),
-          ],
-          borderData: FlBorderData(
-            show: true,
-            border: Border.all(
-              color: Theme.of(context).dividerColor.withOpacity(0.2),
-            ),
-          ),
-          minY: 0,
-          maxY: maxY + interval * 2,
+          majorGridLines: const MajorGridLines(width: 0.5),
         ),
+        primaryYAxis: NumericAxis(
+          labelStyle: const TextStyle(fontSize: 10),
+          axisLine: const AxisLine(width: 0),
+          majorGridLines: const MajorGridLines(width: 0.5),
+          minimum: 0,
+          maximum: maxY + interval * 2,
+          interval: interval,
+        ),
+        series: <CartesianSeries<_LineChartData, String>>[
+          LineSeries<_LineChartData, String>(
+            dataSource: chartData,
+            xValueMapper: (data, _) =>
+                DateFormat('MM/dd').format(DateTime.parse(data.label)),
+            yValueMapper: (data, _) => data.value,
+            color: Colors.redAccent,
+            width: 4,
+            markerSettings: const MarkerSettings(
+              isVisible: true,
+              height: 8,
+              width: 8,
+              shape: DataMarkerType.circle,
+            ),
+            dataLabelSettings: const DataLabelSettings(isVisible: false),
+            enableTooltip: true,
+          ),
+          // Optionally, add an area below the line for a modern look:
+          AreaSeries<_LineChartData, String>(
+            dataSource: chartData,
+            xValueMapper: (data, _) =>
+                DateFormat('MM/dd').format(DateTime.parse(data.label)),
+            yValueMapper: (data, _) => data.value,
+            gradient: LinearGradient(
+              colors: [
+                Colors.redAccent.withOpacity(0.3),
+                Colors.orange.withOpacity(0.1),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderColor: Colors.transparent,
+            borderWidth: 0,
+            opacity: 0.7,
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildBarChart(Map<String, double> categoryExpenses) {
+    final localizer = S.of(context)!;
     final categoryBox = Hive.box<Category>('categories');
     final existingCategoryNames = categoryBox.values
         .map((cat) => cat.name)
         .toSet();
 
-    // Filter and sort categories by value
     final sortedCategories =
         categoryExpenses.entries
             .where((entry) => existingCategoryNames.contains(entry.key))
@@ -505,87 +492,49 @@ class _ReportsScreenState extends State<ReportsScreen> {
     }
 
     return Container(
-      height: 300,
+      height: 320,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: topCategories.first.value + 10,
-          barTouchData: BarTouchData(enabled: true),
-          titlesData: FlTitlesData(
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  int index = value.toInt();
-                  if (index < topCategories.length) {
-                    return Text(
-                      topCategories[index].key,
-                      style: const TextStyle(fontSize: 10),
-                    );
-                  }
-                  return const Text('');
-                },
-              ),
-            ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 40,
-                getTitlesWidget: (value, meta) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        value.toInt().toString(),
-                        style: const TextStyle(fontSize: 10),
-                      ),
-                      const SizedBox(width: 2),
-                      Image.asset(
-                        Theme.of(context).brightness == Brightness.dark
-                            ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
-                            : 'assets/images/Saudi_Riyal_Symbol.png',
-                        width: 10,
-                        height: 10,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
+      child: SfCartesianChart(
+        primaryXAxis: CategoryAxis(
+          labelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
+        ),
+        primaryYAxis: NumericAxis(
+          labelStyle: const TextStyle(fontSize: 10),
+          axisLine: const AxisLine(width: 0),
+          majorGridLines: const MajorGridLines(width: 0.5),
+        ),
+        tooltipBehavior: TooltipBehavior(enable: true),
+        series: <CartesianSeries>[
+          ColumnSeries<MapEntry<String, double>, String>(
+            dataSource: topCategories,
+            xValueMapper: (entry, _) =>
+                getLocalizedCategory(entry.key, localizer),
+            yValueMapper: (entry, _) => entry.value,
+            dataLabelSettings: const DataLabelSettings(isVisible: true),
+            pointColorMapper: (entry, idx) =>
+                Colors.primaries[idx % Colors.primaries.length],
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            gradient: LinearGradient(
+              colors: [Colors.redAccent, Colors.orange],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
             ),
           ),
-          barGroups: List.generate(topCategories.length, (i) {
-            return BarChartGroupData(
-              x: i,
-              barRods: [
-                BarChartRodData(
-                  toY: topCategories[i].value,
-                  gradient: const LinearGradient(
-                    colors: [Colors.redAccent, Colors.orange],
-                  ),
-                  width: 14,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ],
-            );
-          }),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildPieChart(Map<String, double> categoryExpenses) {
+    final localizer = S.of(context)!;
     final categoryBox = Hive.box<Category>('categories');
     final existingCategoryNames = categoryBox.values
         .map((cat) => cat.name)
@@ -605,39 +554,50 @@ class _ReportsScreenState extends State<ReportsScreen> {
     }
 
     return Container(
-      height: 300,
+      height: 320,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
-      child: PieChart(
-        PieChartData(
-          sections: topEntries.map((entry) {
-            final value = entry.value;
-            final percentage = (value / total) * 100;
-            return PieChartSectionData(
-              value: value,
-              title: '${entry.key} (${percentage.toStringAsFixed(1)}%)',
-              color:
-                  Colors.primaries[categoryExpenses.keys.toList().indexOf(
-                        entry.key,
-                      ) %
-                      Colors.primaries.length],
-              radius: 80,
-              titleStyle: const TextStyle(fontSize: 12, color: Colors.black),
-            );
-          }).toList(),
-          borderData: FlBorderData(show: false),
-          sectionsSpace: 2,
-          centerSpaceRadius: 40,
+      child: SfCircularChart(
+        legend: Legend(
+          isVisible: true,
+          overflowMode: LegendItemOverflowMode.wrap,
+          position: LegendPosition.bottom,
+          textStyle: const TextStyle(fontSize: 12),
         ),
+        tooltipBehavior: TooltipBehavior(enable: true),
+        series: <PieSeries<MapEntry<String, double>, String>>[
+          PieSeries<MapEntry<String, double>, String>(
+            dataSource: topEntries,
+            xValueMapper: (entry, _) =>
+                getLocalizedCategory(entry.key, localizer),
+            yValueMapper: (entry, _) => entry.value,
+            dataLabelMapper: (entry, _) =>
+                '${getLocalizedCategory(entry.key, localizer)}\n${((entry.value / total) * 100).toStringAsFixed(1)}%',
+            dataLabelSettings: const DataLabelSettings(
+              isVisible: true,
+              labelPosition: ChartDataLabelPosition.outside,
+              connectorLineSettings: ConnectorLineSettings(
+                type: ConnectorType.curve,
+              ),
+              textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+            pointColorMapper: (entry, idx) =>
+                Colors.primaries[idx % Colors.primaries.length],
+            explode: true,
+            explodeIndex: 0,
+            radius: '90%',
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildGoalProgressCard(Goal goal, int index) {
+    final localizer = S.of(context)!;
     final progress = goal.targetAmount > 0
         ? (goal.savedAmount / goal.targetAmount).clamp(0.0, 1.0)
         : 0.0;
@@ -660,32 +620,13 @@ class _ReportsScreenState extends State<ReportsScreen> {
     String dateStatusText;
     if (isPastDue) {
       dateStatusText =
-          'Past due: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year}';
+          '${localizer.pastDue}: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year}';
     } else {
       dateStatusText =
-          'Target: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year} • $daysLeft days left';
+          '${localizer.target}: ${goal.targetDate.day}/${goal.targetDate.month}/${goal.targetDate.year} • $daysLeft ${localizer.daysLeft}';
     }
 
     return InkWell(
-      // onTap: () {
-      //   showDialog(
-      //     context: context,
-      //     builder: (context) => EditGoalDialog(
-      //       goal: goal,
-      //       index: index,
-      //       onUpdate: (updatedGoal, index) {
-      //         setState(() {
-      //           goals[index] = updatedGoal;
-      //         });
-      //       },
-      //       onDelete: (index) {
-      //         setState(() {
-      //           goals.removeAt(index);
-      //         });
-      //       },
-      //     ),
-      //   );
-      // },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.all(16),
@@ -722,11 +663,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '\$${goal.savedAmount.toStringAsFixed(2)} saved',
+                  '${localizer.saved}: ${goal.savedAmount.toStringAsFixed(2)}',
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
                 Text(
-                  'Goal: \$${goal.targetAmount.toStringAsFixed(2)}',
+                  '${localizer.goal}: ${goal.targetAmount.toStringAsFixed(2)}',
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ],
