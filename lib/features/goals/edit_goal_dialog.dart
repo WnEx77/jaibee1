@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:jaibee1/data/models/goal_model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
+// Import your localization file
+import 'package:jaibee1/l10n/s.dart';
 
 class EditGoalDialog extends StatefulWidget {
   final Goal goal;
@@ -48,7 +50,6 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // Ensure initial date is not before the minimum date
         DateTime validInitialDate = initial.isBefore(now) ? now : initial;
         DateTime tempPickedDate = validInitialDate;
 
@@ -88,7 +89,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                   ),
                 ),
                 CupertinoButton(
-                  child: Text('Done', style: TextStyle(color: textColor)),
+                  child: Text(S.of(context)!.done, style: TextStyle(color: textColor)),
                   onPressed: () {
                     setState(() {
                       _targetDate = tempPickedDate;
@@ -111,7 +112,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
         targetAmount: double.parse(_targetAmountController.text.trim()),
         savedAmount: double.parse(_savedAmountController.text.trim()),
         targetDate: _targetDate!,
-        milestones: [], // Provide empty list or remove if not required in model
+        milestones: [],
       );
       widget.onUpdate(updatedGoal, widget.index);
       Navigator.pop(context);
@@ -122,20 +123,20 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Goal'),
-        content: const Text('Are you sure you want to delete this goal?'),
+        title: Text(S.of(context)!.deleteGoal),
+        content: Text(S.of(context)!.deleteGoalConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(S.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               widget.onDelete(widget.index);
-              Navigator.pop(context); // Close confirm dialog
-              Navigator.pop(context); // Close edit dialog
+              Navigator.pop(context);
+              Navigator.pop(context);
             },
-            child: const Text('Delete'),
+            child: Text(S.of(context)!.delete),
           ),
         ],
       ),
@@ -145,7 +146,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Use your localization if available, e.g. final localizer = S.of(context)!;
+    final localizer = S.of(context);
 
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -169,7 +170,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Edit Goal', // Replace with localizer.editGoal if available
+                          localizer!.editGoal,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             color: Colors.teal[800],
                             fontWeight: FontWeight.bold,
@@ -186,29 +187,29 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                   TextFormField(
                     controller: _nameController,
                     decoration: InputDecoration(
-                      labelText: 'Goal Name', // localizer.goalName
+                      labelText: localizer!.goalName,
                       prefixIcon: const Icon(Icons.title),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     validator: (value) =>
-                        value == null || value.trim().isEmpty ? 'Required' : null,
+                        value == null || value.trim().isEmpty ? localizer.requiredField : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _targetAmountController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'Target Amount', // localizer.targetAmount
+                      labelText: localizer.targetAmount,
                       prefixIcon: const Icon(Icons.attach_money),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Required';
+                        return localizer.requiredField;
                       }
                       final parsed = double.tryParse(value.trim());
                       if (parsed == null || parsed <= 0) {
-                        return 'Enter a valid amount';
+                        return localizer.enterValidAmount;
                       }
                       return null;
                     },
@@ -218,22 +219,22 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                     controller: _savedAmountController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'Saved Amount', // localizer.savedAmount
+                      labelText: localizer.savedAmount,
                       prefixIcon: const Icon(Icons.savings),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Required';
+                        return localizer.requiredField;
                       }
                       final parsed = double.tryParse(value.trim());
                       if (parsed == null || parsed < 0) {
-                        return 'Enter a valid amount';
+                        return localizer.enterValidAmount;
                       }
                       final target =
                           double.tryParse(_targetAmountController.text.trim()) ?? 0;
                       if (parsed > target) {
-                        return 'Saved amount cannot exceed target amount';
+                        return localizer.savedAmountExceedsTarget;
                       }
                       return null;
                     },
@@ -244,18 +245,18 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                     child: AbsorbPointer(
                       child: TextFormField(
                         decoration: InputDecoration(
-                          labelText: 'Target Date', // localizer.targetDate
+                          labelText: localizer.targetDate,
                           prefixIcon: const Icon(Icons.calendar_today),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           suffixIcon: const Icon(Icons.edit_calendar),
                         ),
                         controller: TextEditingController(
                           text: _targetDate != null
-                              ? DateFormat.yMMMd().format(_targetDate!)
+                              ? DateFormat.yMMMd(localizer.localeName).format(_targetDate!)
                               : '',
                         ),
                         validator: (_) =>
-                            _targetDate == null ? 'Pick a date' : null,
+                            _targetDate == null ? localizer.pickDate : null,
                       ),
                     ),
                   ),
@@ -265,11 +266,11 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.delete, color: Colors.red),
-                          label: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
+                          label: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             child: Text(
-                              'Delete',
-                              style: TextStyle(color: Colors.red, fontSize: 16),
+                              localizer.delete,
+                              style: const TextStyle(color: Colors.red, fontSize: 16),
                             ),
                           ),
                           style: OutlinedButton.styleFrom(
@@ -288,7 +289,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                           label: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: Text(
-                              'Save', // localizer.save
+                              localizer.save,
                               style: const TextStyle(fontSize: 16),
                             ),
                           ),

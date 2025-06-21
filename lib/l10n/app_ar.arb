@@ -207,5 +207,15 @@
   "daysLeft": "أيام متبقية",
   "categoryDistribution": "توزيع الفئات",
   "startDate": "تاريخ البداية",
-  "endDate": "تاريخ النهاية"
+  "endDate": "تاريخ النهاية",
+  "savedAmountExceedsTarget": "لا يمكن أن يتجاوز المبلغ المُدخر المبلغ المستهدف",
+  "requiredField": "هذا الحقل مطلوب",
+  "editGoal": "تعديل الهدف",
+  "deleteGoalConfirmation": "هل أنت متأكد أنك تريد حذف هذا الهدف؟ سيتم فقدان جميع البيانات المتعلقة بهذا الهدف.",
+  "@deleteGoalConfirmation": {
+    "description": "رسالة تأكيد عند حذف هدف",
+    "placeholders": {}
+  },
+  "deleteGoal": "حذف الهدف",
+  "done": "تم"
 }

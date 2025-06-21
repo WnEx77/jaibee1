@@ -573,4 +573,24 @@ class SEn extends S {
 
   @override
   String get endDate => 'End Date';
+
+  @override
+  String get savedAmountExceedsTarget =>
+      'Saved amount cannot exceed target amount';
+
+  @override
+  String get requiredField => 'This field is required';
+
+  @override
+  String get editGoal => 'Edit Goal';
+
+  @override
+  String get deleteGoalConfirmation =>
+      'Are you sure you want to delete this goal? All progress will be lost.';
+
+  @override
+  String get deleteGoal => 'Delete Goal';
+
+  @override
+  String get done => 'Done';
 }

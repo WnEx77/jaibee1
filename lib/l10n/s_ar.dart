@@ -581,4 +581,24 @@ class SAr extends S {
 
   @override
   String get endDate => 'تاريخ النهاية';
+
+  @override
+  String get savedAmountExceedsTarget =>
+      'لا يمكن أن يتجاوز المبلغ المُدخر المبلغ المستهدف';
+
+  @override
+  String get requiredField => 'هذا الحقل مطلوب';
+
+  @override
+  String get editGoal => 'تعديل الهدف';
+
+  @override
+  String get deleteGoalConfirmation =>
+      'هل أنت متأكد أنك تريد حذف هذا الهدف؟ سيتم فقدان جميع البيانات المتعلقة بهذا الهدف.';
+
+  @override
+  String get deleteGoal => 'حذف الهدف';
+
+  @override
+  String get done => 'تم';
 }

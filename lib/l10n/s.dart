@@ -1194,6 +1194,42 @@ abstract class S {
   /// In en, this message translates to:
   /// **'End Date'**
   String get endDate;
+
+  /// No description provided for @savedAmountExceedsTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved amount cannot exceed target amount'**
+  String get savedAmountExceedsTarget;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get requiredField;
+
+  /// No description provided for @editGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Goal'**
+  String get editGoal;
+
+  /// Confirmation message shown when deleting a goal
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this goal? All progress will be lost.'**
+  String get deleteGoalConfirmation;
+
+  /// No description provided for @deleteGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Goal'**
+  String get deleteGoal;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

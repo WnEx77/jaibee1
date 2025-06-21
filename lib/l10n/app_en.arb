@@ -209,5 +209,15 @@
   "daysLeft": "Days Left",
   "categoryDistribution": "Category Distribution",
   "startDate": "Start Date",
-  "endDate": "End Date"
+  "endDate": "End Date",
+  "savedAmountExceedsTarget": "Saved amount cannot exceed target amount",
+  "requiredField": "This field is required",
+  "editGoal": "Edit Goal",
+  "deleteGoalConfirmation": "Are you sure you want to delete this goal? All progress will be lost.",
+  "@deleteGoalConfirmation": {
+    "description": "Confirmation message shown when deleting a goal",
+    "placeholders": {}
+  },
+  "deleteGoal": "Delete Goal",
+  "done": "Done"
 }
