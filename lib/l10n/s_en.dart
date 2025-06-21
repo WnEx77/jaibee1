@@ -593,4 +593,7 @@ class SEn extends S {
 
   @override
   String get done => 'Done';
+
+  @override
+  String get mostSpentCategories => 'Most Spent Categories';
 }

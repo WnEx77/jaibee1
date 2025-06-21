@@ -139,6 +139,11 @@ String generatePrompt(
   return prompt.toString();
 }
 
+Future<double> getMonthlyLimit() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getDouble('monthly_limit') ?? 0;
+}
+
 Future<String> fetchFinancialAdvice(String prompt) async {
   final response = await http.post(
     Uri.parse('https://api.openai.com/v1/chat/completions'),
@@ -189,6 +194,8 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     try {
       // ✅ Check internet connection
       final connectivityResult = await Connectivity().checkConnectivity();
+      final prefs = await SharedPreferences.getInstance();
+      final double? monthlyLimit = prefs.getDouble('monthly_limit');
       if (connectivityResult == ConnectivityResult.none) {
         setState(() {
           _error = S.of(context)!.noInternetConnection;
@@ -196,11 +203,9 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
         });
         return;
       }
-      final locale = Localizations.localeOf(context);
 
+      final locale = Localizations.localeOf(context);
       final transactionsBox = Hive.box('transactions');
-      final prefs = await SharedPreferences.getInstance();
-      final double? monthlyLimit = prefs.getDouble('monthly_limit') ?? 0;
 
       final summary = getMonthlySummary(
         _selectedMonth,
@@ -312,7 +317,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
       children: [
         Text(title),
         Text(
-          fallbackText != null && value == 0
+          fallbackText != null && (value == 0 || value == null)
               ? fallbackText
               : "\$${value.toStringAsFixed(2)}",
           style: TextStyle(
@@ -419,7 +424,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                     ),
                   ),
                   pw.Text(
-                    _summary!.monthlyLimit != null
+                    (_summary!.monthlyLimit ?? 0) > 0
                         ? "\$${_summary!.monthlyLimit!.toStringAsFixed(2)}"
                         : s.notSet,
                     style: pw.TextStyle(font: arabicFont, fontSize: 14),
@@ -570,7 +575,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                   ),
                 ),
                 pw.Text(
-                  _summary!.monthlyLimit != null
+                  (_summary!.monthlyLimit ?? 0) > 0
                       ? "\$${_summary!.monthlyLimit!.toStringAsFixed(2)}"
                       : s.notSet,
                   style: pw.TextStyle(font: font, fontSize: 14),
@@ -768,9 +773,9 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                                 ),
                                 _summaryItem(
                                   S.of(context)!.limit,
-                                  _summary!.monthlyLimit ?? 0,
+                                  (_summary!.monthlyLimit ?? 0),
                                   Colors.orange,
-                                  fallbackText: "Not set",
+                                  fallbackText: S.of(context)!.notSet,
                                 ),
                               ],
                             ),

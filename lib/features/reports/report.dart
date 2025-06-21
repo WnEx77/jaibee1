@@ -180,7 +180,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     ),
                     const SizedBox(height: 32),
                     Text(
-                      localizer.selectCategory,
+                      localizer.mostSpentCategories,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.secondary,

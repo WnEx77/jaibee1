@@ -219,5 +219,6 @@
     "placeholders": {}
   },
   "deleteGoal": "Delete Goal",
-  "done": "Done"
+  "done": "Done",
+  "mostSpentCategories": "Most Spent Categories"
 }

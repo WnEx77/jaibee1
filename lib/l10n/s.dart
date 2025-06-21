@@ -1230,6 +1230,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Done'**
   String get done;
+
+  /// No description provided for @mostSpentCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Spent Categories'**
+  String get mostSpentCategories;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

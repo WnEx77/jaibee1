@@ -15,7 +15,7 @@ class SAr extends S {
   String get changeLanguage => 'تغيير اللغة';
 
   @override
-  String get transactions => 'المعاملات';
+  String get transactions => 'المصاريف';
 
   @override
   String get reports => 'التقارير';
@@ -57,7 +57,7 @@ class SAr extends S {
   String get transactionAdded => 'تمت إضافة المصروف';
 
   @override
-  String get noTransactions => 'لا توجد معاملات حتى الآن.';
+  String get noTransactions => 'لا توجد مصاريف حتى الآن.';
 
   @override
   String get transactionDeleted => 'تم حذف المعاملة';
@@ -108,7 +108,7 @@ class SAr extends S {
   String get addQuickTransaction => 'إضافة معاملة سريعة';
 
   @override
-  String get filterTransactions => 'تصفية المعاملات';
+  String get filterTransactions => 'تصفية المصاريف';
 
   @override
   String get ok => 'حسنًا';
@@ -186,10 +186,10 @@ class SAr extends S {
   String get notSet => 'غير محدد';
 
   @override
-  String get personalizedAdvice => 'نصيحة مخصصة';
+  String get personalizedAdvice => 'نصيحة مالية مخصصة لك';
 
   @override
-  String get noAdvice => 'لا توجد نصيحة';
+  String get noAdvice => 'لا توجد نصائح حالياً';
 
   @override
   String get errorWithMessage => 'خطأ مع رسالة';
@@ -324,27 +324,27 @@ class SAr extends S {
   }
 
   @override
-  String get manageCategories => 'إدارة الفئات';
+  String get manageCategories => 'تنظيم الفئات';
 
   @override
-  String get addCategory => 'إضافة فئة';
+  String get addCategory => 'إنشاء فئة جديدة';
 
   @override
-  String get deleteCategory => 'حذف الفئة';
+  String get deleteCategory => 'إزالة الفئة';
 
   @override
   String deleteCategoryConfirm(Object categoryName) {
-    return 'هل أنت متأكد أنك تريد حذف \"$categoryName\"؟ سيتم حذف جميع المعاملات التي تنتمي إلى هذه الفئة!';
+    return 'هل أنت متأكد أنك تريد حذف \"$categoryName\"؟ سيتم حذف جميع المصاريف التي تنتمي إلى هذه الفئة!';
   }
 
   @override
-  String get categoryExists => 'هذه الفئة موجودة بالفعل.';
+  String get categoryExists => 'هذه الفئة مُضافة مسبقًا.';
 
   @override
-  String get incomeProtected => 'فئة \"الدخل\" موجودة ولا يمكن تعديلها.';
+  String get incomeProtected => 'فئة \"الدخل\" أساسية ولا يمكن تعديلها.';
 
   @override
-  String get selectIcon => 'اختر أيقونة';
+  String get selectIcon => 'حدد رمزًا للفئة';
 
   @override
   String get undo => 'تراجع';
@@ -353,7 +353,7 @@ class SAr extends S {
   String get categoryDeleted => 'تم حذف التصنيف';
 
   @override
-  String get daysRemaining => 'يوم متبقٍ على نهاية الشهر.';
+  String get daysRemaining => 'عدد الأيام المتبقية حتى نهاية الشهر';
 
   @override
   String get shopping => 'التسوق';
@@ -395,7 +395,7 @@ class SAr extends S {
   String get events => 'الفعاليات';
 
   @override
-  String get totalSavings => 'إجمالي الادخار';
+  String get totalSavings => 'مجموع المدخرات';
 
   @override
   String get aboutUs => 'عن التطبيق';
@@ -430,7 +430,7 @@ class SAr extends S {
       'هل أنت متأكد أنك ترغب في حذف المعاملة؟';
 
   @override
-  String get budgetDistribution => 'توزيع الميزانية';
+  String get budgetDistribution => 'طريقة توزيع الميزانية';
 
   @override
   String get expectedDate => 'التاريخ المتوقع';
@@ -445,7 +445,7 @@ class SAr extends S {
   String get targetAmount => 'المبلغ المستهدف';
 
   @override
-  String get savedAmount => 'المبلغ المُدخر';
+  String get savedAmount => 'ما تم ادخاره حتى الآن';
 
   @override
   String get targetDate => 'تاريخ الهدف';
@@ -494,25 +494,23 @@ class SAr extends S {
   String get welcomeTitle => 'مرحبًا بك في جيبي';
 
   @override
-  String get welcomeDescription =>
-      'تحكّم في أموالك باستخدام رؤى مدعومة بالذكاء الاصطناعي.';
+  String get welcomeDescription => 'سيطر على مصاريفك بمساعدة الذكاء الاصطناعي.';
 
   @override
   String get trackTitle => 'تتبع نفقاتك';
 
   @override
   String get trackDescription =>
-      'قم بتسجيل ومراجعة جميع معاملاتك اليومية بسهولة.';
+      'قم بتسجيل ومراجعة جميع مصاريفك اليومية بسهولة.';
 
   @override
-  String get budgetTitle => 'حدد الميزانيات والأهداف';
+  String get budgetTitle => 'قم بوضع ميزانيات وأهداف مالية واضحة';
 
   @override
-  String get budgetDescription =>
-      'ابقَ على المسار الصحيح من خلال تحديد ميزانيات وأهداف ادخار واضحة.';
+  String get budgetDescription => 'تابع التزامك المالي بسهولة';
 
   @override
-  String get adviceTitle => 'نصائح ذكية بالذكاء الاصطناعي';
+  String get adviceTitle => 'نصائح مالية مبنية على الذكاء الاصطناعي';
 
   @override
   String get adviceDescription =>
@@ -541,25 +539,25 @@ class SAr extends S {
       'لا توجد فئات مخصصة حتى الآن. يمكنك إضافة فئات جديدة من خلال إعدادات التطبيق.';
 
   @override
-  String get ofExpenses => 'من المصروفات';
+  String get ofExpenses => 'جزء من إجمالي المصروفات';
 
   @override
-  String get categoryProgress => 'تقدم الفئة';
+  String get categoryProgress => 'نسبة استهلاك الفئة';
 
   @override
-  String get noLimitSet => 'لا يوجد حد محدد لهذه الفئة.';
+  String get noLimitSet => 'لم يتم تعيين حد لهذه الفئة بعد.';
 
   @override
-  String get ofLimit => 'من الحد';
+  String get ofLimit => 'من الحد المسموح به';
 
   @override
   String get clickForMoreInfo => 'انقر لمزيد من المعلومات';
 
   @override
-  String get exportTransactionsAsPdf => 'طباعة المصاريف كملف PDF';
+  String get exportTransactionsAsPdf => 'تحميل تقرير المصاريف بصيغة PDF';
 
   @override
-  String get pastDue => 'متأخر';
+  String get pastDue => 'تأخر عن الموعد';
 
   @override
   String get target => 'الهدف';
@@ -571,10 +569,10 @@ class SAr extends S {
   String get goal => 'الهدف';
 
   @override
-  String get daysLeft => 'أيام متبقية';
+  String get daysLeft => 'عدد الأيام المتبقية';
 
   @override
-  String get categoryDistribution => 'توزيع الفئات';
+  String get categoryDistribution => 'تفصيل الإنفاق حسب الفئات';
 
   @override
   String get startDate => 'تاريخ البداية';
@@ -601,4 +599,7 @@ class SAr extends S {
 
   @override
   String get done => 'تم';
+
+  @override
+  String get mostSpentCategories => 'الفئات الأكثر إنفاقًا';
 }
