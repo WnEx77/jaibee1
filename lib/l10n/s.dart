@@ -1248,6 +1248,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Goal added successfully'**
   String get goalAddedSuccessfully;
+
+  /// No description provided for @categoryAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Category added successfully'**
+  String get categoryAdded;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

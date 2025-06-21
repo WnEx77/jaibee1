@@ -201,5 +201,8 @@
   "@deleteGoalConfirmation": { "description": "رسالة تأكيد عند حذف هدف", "placeholders": {} },
   "deleteGoal": "حذف الهدف",
   "done": "تم",
-  "mostSpentCategories": "الفئات الأكثر إنفاقًا"
+  "mostSpentCategories": "الفئات الأكثر إنفاقًا",
+  "goalDeleted": "تم حذف الهدف بنجاح",
+  "goalAddedSuccessfully": "تم إضافة الهدف بنجاح",
+  "categoryAdded": "تم إضافة الفئة بنجاح"
 }

@@ -20,63 +20,6 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
 
   String _selectedCategory = '';
 
-  final Map<String, IconData> availableIcons = {
-    'fastfood': Icons.fastfood,
-    'commute': Icons.commute,
-    'movie': Icons.movie,
-    'shopping_cart': Icons.shopping_cart,
-    'fitness_center': Icons.fitness_center,
-    'savings': Icons.savings,
-    'category': Icons.category,
-    'coffee': Icons.coffee,
-    'local_cafe': Icons.local_cafe,
-    'restaurant': Icons.restaurant,
-    'directions_car': Icons.directions_car,
-    'directions_bike': Icons.directions_bike,
-    'local_gas_station': Icons.local_gas_station,
-    'flight': Icons.flight,
-    'train': Icons.train,
-    'local_hospital': Icons.local_hospital,
-    'home': Icons.home,
-    'phone': Icons.phone,
-    'computer': Icons.computer,
-    'movie_filter': Icons.movie_filter,
-    'music_note': Icons.music_note,
-    'sports_soccer': Icons.sports_soccer,
-    'book': Icons.book,
-    'local_library': Icons.local_library,
-    'pets': Icons.pets,
-    'local_florist': Icons.local_florist,
-    'toys': Icons.toys,
-    'school': Icons.school,
-    'work': Icons.work,
-    'local_offer': Icons.local_offer,
-    'credit_card': Icons.credit_card,
-    'account_balance': Icons.account_balance,
-    'build': Icons.build,
-    'local_mall': Icons.local_mall,
-    'brush': Icons.brush,
-    'cake': Icons.cake,
-    'child_care': Icons.child_care,
-    'directions_run': Icons.directions_run,
-    'emoji_events': Icons.emoji_events,
-    'event': Icons.event,
-    'extension': Icons.extension,
-    'golf_course': Icons.golf_course,
-    'headphones': Icons.headphones,
-    'healing': Icons.healing,
-    'keyboard': Icons.keyboard,
-    'local_pizza': Icons.local_pizza,
-    'mic': Icons.mic,
-    'nightlife': Icons.nightlife,
-    'pool': Icons.pool,
-    'restaurant_menu': Icons.restaurant_menu,
-    'spa': Icons.spa,
-    'star': Icons.star,
-    'videogame_asset': Icons.videogame_asset,
-    'watch': Icons.watch,
-  };
-
   final List<Category> defaultUserCategories = [
     Category(name: 'shopping', icon: 'shopping_cart'),
     Category(name: 'health', icon: 'local_hospital'),
@@ -138,6 +81,15 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     setState(() {
       _selectedCategory = '';
     });
+
+    Flushbar(
+      message: localizer.categoryAdded,
+      duration: const Duration(seconds: 2),
+      backgroundColor: Colors.green,
+      margin: const EdgeInsets.all(16),
+      borderRadius: BorderRadius.circular(12),
+      icon: const Icon(Icons.check_circle_outline, color: Colors.white),
+    ).show(context);
   }
 
   @override
@@ -195,9 +147,18 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                     value: cat.name,
                     child: Row(
                       children: [
-                        Icon(availableIcons[cat.icon] ?? Icons.category),
+                        Icon(
+                            getCategoryIcon(cat),
+                          size: 22,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.tealAccent
+                              : Colors.teal,
+                        ),
                         const SizedBox(width: 10),
-                        Text(getLocalizedCategory(cat.name, localizer)),
+                        Text(
+                          getLocalizedCategory(cat.name, localizer),
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
                       ],
                     ),
                   );
@@ -211,8 +172,31 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                 },
                 decoration: InputDecoration(
                   labelText: localizer.selectCategory,
-                  border: const OutlineInputBorder(),
+                  border: InputBorder.none,
+                  filled: true,
+                  fillColor: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[900]
+                      : Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[800]!
+                          : Colors.grey[200]!,
+                      width: 1.2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide(color: Colors.teal, width: 1.5),
+                  ),
                 ),
+                borderRadius: BorderRadius.circular(18),
+                icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 28),
               ),
               const SizedBox(height: 12),
               ElevatedButton.icon(
@@ -233,7 +217,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                   itemBuilder: (ctx, index) {
                     final cat = categories[index];
                     final isProtected = cat.name.toLowerCase() == 'income';
-                    final iconData = availableIcons[cat.icon] ?? Icons.category;
+                    final iconData = getCategoryIcon(cat);
                     final localizedName = getLocalizedCategory(
                       cat.name,
                       localizer,

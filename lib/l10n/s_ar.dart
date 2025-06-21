@@ -604,8 +604,11 @@ class SAr extends S {
   String get mostSpentCategories => 'الفئات الأكثر إنفاقًا';
 
   @override
-  String get goalDeleted => 'Goal deleted successfully';
+  String get goalDeleted => 'تم حذف الهدف بنجاح';
 
   @override
-  String get goalAddedSuccessfully => 'Goal added successfully';
+  String get goalAddedSuccessfully => 'تم إضافة الهدف بنجاح';
+
+  @override
+  String get categoryAdded => 'تم إضافة الفئة بنجاح';
 }

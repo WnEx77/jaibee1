@@ -602,4 +602,7 @@ class SEn extends S {
 
   @override
   String get goalAddedSuccessfully => 'Goal added successfully';
+
+  @override
+  String get categoryAdded => 'Category added successfully';
 }

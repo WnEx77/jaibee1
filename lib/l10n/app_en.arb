@@ -222,5 +222,6 @@
   "done": "Done",
   "mostSpentCategories": "Most Spent Categories",
   "goalDeleted": "Goal deleted successfully",
-  "goalAddedSuccessfully": "Goal added successfully"
+  "goalAddedSuccessfully": "Goal added successfully",
+  "categoryAdded": "Category added successfully"
 }
