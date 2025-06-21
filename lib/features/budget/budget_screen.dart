@@ -7,6 +7,7 @@ import 'package:jaibee1/data/models/category.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee1/core/utils/category_utils.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -75,7 +76,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              '${localizeCategory(context, category.name)}: ${S.of(context)!.invalidLimit}',
+              '${getLocalizedCategory(category.name, S.of(context)!)}: ${S.of(context)!.invalidLimit}',
             ),
             backgroundColor: Colors.redAccent,
           ),
@@ -138,105 +139,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
     ).showSnackBar(SnackBar(content: Text(S.of(context)!.budgetsSaved)));
   }
 
-  String localizeCategory(BuildContext context, String name) {
-    final s = S.of(context)!;
-    switch (name.toLowerCase()) {
-      case 'food':
-        return s.food;
-      case 'transport':
-      case 'transportation':
-        return s.transport;
-      case 'entertainment':
-        return s.entertainment;
-      case 'coffee':
-        return s.coffee;
-      case 'income':
-        return s.income;
-      case 'shopping':
-        return s.shopping;
-      case 'health':
-        return s.health;
-      case 'bills':
-        return s.bills;
-      case 'home':
-        return s.home;
-      case 'groceries':
-        return s.groceries;
-      case 'beauty':
-        return s.beauty;
-      case 'electronics':
-        return s.electronics;
-      case 'books':
-        return s.books;
-      case 'petcare':
-      case 'pet care':
-        return s.petCare;
-      case 'gifts':
-        return s.gifts;
-      case 'savings':
-        return s.savings;
-      case 'events':
-        return s.events;
-      case 'fitness':
-        return s.fitness;
-      case 'other':
-        return s.other;
-      default:
-        return name;
-    }
-  }
-
-    IconData _getIconForCategory(String key) {
-    switch (key.toLowerCase()) {
-      case 'shopping':
-        return Icons.shopping_cart;
-      case 'health':
-        return Icons.local_hospital;
-      case 'transport':
-        return Icons.directions_car;
-      case 'food':
-        return Icons.restaurant;
-      case 'education':
-        return Icons.school;
-      case 'entertainment':
-        return Icons.movie;
-      case 'fitness':
-        return Icons.fitness_center;
-      case 'travel':
-        return Icons.flight;
-      case 'home':
-        return Icons.home;
-      case 'bills':
-        return Icons.credit_card;
-      case 'groceries':
-        return Icons.local_mall;
-      case 'beauty':
-        return Icons.spa;
-      case 'electronics':
-        return Icons.computer;
-      case 'books':
-        return Icons.book;
-      case 'petcare': // note lowercase
-        return Icons.pets;
-      case 'gifts':
-        return Icons.cake;
-      case 'savings':
-        return Icons.savings;
-      case 'events':
-        return Icons.event;
-      case 'income':
-        return Icons.monetization_on;
-      case 'coffee':
-        return Icons.coffee;
-      case 'transportation':
-        return Icons.directions_bus;
-      case 'other':
-        return Icons.category;
-      default:
-        return Icons.category;
-    }
-  }
-
   List<PieChartSectionData> _buildPieChartSections() {
     final total = _controllers.values
         .map((c) => double.tryParse(c.text) ?? 0)
@@ -271,7 +173,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
       return PieChartSectionData(
         title:
-            '${localizeCategory(context, name)}\n${percentage.toStringAsFixed(1)}%',
+            '${getLocalizedCategory(name, S.of(context)!)}\n${percentage.toStringAsFixed(1)}%',
         value: value,
         color: pieColors[i % pieColors.length],
         radius: 60,
@@ -410,7 +312,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   child: Row(
                     children: [
                     Icon(
-                      _getIconForCategory(category.name),
+                      getCategoryIcon(category),
                       color: mintTheme.buttonColor,
                       size: 36,
                     ),
@@ -418,7 +320,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                     Expanded(
                       flex: 2,
                       child: Text(
-                      localizeCategory(context, category.name),
+                      getLocalizedCategory(category.name, S.of(context)!),
                       style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),

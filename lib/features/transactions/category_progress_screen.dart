@@ -8,6 +8,7 @@ import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 import 'package:jaibee1/data/models/budget.dart';
+import 'package:jaibee1/core/utils/category_utils.dart';
 
 class CategoryProgressScreen extends StatelessWidget {
   final DateTime selectedMonth;
@@ -94,12 +95,12 @@ class CategoryProgressScreen extends StatelessWidget {
             leading: CircleAvatar(
               backgroundColor: Colors.transparent,
               child: Icon(
-                _getIconForCategory(cat.name),
+                getCategoryIcon(cat),
                 color: mintTheme.unselectedIconColor,
               ),
             ),
             title: Text(
-              _getLocalizedCategory(cat.name, localizer),
+              getLocalizedCategory(cat.name, localizer),
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             subtitle: Column(
@@ -174,99 +175,5 @@ class CategoryProgressScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _getLocalizedCategory(String key, S localizer) {
-    switch (key.toLowerCase()) {
-      case 'shopping':
-        return localizer.shopping;
-      case 'health':
-        return localizer.health;
-      case 'transport':
-        return localizer.transport;
-      case 'food':
-        return localizer.food;
-      case 'education':
-        return localizer.education;
-      case 'entertainment':
-        return localizer.entertainment;
-      case 'fitness':
-        return localizer.fitness;
-      case 'travel':
-        return localizer.travel;
-      case 'home':
-        return localizer.home;
-      case 'bills':
-        return localizer.bills;
-      case 'groceries':
-        return localizer.groceries;
-      case 'beauty':
-        return localizer.beauty;
-      case 'electronics':
-        return localizer.electronics;
-      case 'books':
-        return localizer.books;
-      case 'other':
-        return localizer.other;
-      case 'petcare':
-        return localizer.petCare;
-      case 'gifts':
-        return localizer.gifts;
-      case 'savings':
-        return localizer.savings;
-      case 'events':
-        return localizer.events;
-      default:
-        return key;
-    }
-  }
-
-  IconData _getIconForCategory(String key) {
-    switch (key.toLowerCase()) {
-      case 'shopping':
-        return Icons.shopping_cart;
-      case 'health':
-        return Icons.local_hospital;
-      case 'transport':
-        return Icons.directions_car;
-      case 'food':
-        return Icons.restaurant;
-      case 'education':
-        return Icons.school;
-      case 'entertainment':
-        return Icons.movie;
-      case 'fitness':
-        return Icons.fitness_center;
-      case 'travel':
-        return Icons.flight;
-      case 'home':
-        return Icons.home;
-      case 'bills':
-        return Icons.credit_card;
-      case 'groceries':
-        return Icons.local_mall;
-      case 'beauty':
-        return Icons.spa;
-      case 'electronics':
-        return Icons.computer;
-      case 'books':
-        return Icons.book;
-      case 'petcare':
-        return Icons.pets;
-      case 'gifts':
-        return Icons.cake;
-      case 'savings':
-        return Icons.savings;
-      case 'events':
-        return Icons.event;
-      case 'coffee':
-        return Icons.coffee;
-      case 'transportation':
-        return Icons.directions_bus;
-      case 'other':
-        return Icons.category;
-      default:
-        return Icons.category;
-    }
   }
 }

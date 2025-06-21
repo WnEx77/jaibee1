@@ -8,6 +8,7 @@ import 'package:jaibee1/data/models/category.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee1/core/utils/category_utils.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -126,13 +127,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             child: Row(
               children: [
                 Icon(
-                  _getCategoryIcon(cat),
+                  getCategoryIcon(cat),
                   size: 22,
                   color: isDark ? Colors.tealAccent : Colors.teal,
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  _getLocalizedCategory(cat.name, localizer),
+                  getLocalizedCategory(cat.name, localizer),
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
               ],
@@ -387,56 +388,5 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         label: Text(label),
       ),
     );
-  }
-
-  String _getLocalizedCategory(String name, S localizer) {
-    final map = {
-      'food': localizer.food,
-      'transport': localizer.transport,
-      'transportation': localizer.transport,
-      'entertainment': localizer.entertainment,
-      'coffee': localizer.coffee,
-      'income': localizer.income,
-      'shopping': localizer.shopping,
-      'health': localizer.health,
-      'bills': localizer.bills,
-      'groceries': localizer.groceries,
-      'beauty': localizer.beauty,
-      'electronics': localizer.electronics,
-      'books': localizer.books,
-      'pet care': localizer.petCare,
-      'gifts': localizer.gifts,
-      'home': localizer.home,
-      'savings': localizer.savings,
-      'events': localizer.events,
-      'fitness': localizer.fitness,
-      'other': localizer.other,
-    };
-    return map[name.toLowerCase()] ?? name;
-  }
-
-  IconData _getCategoryIcon(Category category) {
-    const iconMap = {
-      'shopping_cart': Icons.shopping_cart,
-      'local_hospital': Icons.local_hospital,
-      'directions_car': Icons.directions_car,
-      'restaurant': Icons.restaurant,
-      'school': Icons.school,
-      'movie': Icons.movie,
-      'fitness_center': Icons.fitness_center,
-      'flight': Icons.flight,
-      'home': Icons.home,
-      'credit_card': Icons.credit_card,
-      'local_mall': Icons.local_mall,
-      'spa': Icons.spa,
-      'computer': Icons.computer,
-      'book': Icons.book,
-      'pets': Icons.pets,
-      'cake': Icons.cake,
-      'savings': Icons.savings,
-      'event': Icons.event,
-      'attach_money': Icons.attach_money,
-    };
-    return iconMap[category.icon] ?? Icons.category;
   }
 }

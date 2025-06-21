@@ -10,6 +10,7 @@ import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 // import 'package:jaibee1/utils/category_utils.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:jaibee1/core/utils/category_utils.dart';
 
 
 class EditTransactionScreen extends StatefulWidget {
@@ -175,7 +176,7 @@ Future<void> _selectDate(BuildContext context) async {
     } else {
       return _customCategories.map((cat) {
         // final iconData = availableIcons[cat.icon] ?? Icons.category;
-        final name = _getLocalizedCategory(cat.name, localizer);
+        final name = getLocalizedCategory(cat.name, localizer);
         return DropdownMenuItem(
           value: cat.name,
           child: Row(
@@ -187,25 +188,6 @@ Future<void> _selectDate(BuildContext context) async {
           ),
         );
       }).toList();
-    }
-  }
-
-  String _getLocalizedCategory(String key, S localizer) {
-    switch (key) {
-      case 'food':
-        return localizer.food;
-      case 'transportation':
-        return localizer.transportation;
-      case 'entertainment':
-        return localizer.entertainment;
-      case 'coffee':
-        return localizer.coffee;
-      case 'income':
-        return localizer.income;
-      case 'other':
-        return localizer.other;
-      default:
-        return key;
     }
   }
 
@@ -280,7 +262,14 @@ Future<void> _selectDate(BuildContext context) async {
                         decoration: InputDecoration(
                           labelText: localizer.category,
                           border: const OutlineInputBorder(),
-                          icon: Icon(_getIconForCategory(_category)),
+                          icon: Icon(
+                            getCategoryIcon(
+                              _customCategories.firstWhere(
+                                (cat) => cat.name == _category,
+                                orElse: () => Category(name: _category, icon: ''),
+                              ),
+                            ),
+                          ),
                         ),
                         onChanged: _isIncome
                             ? null
@@ -346,56 +335,5 @@ Future<void> _selectDate(BuildContext context) async {
         ),
       ),
     );
-  }
-
-  IconData _getIconForCategory(String key) {
-    switch (key.toLowerCase()) {
-      case 'shopping':
-        return Icons.shopping_cart;
-      case 'health':
-        return Icons.local_hospital;
-      case 'transport':
-        return Icons.directions_car;
-      case 'food':
-        return Icons.restaurant;
-      case 'education':
-        return Icons.school;
-      case 'entertainment':
-        return Icons.movie;
-      case 'fitness':
-        return Icons.fitness_center;
-      case 'travel':
-        return Icons.flight;
-      case 'home':
-        return Icons.home;
-      case 'bills':
-        return Icons.credit_card;
-      case 'groceries':
-        return Icons.local_mall;
-      case 'beauty':
-        return Icons.spa;
-      case 'electronics':
-        return Icons.computer;
-      case 'books':
-        return Icons.book;
-      case 'petcare': // note lowercase
-        return Icons.pets;
-      case 'gifts':
-        return Icons.cake;
-      case 'savings':
-        return Icons.savings;
-      case 'events':
-        return Icons.event;
-      case 'income':
-        return Icons.monetization_on;
-      case 'coffee':
-        return Icons.coffee;
-      case 'transportation':
-        return Icons.directions_bus;
-      case 'other':
-        return Icons.category;
-      default:
-        return Icons.category;
-    }
   }
 }

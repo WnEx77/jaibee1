@@ -4,6 +4,7 @@ import 'package:jaibee1/data/models/category.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart'; // <-- Add your theme extension import
+import 'package:jaibee1/core/utils/category_utils.dart'; // <-- Import your utility functions
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});
@@ -110,57 +111,6 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     }
   }
 
-  String _getLocalizedCategory(String name, S localizer) {
-    switch (name.toLowerCase()) {
-      case 'food':
-        return localizer.food;
-      case 'transport':
-      case 'transportation':
-        return localizer.transport;
-      case 'entertainment':
-        return localizer.entertainment;
-      case 'coffee':
-        return localizer.coffee;
-      case 'income':
-        return localizer.income;
-      case 'shopping':
-        return localizer.shopping;
-      case 'health':
-        return localizer.health;
-      case 'bills':
-        return localizer.bills;
-      case 'groceries':
-        return localizer.groceries;
-      case 'beauty':
-        return localizer.beauty;
-      case 'electronics':
-        return localizer.electronics;
-      case 'books':
-        return localizer.books;
-      case 'pet care':
-      case 'petcare':
-        return localizer.petCare;
-      case 'gifts':
-        return localizer.gifts;
-      case 'home':
-        return localizer.home;
-      case 'savings':
-        return localizer.savings;
-      case 'events':
-        return localizer.events;
-      case 'fitness':
-        return localizer.fitness;
-      case 'other':
-        return localizer.other;
-      case 'travel':
-        return localizer.travel;
-      case 'education':
-        return localizer.education;
-      default:
-        return name;
-    }
-  }
-
   void _addCategory() {
     final localizer = S.of(context)!;
 
@@ -241,7 +191,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                       children: [
                         Icon(availableIcons[cat.icon] ?? Icons.category),
                         const SizedBox(width: 10),
-                        Text(_getLocalizedCategory(cat.name, localizer)),
+                        Text(getLocalizedCategory(cat.name, localizer)),
                       ],
                     ),
                   );
@@ -278,7 +228,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                     final cat = categories[index];
                     final isProtected = cat.name.toLowerCase() == 'income';
                     final iconData = availableIcons[cat.icon] ?? Icons.category;
-                    final localizedName = _getLocalizedCategory(
+                    final localizedName = getLocalizedCategory(
                       cat.name,
                       localizer,
                     );
