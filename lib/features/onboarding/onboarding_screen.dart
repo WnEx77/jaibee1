@@ -63,37 +63,74 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _showLanguageDialog() {
     showDialog(
       context: context,
-      builder: (_) => Directionality(
-        textDirection: TextDirection.ltr, // Always LTR for dialog
-        child: AlertDialog(
-          title: Text(
-            S.of(context)!.changeLanguage,
-            textAlign: TextAlign.center,
+      builder: (_) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Theme.of(context).cardColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.language,
+                size: 48,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                S.of(context)!.changeLanguage,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              _buildLanguageOption(
+                flag: '🇸🇦',
+                language: 'العربية',
+                onTap: () {
+                  Navigator.pop(context);
+                  JaibeeTrackerApp.setLocale(context, const Locale('ar'));
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildLanguageOption(
+                flag: '🇺🇸',
+                language: 'English',
+                onTap: () {
+                  Navigator.pop(context);
+                  JaibeeTrackerApp.setLocale(context, const Locale('en'));
+                },
+              ),
+            ],
           ),
-          content: SizedBox(
-            width: 220, // Make the dialog box smaller
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ListTile(
-                  leading: const Text('🇸🇦', textAlign: TextAlign.center),
-                  title: const Text('العربية', textAlign: TextAlign.center),
-                  onTap: () {
-                    Navigator.pop(context);
-                    JaibeeTrackerApp.setLocale(context, const Locale('ar'));
-                  },
-                ),
-                ListTile(
-                  leading: const Text('🇺🇸', textAlign: TextAlign.center),
-                  title: const Text('English', textAlign: TextAlign.center),
-                  onTap: () {
-                    Navigator.pop(context);
-                    JaibeeTrackerApp.setLocale(context, const Locale('en'));
-                  },
-                ),
-              ],
-            ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageOption({
+    required String flag,
+    required String language,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(flag, style: const TextStyle(fontSize: 22)),
+              const SizedBox(width: 12),
+              Text(language, style: Theme.of(context).textTheme.bodyLarge),
+            ],
           ),
         ),
       ),

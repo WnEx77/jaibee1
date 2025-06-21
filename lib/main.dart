@@ -13,6 +13,7 @@ import 'data/models/category.dart';
 import 'data/models/goal_model.dart';
 import 'data/models/trancs.dart';
 import 'package:jaibee1/features/onboarding/onboarding_screen.dart';
+import 'features/home/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,7 @@ Future<void> main() async {
   Hive.registerAdapter(GoalAdapter());
 
   // Place this before opening the 'categories' box, if you want to delete it before use.
-  await Hive.deleteBoxFromDisk('categories');
+  // await Hive.deleteBoxFromDisk('categories');
 
   await Hive.openBox('transactions');
   await Hive.openBox<Category>('categories');
@@ -137,6 +138,7 @@ class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
       ],
     );
 
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'جيبي',
@@ -159,7 +161,7 @@ class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeProvider.themeMode,
-      home: widget.initialRoute == 'home' ? const JaibeeHomeScreen() : const OnboardingScreen(),
+      home: const SplashScreen(), // Always show splash first
     );
   }
 }

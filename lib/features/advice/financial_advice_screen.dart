@@ -17,6 +17,8 @@ import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 // import 'package:jaibee1/core/utils/connection_checker.dart';
+import 'package:lottie/lottie.dart';
+
 
 class MonthlySummary {
   final double totalIncome;
@@ -697,7 +699,16 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: _loading
-              ? const Center(child: CircularProgressIndicator())
+              ? Center(
+                  child: SizedBox(
+                    height: 180,
+                    width: 180,
+                    child: Lottie.asset(
+                      'assets/animations/loading.json',
+                      repeat: true,
+                    ),
+                  ),
+                )
               : _error != null
               ? Center(
                   child: Column(
