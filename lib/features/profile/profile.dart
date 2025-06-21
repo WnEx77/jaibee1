@@ -11,7 +11,7 @@ import 'package:jaibee1/features/webview/webview_screen.dart';
 import 'package:jaibee1/core/theme/theme_provider.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/features/reports/export_report_screen.dart'; // Add this import
+import 'package:jaibee1/features/reports/export_report_screen.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee1/features/about/privacy_policy_screen.dart';
 
@@ -154,132 +154,160 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final s = S.of(context)!;
     final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: AppBackground(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
+              // Profile header
+              // Container(
+              //   padding: const EdgeInsets.symmetric(vertical: 24),
+              //   child: Column(
+              //     children: [
+              //       CircleAvatar(
+              //         radius: 38,
+              //         backgroundColor: mintTheme.buttonColor.withOpacity(0.1),
+              //         child: Icon(Icons.person, size: 48, color: mintTheme.buttonColor),
+              //       ),
+              //       const SizedBox(height: 12),
+              //       Text(
+              //         s.profile,
+              //         style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              //               fontWeight: FontWeight.bold,
+              //               fontSize: 22,
+              //             ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              const SizedBox(height: 10),
 
-              // Language Selection
-              _buildCardTile(
-                icon: Icons.language,
-                label: s.changeLanguage,
-                onTap: _showLanguageDialog,
-              ),
-
-              // Dark Mode Toggle
+              // Settings Section
               Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.brightness_6,
-                    color: Colors.blueGrey,
-                  ),
-                  title: Text(s.darkMode),
-                  trailing: Consumer<ThemeProvider>(
-                    builder: (context, themeProvider, _) {
-                      return Switch(
-                        value: themeProvider.isDarkTheme,
-                        onChanged: themeProvider.toggleTheme,
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              // About Us
-              _buildCardTile(
-                icon: Icons.account_circle_outlined,
-                label: s.aboutUs,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const AboutUsScreen()),
-                  );
-                },
-              ),
-
-              // Contact Us
-              _buildCardTile(
-                icon: Icons.email_outlined,
-                label: s.contactUs,
-                onTap: _contactSupport,
-              ),
-
-              // Privacy Policy
-              _buildCardTile(
-                icon: Icons.privacy_tip_outlined,
-                label: s.privacyPolicy,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const PrivacyPolicyScreen(),
+                elevation: 3,
+                margin: const EdgeInsets.only(bottom: 18),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                child: Column(
+                  children: [
+                    _buildCardTile(
+                      icon: Icons.language,
+                      label: s.changeLanguage,
+                      onTap: _showLanguageDialog,
                     ),
-                  );
-                },
-              ),
-
-              _buildCardTile(
-                icon: Icons.picture_as_pdf,
-                label: s.exportTransactionsAsPdf,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ExportReportScreen(),
+                    _buildDivider(),
+                    Card(
+                      elevation: 0,
+                      margin: EdgeInsets.zero,
+                      color: Colors.transparent,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.brightness_6,
+                          color: Colors.blueGrey,
+                        ),
+                        title: Text(s.darkMode),
+                        trailing: Consumer<ThemeProvider>(
+                          builder: (context, themeProvider, _) {
+                            return Switch(
+                              value: themeProvider.isDarkTheme,
+                              onChanged: themeProvider.toggleTheme,
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
 
-              const SizedBox(height: 20),
-
-              // Set Goals
-              ElevatedButton.icon(
-                icon: const Icon(Icons.flag),
-                label: Text(s.setGoals),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: mintTheme.unselectedIconColor,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+              // Main Actions Section
+              Card(
+                elevation: 3,
+                margin: const EdgeInsets.only(bottom: 18),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                child: Column(
+                  children: [
+                    _buildCardTile(
+                      icon: Icons.flag,
+                      label: s.setGoals,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const GoalsScreen()),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    _buildCardTile(
+                      icon: Icons.picture_as_pdf,
+                      label: s.exportTransactionsAsPdf,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ExportReportScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const GoalsScreen()),
-                  );
-                },
               ),
 
-              const SizedBox(height: 20),
+              // Info Section
+              Card(
+                elevation: 3,
+                margin: const EdgeInsets.only(bottom: 18),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                child: Column(
+                  children: [
+                    _buildCardTile(
+                      icon: Icons.account_circle_outlined,
+                      label: s.aboutUs,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const AboutUsScreen()),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    _buildCardTile(
+                      icon: Icons.privacy_tip_outlined,
+                      label: s.privacyPolicy,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const PrivacyPolicyScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    _buildCardTile(
+                      icon: Icons.email_outlined,
+                      label: s.contactUs,
+                      onTap: _contactSupport,
+                    ),
+                  ],
+                ),
+              ),
 
-              // Buy Me a Coffee
-              ElevatedButton.icon(
-                icon: Image.asset(
-                  'assets/images/buy-me-a-coffee.png',
-                  height: 30,
-                  width: 30,
+              // Support Section
+              Card(
+                elevation: 3,
+                margin: const EdgeInsets.only(bottom: 18),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                child: _buildCardTile(
+                  icon: Icons.local_cafe_outlined,
+                  label: s.buyMeACoffee,
+                  onTap: _launchBuyMeACoffee,
                 ),
-                label: Text(s.buyMeACoffee),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.brown,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: _launchBuyMeACoffee,
               ),
             ],
           ),
@@ -293,14 +321,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String label,
     required VoidCallback onTap,
   }) {
-    return Card(
-      elevation: 4,
+    return ListTile(
+      leading: Icon(icon, color: Colors.teal, size: 28),
+      title: Text(
+        label,
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+      ),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blueGrey),
-        title: Text(label),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: onTap,
+      minLeadingWidth: 0,
+    );
+  }
+
+  Widget _buildDivider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Divider(
+        height: 0,
+        thickness: 0.7,
+        color: Colors.grey.withOpacity(0.18),
       ),
     );
   }
