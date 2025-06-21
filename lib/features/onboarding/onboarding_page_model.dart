@@ -1,11 +1,13 @@
 class OnboardingPageModel {
   final String title;
   final String description;
-  final String imageAsset;
+  final String? imageAsset;
+  final String? lottieAsset;
 
   OnboardingPageModel({
     required this.title,
     required this.description,
-    required this.imageAsset,
+    this.imageAsset,
+    this.lottieAsset,
   });
 }

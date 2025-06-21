@@ -6,6 +6,7 @@ import 'onboarding_page_model.dart';
 import '../../core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/main.dart';
+import 'package:lottie/lottie.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -34,17 +35,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       OnboardingPageModel(
         title: S.of(context)!.trackTitle,
         description: S.of(context)!.trackDescription,
-        imageAsset: 'assets/onboarding/track.png',
+        lottieAsset: 'assets/animations/track.json',
       ),
       OnboardingPageModel(
         title: S.of(context)!.budgetTitle,
         description: S.of(context)!.budgetDescription,
-        imageAsset: 'assets/onboarding/budget.png',
+        lottieAsset: 'assets/animations/budget.json',
       ),
       OnboardingPageModel(
         title: S.of(context)!.adviceTitle,
         description: S.of(context)!.adviceDescription,
-        imageAsset: 'assets/onboarding/advice.png',
+        lottieAsset: 'assets/animations/advice.json',
       ),
     ];
   }
@@ -161,7 +162,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset(page.imageAsset, height: 240),
+                            if (page.imageAsset != null && page.imageAsset!.isNotEmpty)
+                              Image.asset(page.imageAsset!, height: 240)
+                            else if (page.lottieAsset != null && page.lottieAsset!.isNotEmpty)
+                              Lottie.asset(page.lottieAsset!, height: 240),
                             const SizedBox(height: 32),
                             Text(
                               page.title,
