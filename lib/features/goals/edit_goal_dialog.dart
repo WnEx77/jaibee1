@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 // Import your localization file
 import 'package:jaibee1/l10n/s.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class EditGoalDialog extends StatefulWidget {
   final Goal goal;
@@ -59,7 +60,9 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
 
         return AlertDialog(
           contentPadding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           content: SizedBox(
             width: 320,
             child: Column(
@@ -89,7 +92,10 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                   ),
                 ),
                 CupertinoButton(
-                  child: Text(S.of(context)!.done, style: TextStyle(color: textColor)),
+                  child: Text(
+                    S.of(context)!.done,
+                    style: TextStyle(color: textColor),
+                  ),
                   onPressed: () {
                     setState(() {
                       _targetDate = tempPickedDate;
@@ -119,26 +125,81 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
     }
   }
 
-  void _confirmDelete() {
+  void _confirmDelete() async {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(S.of(context)!.deleteGoal),
-        content: Text(S.of(context)!.deleteGoalConfirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(S.of(context)!.cancel),
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Theme.of(context).dialogBackgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                S.of(context)!.deleteGoal,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                S.of(context)!.deleteGoalConfirmation,
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.secondary,
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(S.of(context)!.cancel),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.delete, size: 18),
+                    label: Text(S.of(context)!.delete),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 10,
+                      ),
+                    ),
+                    onPressed: () {
+                      widget.onDelete(widget.index);
+                      Navigator.of(context).pop(); // Close dialog
+                      Navigator.of(context).pop(); // Return to previous
+                      // Show success message
+                        Flushbar(
+                        message: S.of(context)!.goalDeleted,
+                        icon: const Icon(Icons.check_circle, color: Colors.white, size: 28),
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: Colors.red,
+                        margin: const EdgeInsets.all(16),
+                        borderRadius: BorderRadius.circular(12),
+                        flushbarPosition: FlushbarPosition.BOTTOM,
+                        ).show(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              widget.onDelete(widget.index);
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: Text(S.of(context)!.delete),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -155,7 +216,9 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
         padding: const EdgeInsets.all(0),
         child: Card(
           elevation: 6,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(22),
             child: Form(
@@ -189,10 +252,13 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                     decoration: InputDecoration(
                       labelText: localizer!.goalName,
                       prefixIcon: const Icon(Icons.title),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    validator: (value) =>
-                        value == null || value.trim().isEmpty ? localizer.requiredField : null,
+                    validator: (value) => value == null || value.trim().isEmpty
+                        ? localizer.requiredField
+                        : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -201,7 +267,9 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                     decoration: InputDecoration(
                       labelText: localizer.targetAmount,
                       prefixIcon: const Icon(Icons.attach_money),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -221,7 +289,9 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                     decoration: InputDecoration(
                       labelText: localizer.savedAmount,
                       prefixIcon: const Icon(Icons.savings),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -232,7 +302,10 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                         return localizer.enterValidAmount;
                       }
                       final target =
-                          double.tryParse(_targetAmountController.text.trim()) ?? 0;
+                          double.tryParse(
+                            _targetAmountController.text.trim(),
+                          ) ??
+                          0;
                       if (parsed > target) {
                         return localizer.savedAmountExceedsTarget;
                       }
@@ -247,12 +320,16 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                         decoration: InputDecoration(
                           labelText: localizer.targetDate,
                           prefixIcon: const Icon(Icons.calendar_today),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           suffixIcon: const Icon(Icons.edit_calendar),
                         ),
                         controller: TextEditingController(
                           text: _targetDate != null
-                              ? DateFormat.yMMMd(localizer.localeName).format(_targetDate!)
+                              ? DateFormat.yMMMd(
+                                  localizer.localeName,
+                                ).format(_targetDate!)
                               : '',
                         ),
                         validator: (_) =>
@@ -270,7 +347,10 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: Text(
                               localizer.delete,
-                              style: const TextStyle(color: Colors.red, fontSize: 16),
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                           style: OutlinedButton.styleFrom(

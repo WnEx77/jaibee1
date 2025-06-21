@@ -145,32 +145,79 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   void _confirmDelete() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(S.of(context)!.deleteTransaction),
-        content: Text(S.of(context)!.areYouSureDeleteTransaction),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(S.of(context)!.cancel),
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        backgroundColor: Theme.of(context).dialogBackgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                S.of(context)!.deleteTransaction,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                S.of(context)!.areYouSureDeleteTransaction,
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.secondary,
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(S.of(context)!.cancel),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.delete, size: 18),
+                    label: Text(S.of(context)!.delete),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 10,
+                      ),
+                    ),
+                    onPressed: () {
+                      Hive.box('transactions').delete(widget.transactionKey);
+                      Navigator.of(context).pop(); // Close dialog
+                      Navigator.of(context).pop(); // Return to previous
+                      Flushbar(
+                        message: S.of(context)!.transactionDeleted,
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: Colors.red,
+                        margin: const EdgeInsets.all(8),
+                        borderRadius: BorderRadius.circular(8),
+                        flushbarPosition: FlushbarPosition.BOTTOM,
+                        icon: const Icon(Icons.check_circle, color: Colors.white),
+                      ).show(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Hive.box('transactions').delete(widget.transactionKey);
-              Navigator.of(context).pop(); // Close dialog
-              Navigator.of(context).pop(); // Return to previous
-              Flushbar(
-                message: S.of(context)!.transactionDeleted,
-                duration: const Duration(seconds: 2),
-                backgroundColor: Colors.red,
-                margin: const EdgeInsets.all(8),
-                borderRadius: BorderRadius.circular(8),
-                flushbarPosition: FlushbarPosition.BOTTOM,
-                icon: const Icon(Icons.check_circle, color: Colors.white),
-              ).show(context);
-            },
-            child: Text(S.of(context)!.delete),
-          ),
-        ],
+        ),
       ),
     );
   }

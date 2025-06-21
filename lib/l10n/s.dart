@@ -1236,6 +1236,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Most Spent Categories'**
   String get mostSpentCategories;
+
+  /// No description provided for @goalDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal deleted successfully'**
+  String get goalDeleted;
+
+  /// No description provided for @goalAddedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal added successfully'**
+  String get goalAddedSuccessfully;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

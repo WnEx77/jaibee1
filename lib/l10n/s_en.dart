@@ -596,4 +596,10 @@ class SEn extends S {
 
   @override
   String get mostSpentCategories => 'Most Spent Categories';
+
+  @override
+  String get goalDeleted => 'Goal deleted successfully';
+
+  @override
+  String get goalAddedSuccessfully => 'Goal added successfully';
 }

@@ -4,6 +4,8 @@ import 'package:jaibee1/data/models/goal_model.dart';
 import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:another_flushbar/flushbar.dart';
+
 
 
 class AddGoalScreen extends StatefulWidget {
@@ -63,7 +65,7 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
     );
   }
 
-  void _submit() {
+   void _submit() {
     if (_formKey.currentState!.validate() && _targetDate != null) {
       final goal = Goal(
         name: _nameController.text.trim(),
@@ -73,7 +75,17 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
         milestones: [],
       );
       widget.onAdd(goal);
-      Navigator.pop(context);
+      Flushbar(
+        message: S.of(context)!.goalAddedSuccessfully,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.green,
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(12),
+        flushbarPosition: FlushbarPosition.BOTTOM,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+      ).show(context).then((_) {
+        Navigator.pop(context);
+      });
     }
   }
 

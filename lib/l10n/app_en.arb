@@ -220,5 +220,7 @@
   },
   "deleteGoal": "Delete Goal",
   "done": "Done",
-  "mostSpentCategories": "Most Spent Categories"
+  "mostSpentCategories": "Most Spent Categories",
+  "goalDeleted": "Goal deleted successfully",
+  "goalAddedSuccessfully": "Goal added successfully"
 }

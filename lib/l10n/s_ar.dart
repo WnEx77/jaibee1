@@ -602,4 +602,10 @@ class SAr extends S {
 
   @override
   String get mostSpentCategories => 'الفئات الأكثر إنفاقًا';
+
+  @override
+  String get goalDeleted => 'Goal deleted successfully';
+
+  @override
+  String get goalAddedSuccessfully => 'Goal added successfully';
 }
