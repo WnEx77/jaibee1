@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:hive/hive.dart';
+// import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jaibee1/data/models/trancs.dart';
 import 'package:jaibee1/data/models/category.dart';
 import 'package:jaibee1/l10n/s.dart';
@@ -26,22 +26,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   String _category = '';
   bool _isIncome = false;
   DateTime _selectedDate = DateTime.now();
-  List<Category> _customCategoryObjects = [];
 
   @override
   void initState() {
     super.initState();
-    _loadCategories();
-  }
-
-  void _loadCategories() {
-    final box = Hive.box<Category>('categories');
-    _customCategoryObjects = box.values.toList();
-    if (_customCategoryObjects.isNotEmpty && !_isIncome) {
-      _category = _customCategoryObjects.first.name;
-    } else if (_isIncome) {
-      _category = 'income';
-    }
+    // No need to load categories here, handled by ValueListenableBuilder
   }
 
   @override
@@ -65,7 +54,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 children: [
                   _buildAmountField(localizer),
                   const SizedBox(height: 16),
-                  _buildCategoryDropdown(localizer),
+                  ValueListenableBuilder(
+                    valueListenable: Hive.box<Category>('categories').listenable(),
+                    builder: (context, Box<Category> box, _) {
+                      final categories = box.values.toList();
+                      return _buildCategoryDropdown(localizer, categories);
+                    },
+                  ),
                   const SizedBox(height: 16),
                   _buildTypeToggle(localizer),
                   const SizedBox(height: 16),
@@ -113,16 +108,23 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
-  Widget _buildCategoryDropdown(S localizer) {
+  Widget _buildCategoryDropdown(S localizer, List<Category> categories) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final categories = _isIncome
+    final dropdownCategories = _isIncome
         ? [Category(name: 'income', icon: 'attach_money')]
-        : _customCategoryObjects;
+        : categories;
+
+    // Ensure _category is valid
+    if (!_isIncome && dropdownCategories.isNotEmpty && !_category.isNotEmpty) {
+      _category = dropdownCategories.first.name;
+    } else if (_isIncome) {
+      _category = 'income';
+    }
 
     return _styledContainer(
       child: DropdownButtonFormField<String>(
         value: _category.isNotEmpty ? _category : null,
-        items: categories.map((cat) {
+        items: dropdownCategories.map((cat) {
           return DropdownMenuItem<String>(
             value: cat.name,
             child: Row(
@@ -171,9 +173,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               _isIncome = index == 1;
               _category = _isIncome
                   ? 'income'
-                  : (_customCategoryObjects.isNotEmpty
-                        ? _customCategoryObjects.first.name
-                        : '');
+                  : '';
             });
           },
           borderRadius: BorderRadius.circular(12),
@@ -255,7 +255,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       onPressed: _submitForm,
       style: FilledButton.styleFrom(
         backgroundColor: mintTheme.buttonColor,
-        foregroundColor: Colors.white, // Set text/icon color here
+        foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 14),
       ),
       icon: const Icon(Icons.add),
@@ -296,9 +296,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         _descriptionController.clear();
         _isIncome = false;
         _selectedDate = DateTime.now();
-        _category = _customCategoryObjects.isNotEmpty
-            ? _customCategoryObjects.first.name
-            : '';
+        _category = '';
       });
 
       Flushbar(
@@ -379,25 +377,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ),
       ),
       child: child,
-    );
-  }
-
-  Widget _toggleButton(
-    String label,
-    bool isSelected,
-    IconData icon,
-    VoidCallback onPressed,
-  ) {
-    return Expanded(
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSelected ? Colors.green : Colors.grey.shade300,
-          foregroundColor: isSelected ? Colors.white : Colors.black,
-        ),
-        onPressed: onPressed,
-        icon: Icon(icon),
-        label: Text(label),
-      ),
     );
   }
 }
