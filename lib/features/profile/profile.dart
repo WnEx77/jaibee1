@@ -149,6 +149,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _openSupportPage() async {
+    final url = Uri.parse('https://github.com/wnex77/jaibee1/issues');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      Flushbar(
+        message: 'Could not open support page',
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.redAccent,
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(12),
+        icon: const Icon(Icons.error_outline, color: Colors.white),
+      ).show(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context)!;
@@ -279,10 +295,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 elevation: 3,
                 margin: const EdgeInsets.only(bottom: 18),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                child: _buildCardTile(
-                  icon: Icons.local_cafe_outlined,
-                  label: s.buyMeACoffee,
-                  onTap: _launchBuyMeACoffee,
+                child: Column(
+                  children: [
+                    _buildCardTile(
+                      icon: Icons.local_cafe_outlined,
+                      label: s.buyMeACoffee,
+                      onTap: _launchBuyMeACoffee,
+                    ),
+                    _buildDivider(),
+                    _buildCardTile(
+                      icon: Icons.support_agent,
+                      label: 'Support & Feedback',
+                      onTap: _openSupportPage,
+                    ),
+                  ],
                 ),
               ),
             ],
