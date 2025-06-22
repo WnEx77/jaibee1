@@ -259,12 +259,13 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
+                      Lottie.asset(
                         Theme.of(context).brightness == Brightness.dark
-                            ? 'assets/images/error_DarkMode.png'
-                            : 'assets/images/error.png',
+                            ? 'assets/animations/error.json'
+                            : 'assets/animations/error.json',
                         height: 300,
                         width: 300,
+                        fit: BoxFit.contain,
                       ),
 
                       const SizedBox(height: 16),
