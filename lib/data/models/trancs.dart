@@ -1,12 +1,9 @@
-// Importing Hive package for local storage
 import 'package:hive/hive.dart';
 
-// Part statement is used for code
-// generation for the Transaction class.
+
 part 'trancs.g.dart';
 
-// Defining a Hive Type with a unique
-// typeId of 0 to store Transaction objects.
+
 @HiveType(typeId: 0)
 class Transaction extends HiveObject {
   @HiveField(0)
@@ -21,7 +18,7 @@ class Transaction extends HiveObject {
   @HiveField(3)
   final DateTime date;
 
-  @HiveField(4) // 👈 New field
+  @HiveField(4)
   final String? description;
 
   Transaction({
@@ -29,6 +26,6 @@ class Transaction extends HiveObject {
     required this.amount,
     required this.isIncome,
     required this.date,
-    this.description, // 👈 Include in constructor
+    this.description,
   });
 }

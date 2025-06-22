@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'budget.g.dart';
 
-@HiveType(typeId: 2)  // Use a unique typeId (different from Category)
+@HiveType(typeId: 2)
 class Budget extends HiveObject {
   @HiveField(0)
    String category;

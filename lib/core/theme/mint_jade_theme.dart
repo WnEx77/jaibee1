@@ -6,14 +6,14 @@ class MintJadeColors extends ThemeExtension<MintJadeColors> {
   final Color navBarColor;
   final Color selectedIconColor;
   final Color unselectedIconColor;
-  final Color buttonColor;  // New property added
+  final Color buttonColor;  
 
   const MintJadeColors({
     required this.appBarColor,
     required this.navBarColor,
     required this.selectedIconColor,
     required this.unselectedIconColor,
-    required this.buttonColor,  // include in constructor
+    required this.buttonColor,  
   });
 
   @override
@@ -22,14 +22,14 @@ class MintJadeColors extends ThemeExtension<MintJadeColors> {
     Color? navBarColor,
     Color? selectedIconColor,
     Color? unselectedIconColor,
-    Color? buttonColor,  // add here
+    Color? buttonColor,  
   }) {
     return MintJadeColors(
       appBarColor: appBarColor ?? this.appBarColor,
       navBarColor: navBarColor ?? this.navBarColor,
       selectedIconColor: selectedIconColor ?? this.selectedIconColor,
       unselectedIconColor: unselectedIconColor ?? this.unselectedIconColor,
-      buttonColor: buttonColor ?? this.buttonColor,  // copyWith
+      buttonColor: buttonColor ?? this.buttonColor,  
     );
   }
 
@@ -41,7 +41,7 @@ class MintJadeColors extends ThemeExtension<MintJadeColors> {
       navBarColor: Color.lerp(navBarColor, other.navBarColor, t)!,
       selectedIconColor: Color.lerp(selectedIconColor, other.selectedIconColor, t)!,
       unselectedIconColor: Color.lerp(unselectedIconColor, other.unselectedIconColor, t)!,
-      buttonColor: Color.lerp(buttonColor, other.buttonColor, t)!,  // lerp for buttonColor
+      buttonColor: Color.lerp(buttonColor, other.buttonColor, t)!,
     );
   }
 }

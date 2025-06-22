@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:jaibee1/data/models/goal_model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
-// Import your localization file
 import 'package:jaibee1/l10n/s.dart';
 import 'package:another_flushbar/flushbar.dart';
 

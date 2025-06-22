@@ -55,13 +55,12 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Locale logic must be inside build() (not initState) after MaterialApp is built
     final locale = Localizations.maybeLocaleOf(context);
     final isRtl = locale?.languageCode == 'ar';
 
     final mintTheme = Theme.of(context).extension<MintJadeColors>();
     if (mintTheme == null) {
-      return const SizedBox(); // or a loader/spinner, etc.
+      return const SizedBox();
     }
 
     return Directionality(
@@ -78,7 +77,7 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
               IconButton(
                 icon: const Icon(
                   Icons.tune,
-                ), // Changed from Icons.category to Icons.tune for a better "manage" feel
+                ),
                 tooltip: S.of(context)!.manageCategories,
                 onPressed: () {
                   Navigator.push(
@@ -140,7 +139,7 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                               unselectedColor: mintTheme.unselectedIconColor,
                             ),
                           ),
-                          const Spacer(), // Middle spacer for add button
+                          const Spacer(),
                           Expanded(
                             child: _buildNavItem(
                               icon: Icons.bar_chart,

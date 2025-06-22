@@ -13,7 +13,7 @@ class BudgetService {
   }
 
   Future<void> updateBudget(Budget budget, {required double newLimit}) async {
-    budget.limit = newLimit; // You'll need to make `limit` mutable
+    budget.limit = newLimit; // need to make `limit` mutable
     await budget.save();
   }
 

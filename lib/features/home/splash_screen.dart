@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigate() async {
-    await Future.delayed(const Duration(seconds: 4)); // Increased from 2 to 4 seconds
+    await Future.delayed(const Duration(seconds: 4));
     final prefs = await SharedPreferences.getInstance();
     final seenOnboarding = prefs.getBool('onboarding_completed') ?? false;
 
@@ -119,7 +119,6 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
                   const SizedBox(height: 40),
-                  // Lottie animation instead of CircularProgressIndicator
                   SizedBox(
                     height: 60,
                     width: 60,

@@ -11,7 +11,6 @@ class AppBackground extends StatelessWidget {
 
     return Stack(
       children: [
-        // Background image depending on theme
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(

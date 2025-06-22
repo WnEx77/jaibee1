@@ -13,7 +13,7 @@ class AboutUsScreen extends StatefulWidget {
 class _AboutUsScreenState extends State<AboutUsScreen>
     with SingleTickerProviderStateMixin {
   String _appVersion = '';
-  // String _appName = '';
+  String _appName = '';
   String _packageName = '';
   String _buildNumber = '';
 
@@ -51,7 +51,7 @@ class _AboutUsScreenState extends State<AboutUsScreen>
     final info = await PackageInfo.fromPlatform();
     setState(() {
       _appVersion = info.version;
-      // _appName = info.appName;
+      _appName = info.appName;
       _packageName = info.packageName;
       _buildNumber = info.buildNumber;
     });
@@ -85,7 +85,7 @@ class _AboutUsScreenState extends State<AboutUsScreen>
                   const SizedBox(height: 20),
                   Image.asset(
                     'assets/images/logo.png',
-                    width: 100, // equivalent to diameter of radius 50
+                    width: 100,
                     height: 100,
                     fit: BoxFit.cover,
                   ),

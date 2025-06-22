@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-// import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
-// import 'package:jaibee1/data/models/trancs.dart';
-// import 'package:jaibee1/secrets.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/data/models/budget.dart';
 import 'package:flutter/services.dart';
-// import 'package:printing/printing.dart';
-// import 'package:pdf/widgets.dart' as pw;
-// import 'package:pdf/pdf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:month_year_picker/month_year_picker.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-// import 'package:jaibee1/core/utils/connection_checker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'monthly_summary.dart';
@@ -86,10 +78,8 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
         monthlyLimit: monthlyLimit,
       );
 
-      // Still get sex, age, goals from prefs if needed
+      // get goals from prefs if needed
       final prefs = await SharedPreferences.getInstance();
-      final String? sex = prefs.getString('user_sex');
-      final int? age = prefs.getInt('user_age');
       final String? goalsJson = prefs.getString('user_goals_list');
       final List<Map<String, dynamic>> goals = goalsJson != null
           ? List<Map<String, dynamic>>.from(jsonDecode(goalsJson))
@@ -98,8 +88,6 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
       final prompt = generatePrompt(
         summary,
         locale,
-        sex: sex,
-        age: age,
         goals: goals,
         budgets: budgets,
       );
@@ -120,24 +108,6 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     }
   }
 
-  // Future<void> _pickMonth() async {
-  //   final DateTime now = DateTime.now();
-  //   final DateTime? picked = await showMonthYearPicker(
-  //     context: context,
-  //     initialDate: _selectedMonth,
-  //     firstDate: DateTime(now.year - 3),
-  //     lastDate: DateTime(now.year + 1),
-  //   );
-
-  //   if (picked != null) {
-  //     setState(() {
-  //       _selectedMonth = DateTime(picked.year, picked.month);
-  //       _loading = true;
-  //     });
-  //     await _loadAdvice();
-  //   }
-  // }
-
   void _showShareOptions() {
     showModalBottomSheet(
       context: context,
@@ -152,9 +122,6 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                 onTap: () {
                   Navigator.pop(context);
                   Clipboard.setData(ClipboardData(text: _advice ?? ''));
-                  // Use Flushbar instead of SnackBar
-                  // Add flushbar package to pubspec.yaml: flushbar: ^1.10.4
-                  // Import at top: import 'package:another_flushbar/flushbar.dart';
                   Flushbar(
                     message: S.of(context)!.adviceCopied,
                     duration: const Duration(seconds: 2),

@@ -4,14 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:jaibee1/data/models/trancs.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/features/transactions/edit_transaction.dart';
-// import 'package:jaibee1/screens/budget_screen.dart'; // Import BudgetScreen
-// import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart'; // Import your background widget
+import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/data/models/category.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/features/transactions/category_progress_screen.dart';
-// import 'package:jaibee1/features/reports/export_report_screen.dart';
-import 'package:jaibee1/core/utils/category_utils.dart'; // Import your category utility functions
+import 'package:jaibee1/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee1/data/models/budget.dart';
 
@@ -23,23 +20,11 @@ class TransactionScreen extends StatefulWidget {
 }
 
 class _TransactionScreenState extends State<TransactionScreen> {
-  // static const List<String> defaultQuickCategories = [
-  //   'food',
-  //   'coffee',
-  //   'transportation',
-  //   'entertainment',
-  //   'income',
-  //   'other',
-  // ];
-
+  
   final Set<String> _selectedFilters = {'income'}; // Always includes 'income'
-  // List<String> _categoryNames = []; // Populated from Hive
-
   DateTime _selectedMonth = DateTime.now();
   String _selectedPeriod = 'monthly'; // 'daily', 'weekly', 'monthly'
-
   double? _monthlyLimit; // retrieved from budget box
-  // bool _showOnlySavings = false;
 
   @override
   void initState() {
@@ -92,21 +77,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
     final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(localizer.transactions),
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(Icons.picture_as_pdf),
-      //       tooltip: localizer.exportAsPdf,
-      //       onPressed: () {
-      //         Navigator.push(
-      //           context,
-      //           MaterialPageRoute(builder: (_) => ExportReportScreen()),
-      //         );
-      //       },
-      //     ),
-      //   ],
-      // ),
       body: AppBackground(
         child: ValueListenableBuilder(
           valueListenable: categoryBox.listenable(),
@@ -181,7 +151,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
                 return Column(
                   children: [
-                    // 🔼 Monthly summary card with navigation
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -329,12 +298,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                           ? Colors.green
                                           : Colors.red,
                                     ),
-                                    // _summaryItem(
-                                    //   title: localizer
-                                    //       .totalSavings, // Add to localization
-                                    //   amount: totalSavings,
-                                    //   color: Colors.blue,
-                                    // ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
@@ -352,10 +315,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         ),
                       ),
                     ),
-                    // 🔽 Filter buttons for Daily, Weekly, Monthly
-                    // Add this to your state:
 
-                    // 🔼 Month navigation remains unchanged
+                    // Month navigation
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -382,7 +343,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         ],
                       ),
                     ),
-                    // In your build method, update the FilterChips:
                     Padding(
                       padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -482,7 +442,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     height: 80,
                                     color: Colors
                                         .grey
-                                        .shade400, // optional: to tint the image, remove if not needed
+                                        .shade400,
                                   ),
                                   const SizedBox(height: 16),
                                   Text(localizer.noTransactions),
@@ -637,20 +597,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         );
                                       },
                                       leading: CircleAvatar(
-                                        // backgroundColor: isIncome
-                                        //     ? Colors.green.shade50
-                                        //     : Colors.red.shade50,
-                                        // child: Icon(
-                                        //   isIncome
-                                        //       ? Icons.arrow_downward
-                                        //       : Icons.arrow_upward,
-                                        //   color: isIncome
-                                        //       ? Colors.green
-                                        //       : Colors.red,
-                                        // ),
-                                        // backgroundColor: isIncome
-                                        //     ? Colors.green.shade50
-                                        // : Colors.transparent,
                                         backgroundColor: Colors.transparent,
                                         child: Icon(
                                           getCategoryIcon(
@@ -728,70 +674,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
       ),
     );
   }
-
-  // void _showFilterDialog(BuildContext context, S localizer) {
-  //   final tempSelected = Set<String>.from(_selectedFilters);
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: Text(localizer.filterTransactions),
-  //         content: StatefulBuilder(
-  //           builder: (context, setStateDialog) {
-  //             final allCategories = ['income', ..._categoryNames];
-
-  //             return SizedBox(
-  //               width: double.maxFinite,
-  //               child: ListView(
-  //                 shrinkWrap: true,
-  //                 children: allCategories.map((categoryName) {
-  //                   final label = getLocalizedCategory(
-  //                     categoryName,
-  //                     localizer,
-  //                   );
-  //                   return CheckboxListTile(
-  //                     title: Text(label),
-  //                     value: tempSelected.contains(categoryName),
-  //                     onChanged: categoryName == 'income'
-  //                         ? null // Disable unchecking for income
-  //                         : (checked) {
-  //                             setStateDialog(() {
-  //                               if (checked == true) {
-  //                                 tempSelected.add(categoryName);
-  //                               } else {
-  //                                 tempSelected.remove(categoryName);
-  //                               }
-  //                             });
-  //                           },
-  //                   );
-  //                 }).toList(),
-  //               ),
-  //             );
-  //           },
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.pop(context),
-  //             child: Text(localizer.cancel),
-  //           ),
-  //           ElevatedButton(
-  //             onPressed: () {
-  //               setState(() {
-  //                 _selectedFilters
-  //                   ..clear()
-  //                   ..add('income') // Always keep income
-  //                   ..addAll(tempSelected.where((c) => c != 'income'));
-  //               });
-  //               Navigator.pop(context);
-  //             },
-  //             child: Text(localizer.ok),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   Widget _summaryItem({
     required String title,

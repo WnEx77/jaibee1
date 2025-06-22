@@ -8,7 +8,7 @@ class Category extends HiveObject {
   String name;
 
   @HiveField(1)
-  String? icon; // 👈 Make it nullable
+  String? icon;
 
   Category({
     required this.name,

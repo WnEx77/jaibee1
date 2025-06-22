@@ -6,13 +6,11 @@ import 'package:month_year_picker/month_year_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/theme/mint_jade_theme.dart';
-// import 'features/home/jaibee_home_screen.dart';
 import 'l10n/s.dart';
 import 'data/models/budget.dart';
 import 'data/models/category.dart';
 import 'data/models/goal_model.dart';
 import 'data/models/trancs.dart';
-// import 'package:jaibee1/features/onboarding/onboarding_screen.dart';
 import 'features/home/splash_screen.dart';
 
 Future<void> main() async {
