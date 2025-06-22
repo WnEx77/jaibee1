@@ -344,7 +344,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                     Icon(
                       getCategoryIcon(category),
                       color: mintTheme.buttonColor,
-                      size: 36,
+                      size: 30,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -360,21 +360,29 @@ class _BudgetScreenState extends State<BudgetScreen> {
                       child: TextField(
                       controller: _controllers[category.name],
                       keyboardType: TextInputType.number,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      decoration: InputDecoration(
-                        labelText: S.of(context)!.limitLabel,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        decoration: InputDecoration(
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.all(13.0), // more padding for smaller icon
+                          child: Image.asset(
+                          'assets/images/Saudi_Riyal_Symbol.png',
+                          width: 16, // much smaller width
+                          height: 16, // much smaller height
+                          ),
+                        ),
+                        labelText: null,
                         filled: true,
                         fillColor: _isInvalidInput(
-                            _controllers[category.name]?.text,
-                          )
+                          _controllers[category.name]?.text,
+                        )
                           ? Colors.red.withOpacity(0.05)
                           : Colors.grey.withOpacity(0.05),
                         border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
                         ),
                         isDense: true,
-                      ),
+                        ),
                       onChanged: (_) => setState(() {}),
                       ),
                     ),

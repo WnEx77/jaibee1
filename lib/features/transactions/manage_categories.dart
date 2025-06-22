@@ -248,31 +248,55 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                             ),
                             confirmDismiss: (_) async {
                               final confirmed = await showDialog<bool>(
-                                context: context,
-                                builder: (ctx) => AlertDialog(
-                                  title: Text(localizer.deleteCategory),
-                                  content: Text(
-                                    localizer.deleteCategoryConfirm(
-                                      localizedName,
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(ctx, false),
-                                      child: Text(localizer.cancel),
-                                    ),
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(ctx, true),
-                                      child: Text(
-                                        localizer.delete,
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (ctx) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
                                 ),
+                                backgroundColor: Theme.of(context).cardColor,
+                                title: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 32),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                  localizer.deleteCategory,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                  ),
+                                ],
+                                ),
+                                content: Text(
+                                localizer.deleteCategoryConfirm(localizedName),
+                                style: const TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
+                                ),
+                                actionsPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                actionsAlignment: MainAxisAlignment.center,
+                                actions: [
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                  foregroundColor: Colors.grey,
+                                  textStyle: const TextStyle(fontWeight: FontWeight.w500),
+                                  ),
+                                  onPressed: () => Navigator.pop(ctx, false),
+                                  child: Text(localizer.cancel),
+                                ),
+                                const SizedBox(width: 12),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  ),
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  child: Text(localizer.delete),
+                                ),
+                                ],
+                              ),
                               );
                               return confirmed ?? false;
                             },
