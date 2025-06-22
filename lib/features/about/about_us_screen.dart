@@ -137,7 +137,7 @@ class _AboutUsScreenState extends State<AboutUsScreen>
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '📧 amoharib77@gmail.com',
+                        '📧 jaibee.care@gmail.com',
                         style: TextStyle(color: subTextColor, fontSize: 14),
                       ),
                       const SizedBox(height: 12),

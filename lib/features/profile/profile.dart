@@ -132,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _contactSupport() async {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: 'amoharib77@gmail.com',
+      path: 'jaibee.care@gmail.com',
       query: 'subject=Contact%20Support',
     );
     if (await canLaunchUrl(emailLaunchUri)) {

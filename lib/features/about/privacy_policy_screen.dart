@@ -71,7 +71,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
 6. **التغييرات على السياسة**
 - قد نقوم بتحديث سياسة الخصوصية من وقت لآخر. سيتم عرض أي تغييرات داخل التطبيق.
 
-للاستفسار أو الدعم، يرجى التواصل معنا عبر البريد الإلكتروني: amoharib77@gmail.com
+للاستفسار أو الدعم، يرجى التواصل معنا عبر البريد الإلكتروني: jaibee.care@gmail.com
 '''
                       : '''
 Your privacy is important to us. This document explains how the "Jaibee" app collects, uses, and protects your information when you use the app.
@@ -100,7 +100,7 @@ Your privacy is important to us. This document explains how the "Jaibee" app col
 6. **Changes to This Policy**
 - We may update the privacy policy from time to time. Any changes will be shown inside the app.
 
-For inquiries or support, please contact us at: amoharib77@gmail.com
+For inquiries or support, please contact us at: jaibee.care@gmail.com
 ''',
                   style: const TextStyle(fontSize: 15, height: 1.7),
                   textAlign: isArabic ? TextAlign.right : TextAlign.left,

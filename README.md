@@ -100,7 +100,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 
 - Developed by Abdulrahman  
-- Email: amoharib77@gmail.com  
+- Email: jaibee.care@gmail.com  
 - GitHub: [https://github.com/wnex77](https://github.com/wnex77)
 
 ---

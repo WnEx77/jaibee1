@@ -23,7 +23,7 @@ Future<String> fetchFinancialAdvice(String prompt) async {
     return jsonResponse['choices'][0]['message']['content'];
   } else {
     throw Exception(
-      'Failed to fetch advice: ${response.body}, Please contact the developer: amoharib77@gmail.com',
+      'Failed to fetch advice: ${response.body}, Please contact the developer: jaibee.care@gmail.com',
     );
   }
 }
