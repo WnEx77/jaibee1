@@ -206,5 +206,8 @@
   "goalAddedSuccessfully": "تم إضافة الهدف بنجاح",
   "categoryAdded": "تم إضافة الفئة بنجاح",
   "amountToReachMonthlyLimit": "المبلغ المطلوب للوصول إلى الحد الشهري",
-  "privacyPolicy": "سياسة الخصوصية"
+  "privacyPolicy": "سياسة الخصوصية",
+  "daily": "يوميًا",
+  "weekly": "أسبوعيًا",
+  "expensesByPeriod": "المصاريف حسب المدة"
 }

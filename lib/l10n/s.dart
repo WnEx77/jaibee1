@@ -1266,6 +1266,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get privacyPolicy;
+
+  /// No description provided for @daily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get daily;
+
+  /// No description provided for @weekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// No description provided for @expensesByPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses By Period'**
+  String get expensesByPeriod;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

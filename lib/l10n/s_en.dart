@@ -611,4 +611,13 @@ class SEn extends S {
 
   @override
   String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get daily => 'Daily';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get expensesByPeriod => 'Expenses By Period';
 }

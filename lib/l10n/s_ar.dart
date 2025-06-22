@@ -618,4 +618,13 @@ class SAr extends S {
 
   @override
   String get privacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get daily => 'يوميًا';
+
+  @override
+  String get weekly => 'أسبوعيًا';
+
+  @override
+  String get expensesByPeriod => 'المصاريف حسب المدة';
 }

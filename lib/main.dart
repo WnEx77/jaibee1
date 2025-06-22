@@ -28,7 +28,7 @@ Future<void> main() async {
   Hive.registerAdapter(GoalAdapter());
 
   // Place this before opening the 'categories' box, if you want to delete it before use.
-  // await Hive.deleteBoxFromDisk('categories');
+  await Hive.deleteBoxFromDisk('categories');
   // await Hive.deleteBoxFromDisk('transactions');
   // await Hive.deleteBoxFromDisk('budgets');
 
@@ -60,9 +60,9 @@ Future<void> _addDefaultCategoriesIfEmpty() async {
   final categoriesBox = Hive.box<Category>('categories');
   if (categoriesBox.isEmpty) {
     final defaultCategories = [
+      Category(name: 'food', icon: 'restaurant'),
       Category(name: 'shopping', icon: 'shopping_cart'),
       Category(name: 'transport', icon: 'directions_car'),
-      Category(name: 'food', icon: 'restaurant'),
       Category(name: 'entertainment', icon: 'movie'),
       Category(name: 'home', icon: 'home'),
       Category(name: 'bills', icon: 'credit_card'),

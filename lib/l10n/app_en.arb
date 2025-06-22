@@ -225,5 +225,8 @@
   "goalAddedSuccessfully": "Goal added successfully",
   "categoryAdded": "Category added successfully",
   "amountToReachMonthlyLimit": "Amount to reach monthly limit",
-  "privacyPolicy": "Privacy Policy"
+  "privacyPolicy": "Privacy Policy",
+  "daily": "Daily",
+  "weekly": "Weekly",
+  "expensesByPeriod": "Expenses By Period"
 }

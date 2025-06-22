@@ -35,9 +35,6 @@ dependencies:
   another_flushbar: ^1.12.30
   lottie: ^3.1.0
 
-
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -45,34 +42,29 @@ dev_dependencies:
   build_runner:
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^5.0.0
-  
 
-flutter_icons:
+flutter_launcher_icons:
+  image_path: "assets/images/logo_borders_cropped.png"
   android: true
   ios: true
-  image_path: "assets/images/logo.png"
-  adaptive_icon_background: "#FFFFFF"
+  remove_alpha_ios: true
+
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "assets/images/logo.png"
+#   adaptive_icon_background: "#FFFFFF"
 
 flutter:
   uses-material-design: true
   generate: true
+
   assets:
-    # - assets/images/logo.png
-    # - assets/images/logo.png
     - assets/images/
-    # - assets/images/background.png
-    # - assets/images/background2.png
-    # - assets/images/logo.png
-    # - assets/images/WnEx_signature.png
-    - assets/fonts/Amiri-Regular.ttf
-    - assets/fonts/Rubik-Regular.ttf
-    - assets/fonts/Roboto-Regular.ttf
-    - assets/fonts/Roboto-Bold.ttf
-    - assets/fonts/NotoSansArabic-Regular.ttf
-    # - assets/images/Saudi_Riyal_Symbol.png
-    # - assets/images/Saudi_Riyal_Symbol_DarkMode.png
+    - assets/fonts/
     - assets/onboarding/
     - assets/animations/
+
   fonts:
     - family: Roboto
       fonts:
@@ -81,11 +73,9 @@ flutter:
         - asset: assets/fonts/NotoSansArabic-Regular.ttf
           weight: 700
           
-
-          
 flutter_native_splash:
   background_image: assets/images/background.png
-  image: assets/images/logo.png
+  image: assets/images/logo_borders_cropped.png
   branding: assets/images/WnEx_signature.png
   branding_mode: bottom
   android: true

@@ -36,6 +36,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
   // List<String> _categoryNames = []; // Populated from Hive
 
   DateTime _selectedMonth = DateTime.now();
+  String _selectedPeriod = 'monthly'; // 'daily', 'weekly', 'monthly'
 
   double? _monthlyLimit; // retrieved from budget box
   // bool _showOnlySavings = false;
@@ -131,11 +132,26 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
                 final allTransactions = box.values
                     .whereType<Transaction>()
-                    .where(
-                      (t) =>
-                          t.date.month == _selectedMonth.month &&
-                          t.date.year == _selectedMonth.year,
-                    )
+                    .where((t) {
+                      if (_selectedPeriod == 'daily') {
+                        return t.date.year == _selectedMonth.year &&
+                            t.date.month == _selectedMonth.month &&
+                            t.date.day == _selectedMonth.day;
+                      } else if (_selectedPeriod == 'weekly') {
+                        // Find the start and end of the week for _selectedMonth
+                        final weekDay = _selectedMonth.weekday;
+                        final weekStart = _selectedMonth.subtract(
+                          Duration(days: weekDay - 1),
+                        );
+                        final weekEnd = weekStart.add(const Duration(days: 6));
+                        return !t.date.isBefore(weekStart) &&
+                            !t.date.isAfter(weekEnd);
+                      } else {
+                        // monthly
+                        return t.date.year == _selectedMonth.year &&
+                            t.date.month == _selectedMonth.month;
+                      }
+                    })
                     .toList();
 
                 final filteredTransactions = allTransactions
@@ -143,7 +159,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
                       (t) =>
                           _selectedFilters.contains(t.category.toLowerCase()),
                     )
-                    .toList();
+                    .toList()
+                    ..sort((a, b) => b.date.compareTo(a.date)); // Sort by date descending (latest first)
 
                 for (var t in filteredTransactions) {
                   if (t.isIncome) {
@@ -335,6 +352,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         ),
                       ),
                     ),
+                    // 🔽 Filter buttons for Daily, Weekly, Monthly
+                    // Add this to your state:
 
                     // 🔼 Month navigation remains unchanged
                     Padding(
@@ -361,6 +380,92 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             onPressed: _nextMonth,
                           ),
                         ],
+                      ),
+                    ),
+                    // In your build method, update the FilterChips:
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                      ),
+                      child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ChoiceChip(
+                        label: Row(
+                          children: [
+                          const Icon(Icons.today, size: 18),
+                          const SizedBox(width: 4),
+                          Text(localizer.daily),
+                          ],
+                        ),
+                        selected: _selectedPeriod == 'daily',
+                        selectedColor: Colors.blue.shade100,
+                        backgroundColor: Colors.grey.shade200,
+                        labelStyle: TextStyle(
+                          color: _selectedPeriod == 'daily'
+                            ? Colors.blue.shade800
+                            : Colors.black87,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        onSelected: (_) {
+                          setState(() {
+                          _selectedPeriod = 'daily';
+                          _selectedMonth = DateTime.now();
+                          });
+                        },
+                        ),
+                        const SizedBox(width: 12),
+                        ChoiceChip(
+                        label: Row(
+                          children: [
+                          const Icon(Icons.calendar_view_week, size: 18),
+                          const SizedBox(width: 4),
+                          Text(localizer.weekly),
+                          ],
+                        ),
+                        selected: _selectedPeriod == 'weekly',
+                        selectedColor: Colors.orange.shade100,
+                        backgroundColor: Colors.grey.shade200,
+                        labelStyle: TextStyle(
+                          color: _selectedPeriod == 'weekly'
+                            ? Colors.orange.shade800
+                            : Colors.black87,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        onSelected: (_) {
+                          setState(() {
+                          _selectedPeriod = 'weekly';
+                          _selectedMonth = DateTime.now();
+                          });
+                        },
+                        ),
+                        const SizedBox(width: 12),
+                        ChoiceChip(
+                        label: Row(
+                          children: [
+                          const Icon(Icons.calendar_month, size: 18),
+                          const SizedBox(width: 4),
+                          Text(localizer.monthly),
+                          ],
+                        ),
+                        selected: _selectedPeriod == 'monthly',
+                        selectedColor: Colors.green.shade100,
+                        backgroundColor: Colors.grey.shade200,
+                        labelStyle: TextStyle(
+                          color: _selectedPeriod == 'monthly'
+                            ? Colors.green.shade800
+                            : Colors.black87,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        onSelected: (_) {
+                          setState(() {
+                          _selectedPeriod = 'monthly';
+                          _selectedMonth = DateTime.now();
+                          });
+                        },
+                        ),
+                      ],
                       ),
                     ),
 
@@ -408,90 +513,106 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                    confirmDismiss: (direction) async {
-                                      final confirm = await showDialog<bool>(
-                                        context: context,
-                                        builder: (context) => Dialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(20),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(24.0),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.warning_amber_rounded,
-                                                  color: Colors.red,
-                                                  size: 48,
-                                                ),
-                                                const SizedBox(height: 16),
-                                                Text(
-                                                  localizer.confirmDeletion,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                const SizedBox(height: 12),
-                                                Text(
-                                                  localizer.areYouSureDeleteTransaction,
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: Colors.grey.shade700,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 24),
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    TextButton(
-                                                      onPressed: () => Navigator.of(context).pop(false),
-                                                      child: Text(
-                                                        localizer.cancel,
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    ElevatedButton(
-                                                      onPressed: () => Navigator.of(context).pop(true),
-                                                      style: ElevatedButton.styleFrom(
-                                                        backgroundColor: Colors.red,
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(12),
-                                                        ),
-                                                      ),
-                                                      child: Text(
-                                                        localizer.delete,
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
+                                  confirmDismiss: (direction) async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => Dialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
                                           ),
                                         ),
-                                      );
-
-                                      if (confirm == true) {
-                                        box.delete(transaction.key);
-                                        Flushbar(
-                                          message: localizer.transactionDeleted,
-                                          duration: const Duration(seconds: 2),
-                                          backgroundColor: Colors.red,
-                                          margin: const EdgeInsets.all(16),
-                                          borderRadius: BorderRadius.circular(12),
-                                          icon: const Icon(
-                                            Icons.delete,
-                                            color: Colors.white,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(24.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.warning_amber_rounded,
+                                                color: Colors.red,
+                                                size: 48,
+                                              ),
+                                              const SizedBox(height: 16),
+                                              Text(
+                                                localizer.confirmDeletion,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Text(
+                                                localizer
+                                                    .areYouSureDeleteTransaction,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade700,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 24),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop(false),
+                                                    child: Text(
+                                                      localizer.cancel,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  ElevatedButton(
+                                                    onPressed: () =>
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop(true),
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      localizer.delete,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
-                                        ).show(context);
-                                        return true;
-                                      }
-                                      return false;
-                                    },
+                                        ),
+                                      ),
+                                    );
+
+                                    if (confirm == true) {
+                                      box.delete(transaction.key);
+                                      Flushbar(
+                                        message: localizer.transactionDeleted,
+                                        duration: const Duration(seconds: 2),
+                                        backgroundColor: Colors.red,
+                                        margin: const EdgeInsets.all(16),
+                                        borderRadius: BorderRadius.circular(12),
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.white,
+                                        ),
+                                      ).show(context);
+                                      return true;
+                                    }
+                                    return false;
+                                  },
 
                                   child: Card(
                                     elevation: 2,
