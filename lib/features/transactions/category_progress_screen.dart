@@ -76,8 +76,8 @@ class CategoryProgressScreen extends StatelessWidget {
 
             // Get the original limit for this category
             final budget = budgetBox.get(cat.name);
-            final originalLimit = budget != null && budget.limit != null
-            ? budget.limit as double
+            final originalLimit = budget != null
+            ? budget.limit
             : 0.0;
 
             // Calculate percent of limit used

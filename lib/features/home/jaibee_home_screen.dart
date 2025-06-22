@@ -91,8 +91,8 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
           body: PageView(
             controller: _pageController,
             onPageChanged: _onPageChanged,
-            children: _screens,
             physics: const NeverScrollableScrollPhysics(),
+            children: _screens,
           ),
           bottomNavigationBar: _currentPage != 5
               ? Container(

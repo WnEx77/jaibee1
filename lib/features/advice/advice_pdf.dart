@@ -177,8 +177,8 @@ Future<void> generatePdfEnglish(BuildContext context, MonthlySummary summary, St
   final pw.MemoryImage logo = pw.MemoryImage(logoUint8List);
 
   // Load English fonts
-  final font = await pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Regular.ttf'));
-  final boldFont = await pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Bold.ttf'));
+  final font = pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Regular.ttf'));
+  final boldFont = pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Bold.ttf'));
 
   final String monthName = DateFormat.yMMMM().format(selectedMonth);
   final String title = '${s.aiFinancialAdvice} - $monthName';

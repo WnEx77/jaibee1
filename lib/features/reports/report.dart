@@ -221,7 +221,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       const SizedBox(height: 16),
                       ...goals
                           .map((goal) => _buildGoalProgressCard(goal, index))
-                          .toList(),
+                          ,
                       const SizedBox(height: 50),
                     ],
                   ],
@@ -249,7 +249,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             Text(
               localizer.noDataMonth,
               style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -258,7 +258,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
               style: TextStyle(
                 color: Theme.of(
                   context,
-                ).colorScheme.onBackground.withOpacity(0.6),
+                ).colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
           ],

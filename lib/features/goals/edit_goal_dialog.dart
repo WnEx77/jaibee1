@@ -16,8 +16,8 @@ class EditGoalDialog extends StatefulWidget {
     required this.index,
     required this.onUpdate,
     required this.onDelete,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<EditGoalDialog> createState() => _EditGoalDialogState();

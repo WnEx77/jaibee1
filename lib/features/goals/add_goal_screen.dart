@@ -9,7 +9,7 @@ import 'package:another_flushbar/flushbar.dart';
 class AddGoalScreen extends StatefulWidget {
   final Function(Goal) onAdd;
 
-  const AddGoalScreen({required this.onAdd, Key? key}) : super(key: key);
+  const AddGoalScreen({required this.onAdd, super.key});
 
   @override
   State<AddGoalScreen> createState() => _AddGoalScreenState();

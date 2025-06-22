@@ -33,7 +33,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
   bool _loading = true;
   String? _error;
   MonthlySummary? _summary;
-  DateTime _selectedMonth = DateTime.now();
+  final DateTime _selectedMonth = DateTime.now();
 
   @override
   void initState() {
@@ -309,7 +309,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          "${_summary!.totalIncome.toStringAsFixed(2)}",
+                                          _summary!.totalIncome.toStringAsFixed(2),
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -335,7 +335,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          "${_summary!.totalExpenses.toStringAsFixed(2)}",
+                                          _summary!.totalExpenses.toStringAsFixed(2),
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -363,7 +363,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                                         Text(
                                           (_summary!.monthlyLimit ?? 0) == 0
                                               ? S.of(context)!.notSet
-                                              : "${_summary!.monthlyLimit!.toStringAsFixed(2)}",
+                                              : _summary!.monthlyLimit!.toStringAsFixed(2),
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,

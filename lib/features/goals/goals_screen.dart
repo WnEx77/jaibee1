@@ -9,7 +9,7 @@ import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 
 class GoalsScreen extends StatefulWidget {
-  const GoalsScreen({Key? key}) : super(key: key);
+  const GoalsScreen({super.key});
 
   @override
   State<GoalsScreen> createState() => _GoalsScreenState();

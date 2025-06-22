@@ -56,8 +56,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
   }
 
   bool _isInvalidInput(String? text) {
-    if (text == null || text.trim().isEmpty)
+    if (text == null || text.trim().isEmpty) {
       return false; // Empty is OK, treated as 0
+    }
     return double.tryParse(text.trim()) == null;
   }
 
@@ -389,7 +390,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   ),
                 ),
               );
-            }).toList(),
+            }),
             if (pieSections.isNotEmpty) ...[
               const SizedBox(height: 24),
               Text(
