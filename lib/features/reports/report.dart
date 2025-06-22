@@ -407,7 +407,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     double interval,
     double maxY,
   ) {
-    final localizer = S.of(context)!;
+    // final localizer = S.of(context)!;
 
     // Prepare data for Syncfusion (x: date, y: amount)
     final List<_LineChartData> chartData = List.generate(
