@@ -228,5 +228,10 @@
   "privacyPolicy": "Privacy Policy",
   "daily": "Daily",
   "weekly": "Weekly",
-  "expensesByPeriod": "Expenses By Period"
+  "expensesByPeriod": "Expenses By Period",
+  "supportAndFeedback": "Support and Feedback",
+  "currency": "Currency",
+  "selectCurrency": "Select Currency",
+  "couldNotOpenSupportPage": "Could not open the support page",
+  "couldNotLaunchEmailClient": "Could not launch email client"
 }

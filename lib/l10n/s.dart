@@ -1284,6 +1284,36 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Expenses By Period'**
   String get expensesByPeriod;
+
+  /// No description provided for @supportAndFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Support and Feedback'**
+  String get supportAndFeedback;
+
+  /// No description provided for @currency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
+
+  /// No description provided for @selectCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Currency'**
+  String get selectCurrency;
+
+  /// No description provided for @couldNotOpenSupportPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the support page'**
+  String get couldNotOpenSupportPage;
+
+  /// No description provided for @couldNotLaunchEmailClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch email client'**
+  String get couldNotLaunchEmailClient;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

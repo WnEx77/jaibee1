@@ -11,6 +11,8 @@ import 'package:jaibee1/features/transactions/category_progress_screen.dart';
 import 'package:jaibee1/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee1/data/models/budget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/utils/currency_utils.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});
@@ -20,7 +22,6 @@ class TransactionScreen extends StatefulWidget {
 }
 
 class _TransactionScreenState extends State<TransactionScreen> {
-  
   final Set<String> _selectedFilters = {'income'}; // Always includes 'income'
   DateTime _selectedMonth = DateTime.now();
   String _selectedPeriod = 'monthly'; // 'daily', 'weekly', 'monthly'
@@ -49,7 +50,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
         .toList();
 
     setState(() {
-      // _categoryNames = categories;
       _selectedFilters.addAll(categories); // Select all by default
     });
   }
@@ -68,6 +68,20 @@ class _TransactionScreenState extends State<TransactionScreen> {
     setState(() {
       _selectedMonth = DateTime(_selectedMonth.year, _selectedMonth.month + 1);
     });
+  }
+
+  Future<Widget> buildCurrencySymbolWidget(Color color) async {
+    final prefs = await SharedPreferences.getInstance();
+    final code = prefs.getString('currency_code') ?? 'SAR';
+    final currency = getCurrencyByCode(code);
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final asset = currency.getAsset(isDarkMode: isDark);
+    if (asset != null) {
+      return Image.asset(asset, width: 22, height: 22, color: color);
+    } else {
+      return Text(currency.symbol, style: TextStyle(fontSize: 22, color: color));
+    }
   }
 
   @override
@@ -109,7 +123,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             t.date.month == _selectedMonth.month &&
                             t.date.day == _selectedMonth.day;
                       } else if (_selectedPeriod == 'weekly') {
-                        // Find the start and end of the week for _selectedMonth
                         final weekDay = _selectedMonth.weekday;
                         final weekStart = _selectedMonth.subtract(
                           Duration(days: weekDay - 1),
@@ -131,7 +144,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                           _selectedFilters.contains(t.category.toLowerCase()),
                     )
                     .toList()
-                    ..sort((a, b) => b.date.compareTo(a.date)); // Sort by date descending (latest first)
+                    ..sort((a, b) => b.date.compareTo(a.date)); // Sort by date descending
 
                 for (var t in filteredTransactions) {
                   if (t.isIncome) {
@@ -204,13 +217,18 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                             ),
                                           ),
                                           const SizedBox(width: 4),
-                                          Image.asset(
-                                            'assets/images/Saudi_Riyal_Symbol.png',
-                                            width: 16,
-                                            height: 16,
-                                            color: usagePercent >= 1
-                                                ? Colors.red
-                                                : Colors.green,
+                                          FutureBuilder<Widget>(
+                                            future: buildCurrencySymbolWidget(
+                                              usagePercent >= 1
+                                                  ? Colors.red
+                                                  : Colors.green,
+                                            ),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                                return snapshot.data!;
+                                              }
+                                              return const SizedBox(width: 16, height: 16);
+                                            },
                                           ),
                                           Text(
                                             ' / ',
@@ -231,13 +249,18 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                             ),
                                           ),
                                           const SizedBox(width: 4),
-                                          Image.asset(
-                                            'assets/images/Saudi_Riyal_Symbol.png',
-                                            width: 16,
-                                            height: 16,
-                                            color: usagePercent >= 1
-                                                ? Colors.red
-                                                : Colors.green,
+                                          FutureBuilder<Widget>(
+                                            future: buildCurrencySymbolWidget(
+                                              usagePercent >= 1
+                                                  ? Colors.red
+                                                  : Colors.green,
+                                            ),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                                return snapshot.data!;
+                                              }
+                                              return const SizedBox(width: 16, height: 16);
+                                            },
                                           ),
                                         ],
                                       ),
@@ -254,8 +277,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         usagePercent < 0.6
                                             ? Colors.green
                                             : usagePercent < 0.9
-                                            ? Colors.orange
-                                            : Colors.red,
+                                                ? Colors.orange
+                                                : Colors.red,
                                       ),
                                     ),
                                   ),
@@ -346,104 +369,121 @@ class _TransactionScreenState extends State<TransactionScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 4,
+                        horizontal: 16,
+                        vertical: 4,
                       ),
                       child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ChoiceChip(
-                        label: Row(
-                          children: [
-                          const Icon(Icons.today, size: 18),
-                          const SizedBox(width: 4),
-                          Text(localizer.daily),
-                          ],
-                        ),
-                        selected: _selectedPeriod == 'daily',
-                        selectedColor: Colors.blue.shade100,
-                        backgroundColor: Colors.grey.shade200,
-                        labelStyle: TextStyle(
-                          color: _selectedPeriod == 'daily'
-                            ? Colors.blue.shade800
-                            : Colors.black87,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        onSelected: (_) {
-                          setState(() {
-                          _selectedPeriod = 'daily';
-                          _selectedMonth = DateTime.now();
-                          });
-                        },
-                        ),
-                        const SizedBox(width: 12),
-                        ChoiceChip(
-                        label: Row(
-                          children: [
-                          const Icon(Icons.calendar_view_week, size: 18),
-                          const SizedBox(width: 4),
-                          Text(localizer.weekly),
-                          ],
-                        ),
-                        selected: _selectedPeriod == 'weekly',
-                        selectedColor: Colors.orange.shade100,
-                        backgroundColor: Colors.grey.shade200,
-                        labelStyle: TextStyle(
-                          color: _selectedPeriod == 'weekly'
-                            ? Colors.orange.shade800
-                            : Colors.black87,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        onSelected: (_) {
-                          setState(() {
-                          _selectedPeriod = 'weekly';
-                          _selectedMonth = DateTime.now();
-                          });
-                        },
-                        ),
-                        const SizedBox(width: 12),
-                        ChoiceChip(
-                        label: Row(
-                          children: [
-                          const Icon(Icons.calendar_month, size: 18),
-                          const SizedBox(width: 4),
-                          Text(localizer.monthly),
-                          ],
-                        ),
-                        selected: _selectedPeriod == 'monthly',
-                        selectedColor: Colors.green.shade100,
-                        backgroundColor: Colors.grey.shade200,
-                        labelStyle: TextStyle(
-                          color: _selectedPeriod == 'monthly'
-                            ? Colors.green.shade800
-                            : Colors.black87,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        onSelected: (_) {
-                          setState(() {
-                          _selectedPeriod = 'monthly';
-                          _selectedMonth = DateTime.now();
-                          });
-                        },
-                        ),
-                      ],
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ChoiceChip(
+                            label: Row(
+                              children: [
+                                const Icon(Icons.today, size: 18),
+                                const SizedBox(width: 4),
+                                Text(localizer.daily),
+                              ],
+                            ),
+                            selected: _selectedPeriod == 'daily',
+                            selectedColor: Colors.blue.shade100,
+                            backgroundColor: Colors.grey.shade200,
+                            labelStyle: TextStyle(
+                              color: _selectedPeriod == 'daily'
+                                  ? Colors.blue.shade800
+                                  : Colors.black87,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            onSelected: (_) {
+                              setState(() {
+                                _selectedPeriod = 'daily';
+                                _selectedMonth = DateTime.now();
+                              });
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          ChoiceChip(
+                            label: Row(
+                              children: [
+                                const Icon(Icons.calendar_view_week, size: 18),
+                                const SizedBox(width: 4),
+                                Text(localizer.weekly),
+                              ],
+                            ),
+                            selected: _selectedPeriod == 'weekly',
+                            selectedColor: Colors.orange.shade100,
+                            backgroundColor: Colors.grey.shade200,
+                            labelStyle: TextStyle(
+                              color: _selectedPeriod == 'weekly'
+                                  ? Colors.orange.shade800
+                                  : Colors.black87,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            onSelected: (_) {
+                              setState(() {
+                                _selectedPeriod = 'weekly';
+                                _selectedMonth = DateTime.now();
+                              });
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          ChoiceChip(
+                            label: Row(
+                              children: [
+                                const Icon(Icons.calendar_month, size: 18),
+                                const SizedBox(width: 4),
+                                Text(localizer.monthly),
+                              ],
+                            ),
+                            selected: _selectedPeriod == 'monthly',
+                            selectedColor: Colors.green.shade100,
+                            backgroundColor: Colors.grey.shade200,
+                            labelStyle: TextStyle(
+                              color: _selectedPeriod == 'monthly'
+                                  ? Colors.green.shade800
+                                  : Colors.black87,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            onSelected: (_) {
+                              setState(() {
+                                _selectedPeriod = 'monthly';
+                                _selectedMonth = DateTime.now();
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ),
 
-                    // 🔼 Transaction list
+                    // Transaction list
                     Expanded(
                       child: filteredTransactions.isEmpty
                           ? Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Image.asset(
-                                    'assets/images/Saudi_Riyal_Symbol.png',
-                                    width: 80,
-                                    height: 80,
-                                    color: Colors
-                                        .grey
-                                        .shade400,
+                                  FutureBuilder<Widget>(
+                                    future: buildCurrencySymbolWidget(
+                                      Theme.of(context).brightness == Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                        return SizedBox(
+                                          width: 80,
+                                          height: 80,
+                                          child: Center(
+                                            child: Opacity(
+                                              opacity: 0.4,
+                                              child: snapshot.data!,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return SizedBox(
+                                        width: 80,
+                                        height: 80,
+                                      );
+                                    },
                                   ),
                                   const SizedBox(height: 16),
                                   Text(localizer.noTransactions),
@@ -459,6 +499,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                 final formattedDate = DateFormat.yMMMd().format(
                                   transaction.date,
                                 );
+                                final amountColor = isIncome ? Colors.green : Colors.red;
 
                                 return Dismissible(
                                   key: Key(transaction.key.toString()),
@@ -603,8 +644,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                           getCategoryIcon(
                                             categoryBox.values.firstWhere(
                                               (cat) =>
-                                                  cat.name ==
-                                                  transaction.category,
+                                                  cat.name == transaction.category,
                                               orElse: () => Category(
                                                 name: transaction.category,
                                                 icon: 'category',
@@ -632,31 +672,26 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
-                                              color: isIncome
-                                                  ? Colors.green
-                                                  : Colors.red,
+                                              color: amountColor,
                                             ),
                                           ),
                                           Text(
-                                            transaction.amount.toStringAsFixed(
-                                              2,
-                                            ),
+                                            transaction.amount.toStringAsFixed(2),
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
-                                              color: isIncome
-                                                  ? Colors.green
-                                                  : Colors.red,
+                                              color: amountColor,
                                             ),
                                           ),
                                           const SizedBox(width: 4),
-                                          Image.asset(
-                                            'assets/images/Saudi_Riyal_Symbol.png',
-                                            width: 16,
-                                            height: 16,
-                                            color: isIncome
-                                                ? Colors.green
-                                                : Colors.red,
+                                          FutureBuilder<Widget>(
+                                            future: buildCurrencySymbolWidget(amountColor),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                                return snapshot.data!;
+                                              }
+                                              return const SizedBox(width: 16, height: 16);
+                                            },
                                           ),
                                         ],
                                       ),
@@ -692,11 +727,14 @@ class _TransactionScreenState extends State<TransactionScreen> {
               style: TextStyle(color: color, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 4),
-            Image.asset(
-              'assets/images/Saudi_Riyal_Symbol.png',
-              width: 16,
-              height: 16,
-              color: color,
+            FutureBuilder<Widget>(
+              future: buildCurrencySymbolWidget(color),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                  return snapshot.data!;
+                }
+                return SizedBox(width: 16, height: 16);
+              },
             ),
           ],
         ),

@@ -13,6 +13,7 @@ import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/features/reports/export_report_screen.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee1/features/about/privacy_policy_screen.dart';
+import 'package:jaibee1/core/utils/currency_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -42,6 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showLanguageDialog() {
+    final s = S.of(context)!;
     showDialog(
       context: context,
       builder: (_) => Dialog(
@@ -59,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                S.of(context)!.changeLanguage,
+                s.changeLanguage,
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -68,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
               _buildLanguageOption(
                 flag: '🇸🇦',
-                language: 'العربية',
+                language: s.arabic,
                 onTap: () {
                   Navigator.pop(context);
                   _changeLanguage('ar');
@@ -77,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 10),
               _buildLanguageOption(
                 flag: '🇺🇸',
-                language: 'English',
+                language: s.english,
                 onTap: () {
                   Navigator.pop(context);
                   _changeLanguage('en');
@@ -129,6 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _contactSupport() async {
+    final s = S.of(context)!;
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
       path: 'jaibee.care@gmail.com',
@@ -139,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } else {
       // ignore: use_build_context_synchronously
       Flushbar(
-        message: 'Could not launch email client',
+        message: s.couldNotLaunchEmailClient,
         duration: const Duration(seconds: 2),
         backgroundColor: Colors.redAccent,
         margin: const EdgeInsets.all(16),
@@ -150,12 +153,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _openSupportPage() async {
+    final s = S.of(context)!;
     final url = Uri.parse('https://github.com/wnex77/jaibee1/issues');
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
       Flushbar(
-        message: 'Could not open support page',
+        message: s.couldNotOpenSupportPage,
         duration: const Duration(seconds: 2),
         backgroundColor: Colors.redAccent,
         margin: const EdgeInsets.all(16),
@@ -163,6 +167,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
         icon: const Icon(Icons.error_outline, color: Colors.white),
       ).show(context);
     }
+  }
+
+  Future<void> _showCurrencyPicker(BuildContext context) async {
+    final s = S.of(context)!;
+    final prefs = await SharedPreferences.getInstance();
+    String currentCode = prefs.getString('currency_code') ?? 'SAR';
+
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Theme.of(context).cardColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.attach_money,
+                size: 48,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                s.selectCurrency,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              ...supportedCurrencies.map((currency) => _buildCurrencyOption(
+                    currency: currency,
+                    isSelected: currentCode == currency.code,
+                    onTap: () async {
+                      await prefs.setString('currency_code', currency.code);
+                      Navigator.pop(context);
+                      setState(() {}); // Refresh UI
+                    },
+                  )),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCurrencyOption({
+    required AppCurrency currency,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Theme.of(context).colorScheme.secondary.withOpacity(0.15)
+              : Theme.of(context).colorScheme.secondary.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              currency.asset != null
+                  ? Image.asset(currency.asset!, width: 22, height: 22)
+                  : Text(currency.symbol, style: const TextStyle(fontSize: 22)),
+              const SizedBox(width: 12),
+              Text('${currency.name} (${currency.code})', style: Theme.of(context).textTheme.bodyLarge),
+              if (isSelected) ...[
+                const SizedBox(width: 8),
+                const Icon(Icons.check, color: Colors.teal, size: 20),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -182,7 +265,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Card(
                 elevation: 3,
                 margin: const EdgeInsets.only(bottom: 18),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 child: Column(
                   children: [
                     _buildCardTile(
@@ -195,21 +280,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       elevation: 0,
                       margin: EdgeInsets.zero,
                       color: Colors.transparent,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.brightness_6,
-                          color: Colors.blueGrey,
-                        ),
-                        title: Text(s.darkMode),
-                        trailing: Consumer<ThemeProvider>(
-                          builder: (context, themeProvider, _) {
-                            return Switch(
-                              value: themeProvider.isDarkTheme,
-                              onChanged: themeProvider.toggleTheme,
-                            );
-                          },
-                        ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: const Icon(
+                              Icons.brightness_6,
+                              color: Colors.blueGrey,
+                            ),
+                            title: Text(s.darkMode),
+                            trailing: Consumer<ThemeProvider>(
+                              builder: (context, themeProvider, _) {
+                                return Switch(
+                                  value: themeProvider.isDarkTheme,
+                                  onChanged: themeProvider.toggleTheme,
+                                );
+                              },
+                            ),
+                          ),
+                          // --- Add currency picker tile here ---
+                          FutureBuilder<SharedPreferences>(
+                            future: SharedPreferences.getInstance(),
+                            builder: (context, snapshot) {
+                              final prefs = snapshot.data;
+                              final currentCode =
+                                  prefs?.getString('currency_code') ?? 'SAR';
+                              return ListTile(
+                                leading: const Icon(
+                                  Icons.attach_money,
+                                  color: Colors.teal,
+                                ),
+                                title: Text(s.currency),
+                                subtitle: Text(
+                                  getCurrencyByCode(currentCode).name,
+                                ),
+                                onTap: () => _showCurrencyPicker(context),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -220,7 +331,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Card(
                 elevation: 3,
                 margin: const EdgeInsets.only(bottom: 18),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 child: Column(
                   children: [
                     _buildCardTile(
@@ -229,7 +342,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const GoalsScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const GoalsScreen(),
+                          ),
                         );
                       },
                     ),
@@ -254,7 +369,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Card(
                 elevation: 3,
                 margin: const EdgeInsets.only(bottom: 18),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 child: Column(
                   children: [
                     _buildCardTile(
@@ -263,7 +380,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const AboutUsScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const AboutUsScreen(),
+                          ),
                         );
                       },
                     ),
@@ -294,7 +413,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Card(
                 elevation: 3,
                 margin: const EdgeInsets.only(bottom: 18),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 child: Column(
                   children: [
                     _buildCardTile(
@@ -305,7 +426,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildDivider(),
                     _buildCardTile(
                       icon: Icons.support_agent,
-                      label: 'Support & Feedback',
+                      label: s.supportAndFeedback,
                       onTap: _openSupportPage,
                     ),
                   ],
@@ -329,7 +450,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         label,
         style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: Colors.grey,
+      ),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

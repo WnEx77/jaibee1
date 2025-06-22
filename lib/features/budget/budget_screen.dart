@@ -8,6 +8,8 @@ import 'package:jaibee1/l10n/s.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/utils/currency_utils.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -50,8 +52,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
       _monthlyLimit = monthlyBudget?.limit;
       _monthlyLimitController.text =
           (_monthlyLimit != null && _monthlyLimit! > 0)
-          ? _monthlyLimit!.toStringAsFixed(0)
-          : '';
+              ? _monthlyLimit!.toStringAsFixed(0)
+              : '';
     });
   }
 
@@ -181,6 +183,21 @@ class _BudgetScreenState extends State<BudgetScreen> {
         titlePositionPercentageOffset: 0.6,
       );
     });
+  }
+
+  Future<Widget> buildCurrencySymbolWidget(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final code = prefs.getString('currency_code') ?? 'SAR';
+    final currency = getCurrencyByCode(code);
+
+    // Use theme from context for dark mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final asset = currency.getAsset(isDarkMode: isDark);
+    if (asset != null) {
+      return Image.asset(asset, width: 22, height: 22);
+    } else {
+      return Text(currency.symbol, style: const TextStyle(fontSize: 22));
+    }
   }
 
   @override
@@ -371,34 +388,37 @@ class _BudgetScreenState extends State<BudgetScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             flex: 3,
-                            child: TextField(
-                              controller: _controllers[category.name],
-                              keyboardType: TextInputType.number,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              decoration: InputDecoration(
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(13.0),
-                                  child: Image.asset(
-                                    'assets/images/Saudi_Riyal_Symbol.png',
-                                    width: 16,
-                                    height: 16,
+                            child: FutureBuilder<Widget>(
+                              future: buildCurrencySymbolWidget(context),
+                              builder: (context, snapshot) {
+                                return TextField(
+                                  controller: _controllers[category.name],
+                                  keyboardType: TextInputType.number,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  decoration: InputDecoration(
+                                    prefixIcon: snapshot.hasData
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(13.0),
+                                            child: snapshot.data,
+                                          )
+                                        : const SizedBox(width: 16, height: 16),
+                                    labelText: null,
+                                    filled: true,
+                                    fillColor:
+                                        _isInvalidInput(
+                                          _controllers[category.name]?.text,
+                                        )
+                                        ? Colors.red.withOpacity(0.05)
+                                        : Colors.grey.withOpacity(0.05),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    isDense: true,
                                   ),
-                                ),
-                                labelText: null,
-                                filled: true,
-                                fillColor:
-                                    _isInvalidInput(
-                                      _controllers[category.name]?.text,
-                                    )
-                                    ? Colors.red.withOpacity(0.05)
-                                    : Colors.grey.withOpacity(0.05),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide.none,
-                                ),
-                                isDense: true,
-                              ),
-                              onChanged: (_) => setState(() {}),
+                                  onChanged: (_) => setState(() {}),
+                                );
+                              },
                             ),
                           ),
                         ],

@@ -627,4 +627,19 @@ class SAr extends S {
 
   @override
   String get expensesByPeriod => 'المصاريف حسب المدة';
+
+  @override
+  String get supportAndFeedback => 'الدعم والملاحظات';
+
+  @override
+  String get currency => 'العملة';
+
+  @override
+  String get selectCurrency => 'اختر العملة';
+
+  @override
+  String get couldNotOpenSupportPage => 'تعذر فتح صفحة الدعم';
+
+  @override
+  String get couldNotLaunchEmailClient => 'تعذر فتح تطبيق البريد الإلكتروني';
 }

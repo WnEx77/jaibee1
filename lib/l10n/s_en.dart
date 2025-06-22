@@ -620,4 +620,19 @@ class SEn extends S {
 
   @override
   String get expensesByPeriod => 'Expenses By Period';
+
+  @override
+  String get supportAndFeedback => 'Support and Feedback';
+
+  @override
+  String get currency => 'Currency';
+
+  @override
+  String get selectCurrency => 'Select Currency';
+
+  @override
+  String get couldNotOpenSupportPage => 'Could not open the support page';
+
+  @override
+  String get couldNotLaunchEmailClient => 'Could not launch email client';
 }

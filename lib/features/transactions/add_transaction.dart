@@ -10,6 +10,8 @@ import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/utils/currency_utils.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -32,6 +34,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     super.initState();
     // No need to load categories here, handled by ValueListenableBuilder
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +89,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         : 'assets/images/Saudi_Riyal_Symbol.png';
 
     return _styledContainer(
-      child: TextFormField(
+      child: FutureBuilder<Widget>(
+        future: buildCurrencySymbolWidget(),
+        builder: (context, snapshot) {
+          return TextFormField(
         controller: _amountController,
         keyboardType: TextInputType.number,
         validator: (value) => (value == null || value.isEmpty)
@@ -99,13 +106,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           labelText: localizer.amount,
           prefixIcon: Padding(
             padding: const EdgeInsets.all(12),
-            child: Image.asset(iconAsset, width: 24, height: 24),
+            child: snapshot.connectionState == ConnectionState.done && snapshot.hasData
+            ? snapshot.data!
+            : SizedBox(width: 24, height: 24),
           ),
           hintText: localizer.enterAmount,
           border: InputBorder.none,
         ),
+          );
+        },
       ),
-    );
+      );
   }
 
   Widget _buildCategoryDropdown(S localizer, List<Category> categories) {
@@ -355,6 +366,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
+  Future<Widget> buildCurrencySymbolWidget() async {
+  final prefs = await SharedPreferences.getInstance();
+  final code = prefs.getString('currency_code') ?? 'SAR';
+  final currency = getCurrencyByCode(code);
+
+  if (currency.asset != null) {
+    return Image.asset(currency.asset!, width: 22, height: 22);
+  } else {
+    return Text(currency.symbol, style: const TextStyle(fontSize: 22));
+  }
+}
+
   Widget _styledContainer({required Widget child}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedContainer(
@@ -379,4 +402,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       child: child,
     );
   }
+
+
 }
