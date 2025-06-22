@@ -205,7 +205,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                       Flushbar(
                         message: S.of(context)!.transactionDeleted,
                         duration: const Duration(seconds: 2),
-                        backgroundColor: Colors.red,
+                        backgroundColor: Colors.redAccent,
                         margin: const EdgeInsets.all(8),
                         borderRadius: BorderRadius.circular(8),
                         flushbarPosition: FlushbarPosition.BOTTOM,

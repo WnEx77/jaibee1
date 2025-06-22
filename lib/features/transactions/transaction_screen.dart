@@ -601,7 +601,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                       Flushbar(
                                         message: localizer.transactionDeleted,
                                         duration: const Duration(seconds: 2),
-                                        backgroundColor: Colors.red,
+                                        backgroundColor: Colors.redAccent,
                                         margin: const EdgeInsets.all(16),
                                         borderRadius: BorderRadius.circular(12),
                                         icon: const Icon(

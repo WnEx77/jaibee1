@@ -188,7 +188,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                         message: S.of(context)!.goalDeleted,
                         icon: const Icon(Icons.check_circle, color: Colors.white, size: 28),
                         duration: const Duration(seconds: 2),
-                        backgroundColor: Colors.red,
+                        backgroundColor: Colors.redAccent,
                         margin: const EdgeInsets.all(16),
                         borderRadius: BorderRadius.circular(12),
                         flushbarPosition: FlushbarPosition.BOTTOM,

@@ -304,7 +304,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       Flushbar(
         message: localizer.transactionAdded,
         duration: const Duration(seconds: 2),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.green,
         margin: const EdgeInsets.all(16),
         borderRadius: BorderRadius.circular(12),
         icon: const Icon(Icons.check_circle, color: Colors.white),

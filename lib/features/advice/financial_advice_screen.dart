@@ -160,7 +160,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                     duration: const Duration(seconds: 2),
                     margin: const EdgeInsets.all(8),
                     borderRadius: BorderRadius.circular(8),
-                    backgroundColor: Colors.green.shade600,
+                    backgroundColor: Colors.green,
                     icon: const Icon(Icons.check_circle, color: Colors.white),
                   ).show(context);
                 },
