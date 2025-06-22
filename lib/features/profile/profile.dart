@@ -9,7 +9,6 @@ import 'package:jaibee1/features/goals/goals_screen.dart';
 import 'package:jaibee1/features/about/about_us_screen.dart';
 import 'package:jaibee1/features/webview/webview_screen.dart';
 import 'package:jaibee1/core/theme/theme_provider.dart';
-import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/features/reports/export_report_screen.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -153,8 +152,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context)!;
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: AppBackground(
@@ -163,27 +160,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Profile header
-              // Container(
-              //   padding: const EdgeInsets.symmetric(vertical: 24),
-              //   child: Column(
-              //     children: [
-              //       CircleAvatar(
-              //         radius: 38,
-              //         backgroundColor: mintTheme.buttonColor.withOpacity(0.1),
-              //         child: Icon(Icons.person, size: 48, color: mintTheme.buttonColor),
-              //       ),
-              //       const SizedBox(height: 12),
-              //       Text(
-              //         s.profile,
-              //         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              //               fontWeight: FontWeight.bold,
-              //               fontSize: 22,
-              //             ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               const SizedBox(height: 10),
 
               // Settings Section

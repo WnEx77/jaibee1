@@ -54,7 +54,6 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
         DateTime tempPickedDate = validInitialDate;
 
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        final backgroundColor = isDark ? Colors.grey[900] : Colors.white;
         final textColor = isDark ? Colors.white : Colors.black;
 
         return AlertDialog(
@@ -249,7 +248,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                   TextFormField(
                     controller: _nameController,
                     decoration: InputDecoration(
-                      labelText: localizer!.goalName,
+                      labelText: localizer.goalName,
                       prefixIcon: const Icon(Icons.title),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),

@@ -77,8 +77,9 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
       return;
     }
 
-    _categoriesBox.add(Category(name: selected.name, icon: selected.icon));
+    // ✅ Wrap both add and state update inside setState
     setState(() {
+      _categoriesBox.add(Category(name: selected.name, icon: selected.icon));
       _selectedCategory = '';
     });
 
@@ -100,7 +101,9 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     final categories = _categoriesBox.values
         .where((c) => c.name != 'other')
         .toList();
-    final userCategories = defaultUserCategories;
+    final userCategories = defaultUserCategories
+        .where((cat) => !_categoriesBox.values.any((c) => c.name == cat.name))
+        .toList();
 
     return AppBackground(
       child: Scaffold(
@@ -148,7 +151,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                     child: Row(
                       children: [
                         Icon(
-                            getCategoryIcon(cat),
+                          getCategoryIcon(cat),
                           size: 22,
                           color: Theme.of(context).brightness == Brightness.dark
                               ? Colors.tealAccent
@@ -223,92 +226,112 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                       localizer,
                     );
 
-                    return isProtected
-                        ? ListTile(
-                            leading: Icon(iconData),
-                            title: Text(localizedName),
-                            trailing: const Icon(
-                              Icons.lock,
-                              color: Colors.grey,
-                            ),
-                          )
-                        : Dismissible(
-                            key: Key(cat.name),
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              color: Colors.red,
-                              alignment: Alignment.centerRight,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
-                              child: const Icon(
+                    return ListTile(
+                      leading: Icon(iconData),
+                      title: Text(localizedName),
+                      trailing: isProtected
+                          ? const Icon(Icons.lock, color: Colors.grey)
+                          : IconButton(
+                              icon: const Icon(
                                 Icons.delete,
-                                color: Colors.white,
+                                color: Colors.redAccent,
                               ),
-                            ),
-                            confirmDismiss: (_) async {
-                              final confirmed = await showDialog<bool>(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (ctx) => AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                ),
-                                backgroundColor: Theme.of(context).cardColor,
-                                title: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 32),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                  localizer.deleteCategory,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.center,
+                              onPressed: () async {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (ctx) => AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).cardColor,
+                                    title: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.warning_amber_rounded,
+                                          color: Colors.red,
+                                          size: 32,
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          localizer.deleteCategory,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                    content: Text(
+                                      localizer.deleteCategoryConfirm(
+                                        localizedName,
+                                      ),
+                                      style: const TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    actionsPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                    actionsAlignment: MainAxisAlignment.center,
+                                    actions: [
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.grey,
+                                          textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, false),
+                                        child: Text(localizer.cancel),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red,
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed: () =>
+                                            Navigator.pop(ctx, true),
+                                        child: Text(localizer.delete),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                                ),
-                                content: Text(
-                                localizer.deleteCategoryConfirm(localizedName),
-                                style: const TextStyle(fontSize: 16),
-                                textAlign: TextAlign.center,
-                                ),
-                                actionsPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                actionsAlignment: MainAxisAlignment.center,
-                                actions: [
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                  foregroundColor: Colors.grey,
-                                  textStyle: const TextStyle(fontWeight: FontWeight.w500),
-                                  ),
-                                  onPressed: () => Navigator.pop(ctx, false),
-                                  child: Text(localizer.cancel),
-                                ),
-                                const SizedBox(width: 12),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
+                                );
+
+                                if (confirmed == true) {
+                                  final key = _categoriesBox.keyAt(
+                                    _categoriesBox.values.toList().indexWhere(
+                                      (c) => c.name == cat.name,
+                                    ),
+                                  );
+                                  _categoriesBox.delete(key);
+                                  setState(() {});
+                                  Flushbar(
+                                    message:
+                                        '${localizer.categoryDeleted}: $localizedName',
+                                    duration: const Duration(seconds: 2),
+                                    backgroundColor: Colors.redAccent,
+                                    margin: const EdgeInsets.all(16),
                                     borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  ),
-                                  onPressed: () => Navigator.pop(ctx, true),
-                                  child: Text(localizer.delete),
-                                ),
-                                ],
-                              ),
-                              );
-                              return confirmed ?? false;
-                            },
-                            onDismissed: (_) {
-                              _categoriesBox.deleteAt(index);
-                              setState(() {});
-                            },
-                            child: ListTile(
-                              leading: Icon(iconData),
-                              title: Text(localizedName),
+                                    icon: const Icon(
+                                      Icons.check_circle_outline,
+                                      color: Colors.white,
+                                    ),
+                                  ).show(context);
+                                }
+                              },
                             ),
-                          );
+                    );
                   },
                 ),
               ),

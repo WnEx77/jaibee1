@@ -6,8 +6,6 @@ import 'package:jaibee1/l10n/s.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:another_flushbar/flushbar.dart';
 
-
-
 class AddGoalScreen extends StatefulWidget {
   final Function(Goal) onAdd;
 
@@ -26,46 +24,71 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
 
   void _pickDate() async {
     final now = DateTime.now();
-    DateTime initialDate = _targetDate ?? now;
-    DateTime pickedDate = initialDate;
+    final initial = _targetDate ?? now;
 
-    await showCupertinoModalPopup(
+    showDialog(
       context: context,
-      builder: (context) => Container(
-        height: 300,
-        color: Colors.white,
-        child: Column(
-          children: [
-            Container(
-              alignment: Alignment.centerRight,
-              child: CupertinoButton(
-                child: Text('Done', style: TextStyle(color: Colors.teal)),
-                onPressed: () {
-                  setState(() {
-                    _targetDate = pickedDate;
-                  });
-                  Navigator.of(context).pop();
-                },
-              ),
+      builder: (BuildContext context) {
+        DateTime validInitialDate = initial.isBefore(now) ? now : initial;
+        DateTime tempPickedDate = validInitialDate;
+
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final textColor = isDark ? Colors.white : Colors.black;
+
+        return AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          content: SizedBox(
+            width: 320,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 250,
+                  child: CupertinoTheme(
+                    data: CupertinoThemeData(
+                      brightness: isDark ? Brightness.dark : Brightness.light,
+                      textTheme: CupertinoTextThemeData(
+                        dateTimePickerTextStyle: TextStyle(
+                          color: textColor,
+                          fontSize: 22,
+                        ),
+                      ),
+                    ),
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.date,
+                      initialDateTime: validInitialDate,
+                      minimumDate: now,
+                      maximumDate: DateTime(now.year + 5),
+                      onDateTimeChanged: (DateTime date) {
+                        tempPickedDate = date;
+                      },
+                    ),
+                  ),
+                ),
+                CupertinoButton(
+                  child: Text(
+                    S.of(context)!.done,
+                    style: TextStyle(color: textColor),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _targetDate = tempPickedDate;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
             ),
-            Expanded(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: initialDate,
-                minimumDate: now,
-                maximumDate: DateTime(now.year + 5),
-                onDateTimeChanged: (date) {
-                  pickedDate = date;
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-   void _submit() {
+  void _submit() {
     if (_formKey.currentState!.validate() && _targetDate != null) {
       final goal = Goal(
         name: _nameController.text.trim(),
@@ -95,15 +118,14 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: localizer.addNewGoal,
-        showBackButton: true,
-      ),
+      appBar: CustomAppBar(title: localizer.addNewGoal, showBackButton: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Card(
           elevation: 6,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(22),
             child: Form(
@@ -125,10 +147,13 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                     decoration: InputDecoration(
                       labelText: localizer.goalName,
                       prefixIcon: Icon(Icons.title),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    validator: (value) =>
-                        value == null || value.trim().isEmpty ? localizer.required : null,
+                    validator: (value) => value == null || value.trim().isEmpty
+                        ? localizer.required
+                        : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -137,7 +162,9 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                     decoration: InputDecoration(
                       labelText: localizer.targetAmount,
                       prefixIcon: Icon(Icons.attach_money),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -157,7 +184,9 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                     decoration: InputDecoration(
                       labelText: localizer.savedAmount,
                       prefixIcon: Icon(Icons.savings),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -167,7 +196,11 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                       if (parsed == null || parsed < 0) {
                         return localizer.enterValidAmount;
                       }
-                      final target = double.tryParse(_targetAmountController.text.trim()) ?? 0;
+                      final target =
+                          double.tryParse(
+                            _targetAmountController.text.trim(),
+                          ) ??
+                          0;
                       if (parsed > target) {
                         return localizer.savedMoreThanTarget;
                       }
@@ -182,7 +215,9 @@ class _AddGoalScreenState extends State<AddGoalScreen> {
                         decoration: InputDecoration(
                           labelText: localizer.targetDate,
                           prefixIcon: Icon(Icons.calendar_today),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           suffixIcon: Icon(Icons.edit_calendar),
                         ),
                         controller: TextEditingController(
