@@ -3,9 +3,10 @@ import 'package:hive/hive.dart';
 import 'package:jaibee1/data/models/category.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/core/theme/mint_jade_theme.dart'; // <-- Add your theme extension import
-import 'package:jaibee1/core/utils/category_utils.dart'; // <-- Import your utility functions
+import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee1/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:jaibee1/shared/widgets/global_confirm_delete_dialog.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});
@@ -77,7 +78,6 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
       return;
     }
 
-    // ✅ Wrap both add and state update inside setState
     setState(() {
       _categoriesBox.add(Category(name: selected.name, icon: selected.icon));
       _selectedCategory = '';
@@ -237,75 +237,10 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                                 color: Colors.redAccent,
                               ),
                               onPressed: () async {
-                                final confirmed = await showDialog<bool>(
+                                final confirmed = await showGlobalConfirmDeleteDialog(
                                   context: context,
-                                  barrierDismissible: false,
-                                  builder: (ctx) => AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).cardColor,
-                                    title: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Icons.warning_amber_rounded,
-                                          color: Colors.red,
-                                          size: 32,
-                                        ),
-                                        const SizedBox(height: 12),
-                                        Text(
-                                          localizer.deleteCategory,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                    content: Text(
-                                      localizer.deleteCategoryConfirm(
-                                        localizedName,
-                                      ),
-                                      style: const TextStyle(fontSize: 16),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    actionsPadding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 8,
-                                    ),
-                                    actionsAlignment: MainAxisAlignment.center,
-                                    actions: [
-                                      TextButton(
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: Colors.grey,
-                                          textStyle: const TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        onPressed: () =>
-                                            Navigator.pop(ctx, false),
-                                        child: Text(localizer.cancel),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: () =>
-                                            Navigator.pop(ctx, true),
-                                        child: Text(localizer.delete),
-                                      ),
-                                    ],
-                                  ),
+                                  title: localizer.deleteCategory,
+                                  message: localizer.deleteCategoryConfirm(localizedName),
                                 );
 
                                 if (confirmed == true) {

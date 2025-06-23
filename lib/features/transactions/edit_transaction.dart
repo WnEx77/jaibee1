@@ -15,6 +15,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee1/core/utils/currency_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee1/shared/widgets/global_date_picker.dart';
+import 'package:jaibee1/shared/widgets/global_confirm_delete_dialog.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -109,85 +110,30 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     }
   }
 
-  void _confirmDelete() {
-    showDialog(
+  void _confirmDelete() async {
+    final localizer = S.of(context)!;
+    final confirmed = await showGlobalConfirmDeleteDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: Theme.of(context).dialogBackgroundColor,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 48),
-              const SizedBox(height: 16),
-              Text(
-                S.of(context)!.deleteTransaction,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                S.of(context)!.areYouSureDeleteTransaction,
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.secondary,
-                      textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(S.of(context)!.cancel),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.delete, size: 18),
-                    label: Text(S.of(context)!.delete),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 10,
-                      ),
-                    ),
-                    onPressed: () {
-                      Hive.box('transactions').delete(widget.transactionKey);
-                      Navigator.of(context).pop(); // Close dialog
-                      Navigator.of(context).pop(); // Return to previous
-                      Flushbar(
-                        message: S.of(context)!.transactionDeleted,
-                        duration: const Duration(seconds: 2),
-                        backgroundColor: Colors.redAccent,
-                        margin: const EdgeInsets.all(8),
-                        borderRadius: BorderRadius.circular(8),
-                        flushbarPosition: FlushbarPosition.BOTTOM,
-                        icon: const Icon(
-                          Icons.check_circle,
-                          color: Colors.white,
-                        ),
-                      ).show(context);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+      title: localizer.deleteTransaction,
+      message: localizer.areYouSureDeleteTransaction,
     );
+    if (confirmed == true) {
+      Hive.box('transactions').delete(widget.transactionKey);
+      Navigator.of(context).pop(); // Close dialog
+      Navigator.of(context).pop(); // Return to previous
+      Flushbar(
+        message: localizer.transactionDeleted,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.redAccent,
+        margin: const EdgeInsets.all(8),
+        borderRadius: BorderRadius.circular(8),
+        flushbarPosition: FlushbarPosition.BOTTOM,
+        icon: const Icon(
+          Icons.check_circle,
+          color: Colors.white,
+        ),
+      ).show(context);
+    }
   }
 
   List<DropdownMenuItem<String>> _buildCategoryItems(S localizer) {

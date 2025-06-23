@@ -206,16 +206,16 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     const SizedBox(height: 16),
                     _buildBarChart(categoryExpenses),
                     const SizedBox(height: 32),
-                    Text(
-                      localizer.categoryDistribution,
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildPieChart(categoryExpenses),
-                    const SizedBox(height: 32),
+                    // Text(
+                    //   localizer.categoryDistribution,
+                    //   style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    //     fontWeight: FontWeight.bold,
+                    //     color: Theme.of(context).colorScheme.secondary,
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 16),
+                    // _buildPieChart(categoryExpenses),
+                    // const SizedBox(height: 32),
                     if (goals.isNotEmpty) ...[
                       Text(
                         localizer.yourGoals,

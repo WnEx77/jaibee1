@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee1/shared/widgets/global_date_picker.dart';
+import 'package:jaibee1/shared/widgets/global_confirm_delete_dialog.dart';
 
 class EditGoalDialog extends StatefulWidget {
   final Goal goal;
@@ -76,86 +77,31 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
   }
 
   void _confirmDelete() async {
-    showDialog(
+    final localizer = S.of(context)!;
+    final confirmed = await showGlobalConfirmDeleteDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: Theme.of(context).dialogBackgroundColor,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.red, size: 48),
-              const SizedBox(height: 16),
-              Text(
-                S.of(context)!.deleteGoal,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                S.of(context)!.deleteGoalConfirmation,
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).colorScheme.secondary,
-                      textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(S.of(context)!.cancel),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.delete, size: 18),
-                    label: Text(S.of(context)!.delete),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 10,
-                      ),
-                    ),
-                    onPressed: () {
-                      widget.onDelete(widget.index);
-                      Navigator.of(context).pop(); // Close dialog
-                      Navigator.of(context).pop(); // Return to previous
-                      // Show success message
-                      Flushbar(
-                        message: S.of(context)!.goalDeleted,
-                        icon: const Icon(
-                          Icons.check_circle,
-                          color: Colors.white,
-                          size: 28,
-                        ),
-                        duration: const Duration(seconds: 2),
-                        backgroundColor: Colors.redAccent,
-                        margin: const EdgeInsets.all(16),
-                        borderRadius: BorderRadius.circular(12),
-                        flushbarPosition: FlushbarPosition.BOTTOM,
-                      ).show(context);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+      title: localizer.deleteGoal,
+      message: localizer.deleteGoalConfirmation,
     );
+    if (confirmed == true) {
+      widget.onDelete(widget.index);
+      Navigator.of(context).pop(); // Close dialog
+      Navigator.of(context).pop(); // Return to previous
+      // Show success message
+      Flushbar(
+        message: localizer.goalDeleted,
+        icon: const Icon(
+          Icons.check_circle,
+          color: Colors.white,
+          size: 28,
+        ),
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.redAccent,
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(12),
+        flushbarPosition: FlushbarPosition.BOTTOM,
+      ).show(context);
+    }
   }
 
   @override
