@@ -8,7 +8,6 @@ import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/core/utils/currency_utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class GoalsScreen extends StatefulWidget {
   const GoalsScreen({super.key});

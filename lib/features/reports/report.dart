@@ -12,7 +12,7 @@ import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:jaibee1/data/models/category.dart'; // Adjust path as needed
 import 'package:jaibee1/core/utils/category_utils.dart'; // Add this import
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:jaibee1/data/models/budget.dart'; // Adjust path as needed
+// import 'package:jaibee1/data/models/budget.dart'; // Adjust path as needed
 import 'package:jaibee1/core/utils/currency_utils.dart'; // Adjust path as needed
 // import 'package:shared_preferences/shared_preferences.dart'; // For currency symbol
 import 'package:jaibee1/shared/widgets/global_date_picker.dart';
@@ -38,8 +38,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
   bool isMonthlyView = true;
 
   late List<Goal> goals;
-  double? _monthlyLimit; // <-- Add this
-
   @override
   void initState() {
     super.initState();
@@ -49,16 +47,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     final goalBox = Hive.box<Goal>('goals'); // ✅ safe if already open
     goals = goalBox.values.toList().cast<Goal>();
 
-    _loadMonthlyLimit(); // <-- Load from budgets box
     _filterTransactions();
-  }
-
-  Future<void> _loadMonthlyLimit() async {
-    final budgetBox = Hive.box<Budget>('budgets');
-    final monthlyBudget = budgetBox.get('__monthly__');
-    setState(() {
-      _monthlyLimit = monthlyBudget?.limit;
-    });
   }
 
   void _filterTransactions() {
