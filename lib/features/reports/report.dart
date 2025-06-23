@@ -641,7 +641,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
           const SizedBox(height: 8),
           Center(
             child: Text(
-              localizer.clickToSeeAllCategoriesInfo ?? "Click to see all categories info",
+              localizer.clickToSeeAllCategoriesInfo,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w500,
