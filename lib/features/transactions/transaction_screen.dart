@@ -70,6 +70,45 @@ class _TransactionScreenState extends State<TransactionScreen> {
     });
   }
 
+  void _previousPeriod() {
+    setState(() {
+      if (_selectedPeriod == 'daily') {
+        _selectedMonth = _selectedMonth.subtract(const Duration(days: 1));
+      } else {
+        _selectedMonth = DateTime(
+          _selectedMonth.year,
+          _selectedMonth.month - 1,
+        );
+      }
+    });
+  }
+
+  void _nextPeriod() {
+    final now = DateTime.now();
+    if (_selectedPeriod == 'daily') {
+      final today = DateTime(now.year, now.month, now.day);
+      final nextDay = DateTime(
+        _selectedMonth.year,
+        _selectedMonth.month,
+        _selectedMonth.day,
+      ).add(const Duration(days: 1));
+      if (!nextDay.isAfter(today)) {
+        setState(() {
+          _selectedMonth = nextDay;
+        });
+      }
+    } else {
+      if (_selectedMonth.year == now.year && _selectedMonth.month == now.month)
+        return;
+      setState(() {
+        _selectedMonth = DateTime(
+          _selectedMonth.year,
+          _selectedMonth.month + 1,
+        );
+      });
+    }
+  }
+
   Future<Widget> buildCurrencySymbolWidget(Color color) async {
     final prefs = await SharedPreferences.getInstance();
     final code = prefs.getString('currency_code') ?? 'SAR';
@@ -80,7 +119,10 @@ class _TransactionScreenState extends State<TransactionScreen> {
     if (asset != null) {
       return Image.asset(asset, width: 18, height: 18, color: color);
     } else {
-      return Text(currency.symbol, style: TextStyle(fontSize: 18, color: color));
+      return Text(
+        currency.symbol,
+        style: TextStyle(fontSize: 18, color: color),
+      );
     }
   }
 
@@ -138,13 +180,17 @@ class _TransactionScreenState extends State<TransactionScreen> {
                     })
                     .toList();
 
-                final filteredTransactions = allTransactions
-                    .where(
-                      (t) =>
-                          _selectedFilters.contains(t.category.toLowerCase()),
-                    )
-                    .toList()
-                    ..sort((a, b) => b.date.compareTo(a.date)); // Sort by date descending
+                final filteredTransactions =
+                    allTransactions
+                        .where(
+                          (t) => _selectedFilters.contains(
+                            t.category.toLowerCase(),
+                          ),
+                        )
+                        .toList()
+                      ..sort(
+                        (a, b) => b.date.compareTo(a.date),
+                      ); // Sort by date descending
 
                 for (var t in filteredTransactions) {
                   if (t.isIncome) {
@@ -224,10 +270,15 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                                   : Colors.green,
                                             ),
                                             builder: (context, snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                              if (snapshot.connectionState ==
+                                                      ConnectionState.done &&
+                                                  snapshot.hasData) {
                                                 return snapshot.data!;
                                               }
-                                              return const SizedBox(width: 16, height: 16);
+                                              return const SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                              );
                                             },
                                           ),
                                           Text(
@@ -256,10 +307,15 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                                   : Colors.green,
                                             ),
                                             builder: (context, snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                              if (snapshot.connectionState ==
+                                                      ConnectionState.done &&
+                                                  snapshot.hasData) {
                                                 return snapshot.data!;
                                               }
-                                              return const SizedBox(width: 16, height: 16);
+                                              return const SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                              );
                                             },
                                           ),
                                         ],
@@ -277,8 +333,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         usagePercent < 0.6
                                             ? Colors.green
                                             : usagePercent < 0.9
-                                                ? Colors.orange
-                                                : Colors.red,
+                                            ? Colors.orange
+                                            : Colors.red,
                                       ),
                                     ),
                                   ),
@@ -351,10 +407,12 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.arrow_back_ios),
-                            onPressed: _previousMonth,
+                            onPressed: _previousPeriod,
                           ),
                           Text(
-                            DateFormat.yMMM().format(_selectedMonth),
+                            _selectedPeriod == 'daily'
+                                ? DateFormat.yMMMMd().format(_selectedMonth)
+                                : DateFormat.yMMM().format(_selectedMonth),
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -362,7 +420,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                           ),
                           IconButton(
                             icon: const Icon(Icons.arrow_forward_ios),
-                            onPressed: _nextMonth,
+                            onPressed: _nextPeriod,
                           ),
                         ],
                       ),
@@ -400,31 +458,31 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             },
                           ),
                           const SizedBox(width: 12),
-                          ChoiceChip(
-                            label: Row(
-                              children: [
-                                const Icon(Icons.calendar_view_week, size: 18),
-                                const SizedBox(width: 4),
-                                Text(localizer.weekly),
-                              ],
-                            ),
-                            selected: _selectedPeriod == 'weekly',
-                            selectedColor: Colors.orange.shade100,
-                            backgroundColor: Colors.grey.shade200,
-                            labelStyle: TextStyle(
-                              color: _selectedPeriod == 'weekly'
-                                  ? Colors.orange.shade800
-                                  : Colors.black87,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            onSelected: (_) {
-                              setState(() {
-                                _selectedPeriod = 'weekly';
-                                _selectedMonth = DateTime.now();
-                              });
-                            },
-                          ),
-                          const SizedBox(width: 12),
+                          // ChoiceChip(
+                          //   label: Row(
+                          //     children: [
+                          //       const Icon(Icons.calendar_view_week, size: 18),
+                          //       const SizedBox(width: 4),
+                          //       Text(localizer.weekly),
+                          //     ],
+                          //   ),
+                          //   selected: _selectedPeriod == 'weekly',
+                          //   selectedColor: Colors.orange.shade100,
+                          //   backgroundColor: Colors.grey.shade200,
+                          //   labelStyle: TextStyle(
+                          //     color: _selectedPeriod == 'weekly'
+                          //         ? Colors.orange.shade800
+                          //         : Colors.black87,
+                          //     fontWeight: FontWeight.w600,
+                          //   ),
+                          //   onSelected: (_) {
+                          //     setState(() {
+                          //       _selectedPeriod = 'weekly';
+                          //       _selectedMonth = DateTime.now();
+                          //     });
+                          //   },
+                          // ),
+                          // const SizedBox(width: 12),
                           ChoiceChip(
                             label: Row(
                               children: [
@@ -462,12 +520,15 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                 children: [
                                   FutureBuilder<Widget>(
                                     future: buildCurrencySymbolWidget(
-                                      Theme.of(context).brightness == Brightness.dark
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
                                           ? Colors.white
                                           : Colors.black,
                                     ),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                      if (snapshot.connectionState ==
+                                              ConnectionState.done &&
+                                          snapshot.hasData) {
                                         return SizedBox(
                                           width: 80,
                                           height: 80,
@@ -479,10 +540,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                           ),
                                         );
                                       }
-                                      return SizedBox(
-                                        width: 80,
-                                        height: 80,
-                                      );
+                                      return SizedBox(width: 80, height: 80);
                                     },
                                   ),
                                   const SizedBox(height: 16),
@@ -499,7 +557,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                 final formattedDate = DateFormat.yMMMd().format(
                                   transaction.date,
                                 );
-                                final amountColor = isIncome ? Colors.green : Colors.red;
+                                final amountColor = isIncome
+                                    ? Colors.green
+                                    : Colors.red;
 
                                 return Dismissible(
                                   key: Key(transaction.key.toString()),
@@ -644,7 +704,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                           getCategoryIcon(
                                             categoryBox.values.firstWhere(
                                               (cat) =>
-                                                  cat.name == transaction.category,
+                                                  cat.name ==
+                                                  transaction.category,
                                               orElse: () => Category(
                                                 name: transaction.category,
                                                 icon: 'category',
@@ -676,7 +737,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                             ),
                                           ),
                                           Text(
-                                            transaction.amount.toStringAsFixed(2),
+                                            transaction.amount.toStringAsFixed(
+                                              2,
+                                            ),
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -685,12 +748,19 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                           ),
                                           const SizedBox(width: 4),
                                           FutureBuilder<Widget>(
-                                            future: buildCurrencySymbolWidget(amountColor),
+                                            future: buildCurrencySymbolWidget(
+                                              amountColor,
+                                            ),
                                             builder: (context, snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                              if (snapshot.connectionState ==
+                                                      ConnectionState.done &&
+                                                  snapshot.hasData) {
                                                 return snapshot.data!;
                                               }
-                                              return const SizedBox(width: 16, height: 16);
+                                              return const SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                              );
                                             },
                                           ),
                                         ],
@@ -730,7 +800,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
             FutureBuilder<Widget>(
               future: buildCurrencySymbolWidget(color),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData) {
                   return snapshot.data!;
                 }
                 return SizedBox(width: 16, height: 16);
