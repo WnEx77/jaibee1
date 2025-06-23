@@ -84,9 +84,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   Widget _buildAmountField(S localizer) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconAsset = isDark
-        ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
-        : 'assets/images/Saudi_Riyal_Symbol.png';
 
     return _styledContainer(
       child: FutureBuilder<Widget>(

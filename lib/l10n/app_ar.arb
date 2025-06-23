@@ -214,5 +214,8 @@
   "currency": "العملة",
   "selectCurrency": "اختر العملة",
   "couldNotOpenSupportPage": "تعذر فتح صفحة الدعم",
-  "couldNotLaunchEmailClient": "تعذر فتح تطبيق البريد الإلكتروني"
+  "couldNotLaunchEmailClient": "تعذر فتح تطبيق البريد الإلكتروني",
+  "usDollar": "دولار أمريكي",
+  "euro": "يورو",
+  "saudiRiyal": "ريال سعودي"
 }

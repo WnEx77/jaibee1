@@ -7,6 +7,8 @@ import 'package:jaibee1/features/goals/edit_goal_dialog.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee1/core/utils/currency_utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GoalsScreen extends StatefulWidget {
   const GoalsScreen({super.key});
@@ -130,13 +132,19 @@ class _GoalsScreenState extends State<GoalsScreen> {
                                       ? Colors.grey[300]
                                       : Colors.black87,
                                 ),
-                              ),
-                                Image.asset(
-                                Theme.of(context).brightness == Brightness.dark
-                                  ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
-                                  : 'assets/images/Saudi_Riyal_Symbol.png',
-                                width: 12,
-                                height: 12,
+                                ),
+                                FutureBuilder<Widget>(
+                                future: buildCurrencySymbolWidget(context),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                  return SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: Center(child: snapshot.data),
+                                  );
+                                  }
+                                  return const SizedBox(width: 22, height: 22);
+                                },
                                 ),
                               const SizedBox(width: 2),
                               Text(
@@ -150,12 +158,18 @@ class _GoalsScreenState extends State<GoalsScreen> {
                                       : Colors.black87,
                                 ),
                               ),
-                               Image.asset(
-                                Theme.of(context).brightness == Brightness.dark
-                                  ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
-                                  : 'assets/images/Saudi_Riyal_Symbol.png',
-                                width: 12,
-                                height: 12,
+                                FutureBuilder<Widget>(
+                                future: buildCurrencySymbolWidget(context),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                  return SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: Center(child: snapshot.data),
+                                  );
+                                  }
+                                  return const SizedBox(width: 22, height: 22);
+                                },
                                 ),
                               const SizedBox(width: 2),
                               Text(

@@ -180,32 +180,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: Theme.of(context).cardColor,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.attach_money,
-                size: 48,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                s.selectCurrency,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              ...supportedCurrencies.map((currency) => _buildCurrencyOption(
-                    currency: currency,
-                    isSelected: currentCode == currency.code,
-                    onTap: () async {
-                      await prefs.setString('currency_code', currency.code);
-                      Navigator.pop(context);
-                      setState(() {}); // Refresh UI
-                    },
-                  )),
-            ],
+          padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.attach_money,
+                  size: 52,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  s.selectCurrency,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                ...supportedCurrencies.map(
+                  (currency) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: _buildCurrencyOption(
+                      currency: currency,
+                      isSelected: currentCode == currency.code,
+                      onTap: () async {
+                        await prefs.setString('currency_code', currency.code);
+                        Navigator.pop(context);
+                        setState(() {}); // Refresh UI
+                      },
+                      // Localize currency name:
+                      localizedName: _getLocalizedCurrencyName(currency, s),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -216,6 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required AppCurrency currency,
     required bool isSelected,
     required VoidCallback onTap,
+    String? localizedName, // <-- Add this parameter
   }) {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
@@ -236,7 +248,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ? Image.asset(currency.asset!, width: 22, height: 22)
                   : Text(currency.symbol, style: const TextStyle(fontSize: 22)),
               const SizedBox(width: 12),
-              Text('${currency.name} (${currency.code})', style: Theme.of(context).textTheme.bodyLarge),
+              Text(
+                localizedName ?? '${currency.name} (${currency.code})',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               if (isSelected) ...[
                 const SizedBox(width: 8),
                 const Icon(Icons.check, color: Colors.teal, size: 20),
@@ -246,6 +261,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+  // Helper to localize currency names
+  String _getLocalizedCurrencyName(AppCurrency currency, S s) {
+    switch (currency.code) {
+      case 'SAR':
+        return s.saudiRiyal;
+      case 'USD':
+        return s.usDollar;
+      case 'EUR':
+        return s.euro;
+      default:
+        return '${currency.name} (${currency.code})';
+    }
   }
 
   @override
@@ -285,12 +314,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Column(
                         children: [
+                          _buildCardTile(
+                            icon: Icons.attach_money,
+                            label: s.currency,
+                            onTap: () => _showCurrencyPicker(context),
+                          ),
+                          _buildDivider(),
                           ListTile(
                             leading: const Icon(
                               Icons.brightness_6,
                               color: Colors.blueGrey,
                             ),
-                            title: Text(s.darkMode),
+                            title: Text(
+                              s.darkMode,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
                             trailing: Consumer<ThemeProvider>(
                               builder: (context, themeProvider, _) {
                                 return Switch(
@@ -299,26 +340,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 );
                               },
                             ),
-                          ),
-                          // --- Add currency picker tile here ---
-                          FutureBuilder<SharedPreferences>(
-                            future: SharedPreferences.getInstance(),
-                            builder: (context, snapshot) {
-                              final prefs = snapshot.data;
-                              final currentCode =
-                                  prefs?.getString('currency_code') ?? 'SAR';
-                              return ListTile(
-                                leading: const Icon(
-                                  Icons.attach_money,
-                                  color: Colors.teal,
-                                ),
-                                title: Text(s.currency),
-                                subtitle: Text(
-                                  getCurrencyByCode(currentCode).name,
-                                ),
-                                onTap: () => _showCurrencyPicker(context),
-                              );
-                            },
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 2,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            minLeadingWidth: 0,
                           ),
                         ],
                       ),

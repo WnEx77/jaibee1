@@ -78,9 +78,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final asset = currency.getAsset(isDarkMode: isDark);
     if (asset != null) {
-      return Image.asset(asset, width: 22, height: 22, color: color);
+      return Image.asset(asset, width: 18, height: 18, color: color);
     } else {
-      return Text(currency.symbol, style: TextStyle(fontSize: 22, color: color));
+      return Text(currency.symbol, style: TextStyle(fontSize: 18, color: color));
     }
   }
 

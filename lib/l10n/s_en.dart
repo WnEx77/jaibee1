@@ -635,4 +635,13 @@ class SEn extends S {
 
   @override
   String get couldNotLaunchEmailClient => 'Could not launch email client';
+
+  @override
+  String get usDollar => 'US Dollar';
+
+  @override
+  String get euro => 'Euro';
+
+  @override
+  String get saudiRiyal => 'Saudi Riyal';
 }

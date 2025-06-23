@@ -12,6 +12,8 @@ import 'package:jaibee1/core/theme/mint_jade_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jaibee1/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:jaibee1/core/utils/currency_utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -254,6 +256,21 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     }
   }
 
+    Future<Widget> buildCurrencySymbolWidget(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final code = prefs.getString('currency_code') ?? 'SAR';
+    final currency = getCurrencyByCode(code);
+
+    // Use theme from context for dark mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final asset = currency.getAsset(isDarkMode: isDark);
+    if (asset != null) {
+      return Image.asset(asset, width: 22, height: 22);
+    } else {
+      return Text(currency.symbol, style: const TextStyle(fontSize: 22));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
@@ -297,54 +314,56 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          TextFormField(
-                            controller: _amountController,
-                            keyboardType: TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}'),
+                            FutureBuilder<Widget>(
+                            future: buildCurrencySymbolWidget(context),
+                            builder: (context, snapshot) {
+                              return TextFormField(
+                              controller: _amountController,
+                              keyboardType: TextInputType.numberWithOptions(
+                                decimal: true,
                               ),
-                            ],
-                            decoration: InputDecoration(
-                              labelText: localizer.amount,
-                              border: InputBorder.none,
-                              filled: true,
-                              fillColor: Theme.of(context).brightness == Brightness.dark
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d+\.?\d{0,2}'),
+                                ),
+                              ],
+                              decoration: InputDecoration(
+                                labelText: localizer.amount,
+                                border: InputBorder.none,
+                                filled: true,
+                                fillColor: Theme.of(context).brightness == Brightness.dark
                                   ? Colors.grey[900]
                                   : Colors.white,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 14,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).brightness == Brightness.dark
+                                contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).brightness == Brightness.dark
                                     ? Colors.grey[800]!
                                     : Colors.grey[200]!,
-                                width: 1.2,
+                                  width: 1.2,
+                                ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: const BorderSide(color: Colors.teal, width: 1.5),
+                                ),
+                                icon: snapshot.hasData
+                                  ? snapshot.data
+                                  : const SizedBox(width: 24, height: 24),
                               ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                return localizer.pleaseEnterAmount;
+                                }
+                                return null;
+                              },
+                              );
+                            },
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: const BorderSide(color: Colors.teal, width: 1.5),
-                            ),
-                            icon: Image.asset(
-                              'assets/images/Saudi_Riyal_Symbol.png',
-                              width: 24,
-                              height: 24,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return localizer.pleaseEnterAmount;
-                            }
-                            return null;
-                          },
-                        ),
                         const SizedBox(height: 16),
 
                         DropdownButtonFormField<String>(

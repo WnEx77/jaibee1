@@ -1314,6 +1314,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Could not launch email client'**
   String get couldNotLaunchEmailClient;
+
+  /// No description provided for @usDollar.
+  ///
+  /// In en, this message translates to:
+  /// **'US Dollar'**
+  String get usDollar;
+
+  /// No description provided for @euro.
+  ///
+  /// In en, this message translates to:
+  /// **'Euro'**
+  String get euro;
+
+  /// No description provided for @saudiRiyal.
+  ///
+  /// In en, this message translates to:
+  /// **'Saudi Riyal'**
+  String get saudiRiyal;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

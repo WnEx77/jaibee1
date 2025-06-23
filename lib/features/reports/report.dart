@@ -13,6 +13,8 @@ import 'package:jaibee1/data/models/category.dart'; // Adjust path as needed
 import 'package:jaibee1/core/utils/category_utils.dart'; // Add this import
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:jaibee1/data/models/budget.dart'; // Adjust path as needed
+import 'package:jaibee1/core/utils/currency_utils.dart'; // Adjust path as needed
+import 'package:shared_preferences/shared_preferences.dart'; // For currency symbol
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -371,12 +373,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
               Text('${localizer.averageDaily}: '),
               Text(avg.toStringAsFixed(2)),
               const SizedBox(width: 4),
-              Image.asset(
-                Theme.of(context).brightness == Brightness.dark
-                    ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
-                    : 'assets/images/Saudi_Riyal_Symbol.png',
-                width: 16,
-                height: 16,
+              FutureBuilder<Widget>(
+              future: buildCurrencySymbolWidget(context),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                return snapshot.data!;
+                }
+                return const SizedBox(width: 22, height: 22);
+              },
               ),
             ],
           ),
@@ -387,12 +391,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
               Text('${localizer.totalSpent}: '),
               Text(total.toStringAsFixed(2)),
               const SizedBox(width: 4),
-              Image.asset(
-                Theme.of(context).brightness == Brightness.dark
-                    ? 'assets/images/Saudi_Riyal_Symbol_DarkMode.png'
-                    : 'assets/images/Saudi_Riyal_Symbol.png',
-                width: 16,
-                height: 16,
+              FutureBuilder<Widget>(
+              future: buildCurrencySymbolWidget(context),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                return snapshot.data!;
+                }
+                return const SizedBox(width: 22, height: 22);
+              },
               ),
             ],
           ),

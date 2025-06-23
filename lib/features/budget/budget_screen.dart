@@ -52,8 +52,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
       _monthlyLimit = monthlyBudget?.limit;
       _monthlyLimitController.text =
           (_monthlyLimit != null && _monthlyLimit! > 0)
-              ? _monthlyLimit!.toStringAsFixed(0)
-              : '';
+          ? _monthlyLimit!.toStringAsFixed(0)
+          : '';
     });
   }
 

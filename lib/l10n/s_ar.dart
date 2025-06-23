@@ -642,4 +642,13 @@ class SAr extends S {
 
   @override
   String get couldNotLaunchEmailClient => 'تعذر فتح تطبيق البريد الإلكتروني';
+
+  @override
+  String get usDollar => 'دولار أمريكي';
+
+  @override
+  String get euro => 'يورو';
+
+  @override
+  String get saudiRiyal => 'ريال سعودي';
 }

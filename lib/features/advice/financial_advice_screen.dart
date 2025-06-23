@@ -15,6 +15,7 @@ import 'monthly_summary.dart';
 import 'prompt_generator.dart';
 import 'advice_api.dart';
 import 'advice_pdf.dart';
+import 'package:jaibee1/core/utils/currency_utils.dart';
 
 Future<double> getMonthlyLimit() async {
   final prefs = await SharedPreferences.getInstance();
@@ -165,6 +166,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     final mintJadeColors = Theme.of(context).extension<MintJadeColors>()!;
@@ -289,101 +291,163 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                            children: [
                             Text(
                               DateFormat.yMMMM().format(_selectedMonth),
                               style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: 12),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Income
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              // Income
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                Text(S.of(context)!.income),
+                                Row(
                                   children: [
-                                    Text(S.of(context)!.income),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          _summary!.totalIncome.toStringAsFixed(2),
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Image.asset(
-                                          'assets/images/Saudi_Riyal_Symbol.png',
-                                          color: Colors.green,
-                                          height: 20,
-                                          width: 20,
-                                        ),
-                                      ],
+                                  Text(
+                                    _summary!.totalIncome.toStringAsFixed(2),
+                                    style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
                                     ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  FutureBuilder<Widget>(
+                                    future: buildCurrencySymbolWidget(context),
+                                    builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.done &&
+                                      snapshot.hasData) {
+                                      final widget = snapshot.data!;
+                                      if (widget is Image) {
+                                      return ColorFiltered(
+                                        colorFilter: const ColorFilter.mode(
+                                        Colors.green,
+                                        BlendMode.srcIn,
+                                        ),
+                                        child: widget,
+                                      );
+                                      } else if (widget is Text) {
+                                      return Text(
+                                        widget.data ?? '',
+                                        style: widget.style?.copyWith(color: Colors.green) ??
+                                          const TextStyle(fontSize: 22, color: Colors.green),
+                                      );
+                                      }
+                                      return widget;
+                                    } else {
+                                      return const SizedBox(width: 22, height: 22);
+                                    }
+                                    },
+                                  ),
                                   ],
                                 ),
-                                // Expenses
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                ],
+                              ),
+                              // Expenses
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                Text(S.of(context)!.expenses),
+                                Row(
                                   children: [
-                                    Text(S.of(context)!.expenses),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          _summary!.totalExpenses.toStringAsFixed(2),
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.red,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Image.asset(
-                                          'assets/images/Saudi_Riyal_Symbol.png',
-                                          color: Colors.red,
-                                          height: 20,
-                                          width: 20,
-                                        ),
-                                      ],
+                                  Text(
+                                    _summary!.totalExpenses.toStringAsFixed(2),
+                                    style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
                                     ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  FutureBuilder<Widget>(
+                                    future: buildCurrencySymbolWidget(context),
+                                    builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.done &&
+                                      snapshot.hasData) {
+                                      final widget = snapshot.data!;
+                                      if (widget is Image) {
+                                      return ColorFiltered(
+                                        colorFilter: const ColorFilter.mode(
+                                        Colors.red,
+                                        BlendMode.srcIn,
+                                        ),
+                                        child: widget,
+                                      );
+                                      } else if (widget is Text) {
+                                      return Text(
+                                        widget.data ?? '',
+                                        style: widget.style?.copyWith(color: Colors.red) ??
+                                          const TextStyle(fontSize: 22, color: Colors.red),
+                                      );
+                                      }
+                                      return widget;
+                                    } else {
+                                      return const SizedBox(width: 22, height: 22);
+                                    }
+                                    },
+                                  ),
                                   ],
                                 ),
-                                // Limit
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                ],
+                              ),
+                              // Limit
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                Text(S.of(context)!.limit),
+                                Row(
                                   children: [
-                                    Text(S.of(context)!.limit),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          (_summary!.monthlyLimit ?? 0) == 0
-                                              ? S.of(context)!.notSet
-                                              : _summary!.monthlyLimit!.toStringAsFixed(2),
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.orange,
-                                          ),
+                                  Text(
+                                    (_summary!.monthlyLimit ?? 0) == 0
+                                      ? S.of(context)!.notSet
+                                      : _summary!.monthlyLimit!.toStringAsFixed(2),
+                                    style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                    ),
+                                  ),
+                                  if ((_summary!.monthlyLimit ?? 0) != 0) ...[
+                                    const SizedBox(width: 4),
+                                    FutureBuilder<Widget>(
+                                    future: buildCurrencySymbolWidget(context),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.done &&
+                                        snapshot.hasData) {
+                                      final widget = snapshot.data!;
+                                      if (widget is Image) {
+                                        return ColorFiltered(
+                                        colorFilter: const ColorFilter.mode(
+                                          Colors.orange,
+                                          BlendMode.srcIn,
                                         ),
-                                        if ((_summary!.monthlyLimit ?? 0) !=
-                                            0) ...[
-                                          const SizedBox(width: 4),
-                                          Image.asset(
-                                            'assets/images/Saudi_Riyal_Symbol.png',
-                                            color: Colors.orange,
-                                            height: 20,
-                                            width: 20,
-                                          ),
-                                        ],
-                                      ],
+                                        child: widget,
+                                        );
+                                      } else if (widget is Text) {
+                                        return Text(
+                                        widget.data ?? '',
+                                        style: widget.style?.copyWith(color: Colors.orange) ??
+                                          const TextStyle(fontSize: 22, color: Colors.orange),
+                                        );
+                                      }
+                                      return widget;
+                                      } else {
+                                      return const SizedBox(width: 22, height: 22);
+                                      }
+                                    },
                                     ),
                                   ],
+                                  ],
                                 ),
+                                ],
+                              ),
                               ],
                             ),
                           ],
