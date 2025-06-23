@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee/l10n/s.dart';
 
 Future<bool?> showGlobalConfirmDeleteDialog({
   required BuildContext context,

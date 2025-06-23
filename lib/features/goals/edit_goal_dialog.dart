@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/data/models/goal_model.dart';
+import 'package:jaibee/data/models/goal_model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee/l10n/s.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:jaibee1/shared/widgets/global_date_picker.dart';
-import 'package:jaibee1/shared/widgets/global_confirm_delete_dialog.dart';
+import 'package:jaibee/shared/widgets/global_date_picker.dart';
+import 'package:jaibee/shared/widgets/global_confirm_delete_dialog.dart';
 
 class EditGoalDialog extends StatefulWidget {
   final Goal goal;

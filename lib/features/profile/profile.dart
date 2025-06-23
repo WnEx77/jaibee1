@@ -3,17 +3,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/main.dart';
-import 'package:jaibee1/features/goals/goals_screen.dart';
-import 'package:jaibee1/features/about/about_us_screen.dart';
-import 'package:jaibee1/features/webview/webview_screen.dart';
-import 'package:jaibee1/core/theme/theme_provider.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/features/reports/export_report_screen.dart';
+import 'package:jaibee/l10n/s.dart';
+import 'package:jaibee/main.dart';
+import 'package:jaibee/features/goals/goals_screen.dart';
+import 'package:jaibee/features/about/about_us_screen.dart';
+import 'package:jaibee/features/webview/webview_screen.dart';
+import 'package:jaibee/core/theme/theme_provider.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
+import 'package:jaibee/features/reports/export_report_screen.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:jaibee1/features/about/privacy_policy_screen.dart';
-import 'package:jaibee1/core/utils/currency_utils.dart';
+import 'package:jaibee/features/about/privacy_policy_screen.dart';
+import 'package:jaibee/core/utils/currency_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/features/transactions/add_transaction.dart';
-import 'package:jaibee1/features/transactions/transaction_screen.dart';
-import 'package:jaibee1/features/transactions/manage_categories.dart';
-import 'package:jaibee1/features/reports/report.dart';
-import 'package:jaibee1/features/profile/profile.dart';
-import 'package:jaibee1/features/budget/budget_screen.dart';
-import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/shared/widgets/animated_screen_wrapper.dart';
-import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
-import 'package:jaibee1/core/utils/create_animated_route.dart';
-import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee/features/transactions/add_transaction.dart';
+import 'package:jaibee/features/transactions/transaction_screen.dart';
+import 'package:jaibee/features/transactions/manage_categories.dart';
+import 'package:jaibee/features/reports/report.dart';
+import 'package:jaibee/features/profile/profile.dart';
+import 'package:jaibee/features/budget/budget_screen.dart';
+import 'package:jaibee/l10n/s.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
+import 'package:jaibee/shared/widgets/animated_screen_wrapper.dart';
+import 'package:jaibee/shared/widgets/custom_app_bar.dart';
+import 'package:jaibee/core/utils/create_animated_route.dart';
+import 'package:jaibee/core/theme/mint_jade_theme.dart';
 
 class JaibeeHomeScreen extends StatefulWidget {
   const JaibeeHomeScreen({super.key});

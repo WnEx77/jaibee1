@@ -5,7 +5,7 @@ import 'package:printing/printing.dart';
 import 'package:intl/intl.dart';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee/l10n/s.dart';
 import 'monthly_summary.dart';
 
 Future<void> generatePdfArabic(BuildContext context, MonthlySummary summary, String advice, DateTime selectedMonth) async {

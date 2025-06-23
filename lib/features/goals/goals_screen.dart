@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee/l10n/s.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:jaibee1/data/models/goal_model.dart';
-import 'package:jaibee1/features/goals/add_goal_screen.dart';
-import 'package:jaibee1/features/goals/edit_goal_dialog.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
-import 'package:jaibee1/core/theme/mint_jade_theme.dart';
-import 'package:jaibee1/core/utils/currency_utils.dart';
+import 'package:jaibee/data/models/goal_model.dart';
+import 'package:jaibee/features/goals/add_goal_screen.dart';
+import 'package:jaibee/features/goals/edit_goal_dialog.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
+import 'package:jaibee/shared/widgets/custom_app_bar.dart';
+import 'package:jaibee/core/theme/mint_jade_theme.dart';
+import 'package:jaibee/core/utils/currency_utils.dart';
 
 class GoalsScreen extends StatefulWidget {
   const GoalsScreen({super.key});

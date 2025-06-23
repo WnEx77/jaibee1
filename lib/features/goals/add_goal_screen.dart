@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:jaibee1/data/models/goal_model.dart';
-import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
-import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee/data/models/goal_model.dart';
+import 'package:jaibee/shared/widgets/custom_app_bar.dart';
+import 'package:jaibee/l10n/s.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:jaibee1/shared/widgets/global_date_picker.dart';
+import 'package:jaibee/shared/widgets/global_date_picker.dart';
 
 class AddGoalScreen extends StatefulWidget {
   final Function(Goal) onAdd;

@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:jaibee1/data/models/trancs.dart';
+import 'package:jaibee/data/models/trancs.dart';
 
 class MonthlySummary {
   final double totalIncome;

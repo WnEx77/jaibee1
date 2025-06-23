@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
+import 'package:jaibee/shared/widgets/custom_app_bar.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
+import 'package:jaibee/l10n/s.dart';
 
 class AboutUsScreen extends StatefulWidget {
   const AboutUsScreen({super.key});
@@ -91,7 +91,7 @@ class _AboutUsScreenState extends State<AboutUsScreen>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Jaibee',
+                    _appName,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: baseTextColor,

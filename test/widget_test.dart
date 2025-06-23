@@ -1,8 +1,8 @@
 // import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jaibee1/main.dart';
-import 'package:jaibee1/features/home/jaibee_home_screen.dart';
-import 'package:jaibee1/features/onboarding/onboarding_screen.dart';
+import 'package:jaibee/main.dart';
+import 'package:jaibee/features/home/jaibee_home_screen.dart';
+import 'package:jaibee/features/onboarding/onboarding_screen.dart';
 
 void main() {
   testWidgets('App shows onboarding if not completed', (WidgetTester tester) async {

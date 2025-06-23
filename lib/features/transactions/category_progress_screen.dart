@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // import 'package:intl/intl.dart';
-import 'package:jaibee1/data/models/trancs.dart';
-import 'package:jaibee1/data/models/category.dart';
-import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/core/theme/mint_jade_theme.dart';
-import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
-import 'package:jaibee1/data/models/budget.dart';
-import 'package:jaibee1/core/utils/category_utils.dart';
-import 'package:jaibee1/core/utils/currency_utils.dart';
+import 'package:jaibee/data/models/trancs.dart';
+import 'package:jaibee/data/models/category.dart';
+import 'package:jaibee/l10n/s.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
+import 'package:jaibee/core/theme/mint_jade_theme.dart';
+import 'package:jaibee/shared/widgets/custom_app_bar.dart';
+import 'package:jaibee/data/models/budget.dart';
+import 'package:jaibee/core/utils/category_utils.dart';
+import 'package:jaibee/core/utils/currency_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryProgressScreen extends StatelessWidget {

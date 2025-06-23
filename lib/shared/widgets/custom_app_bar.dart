@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee/core/theme/mint_jade_theme.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;

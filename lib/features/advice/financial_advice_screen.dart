@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/data/models/budget.dart';
+import 'package:jaibee/l10n/s.dart';
+import 'package:jaibee/data/models/budget.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
+import 'package:jaibee/core/theme/mint_jade_theme.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:lottie/lottie.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -15,7 +15,7 @@ import 'monthly_summary.dart';
 import 'prompt_generator.dart';
 import 'advice_api.dart';
 import 'advice_pdf.dart';
-import 'package:jaibee1/core/utils/currency_utils.dart';
+import 'package:jaibee/core/utils/currency_utils.dart';
 
 Future<double> getMonthlyLimit() async {
   final prefs = await SharedPreferences.getInstance();

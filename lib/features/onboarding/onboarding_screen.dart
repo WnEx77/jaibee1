@@ -4,8 +4,8 @@ import '../../l10n/s.dart';
 import '../home/jaibee_home_screen.dart';
 import 'onboarding_page_model.dart';
 import '../../core/theme/mint_jade_theme.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/main.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
+import 'package:jaibee/main.dart';
 import 'package:lottie/lottie.dart';
 
 class OnboardingScreen extends StatefulWidget {

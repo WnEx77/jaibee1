@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:jaibee1/data/models/trancs.dart';
-import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/features/transactions/edit_transaction.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/data/models/category.dart';
-import 'package:jaibee1/core/theme/mint_jade_theme.dart';
-import 'package:jaibee1/features/transactions/category_progress_screen.dart';
-import 'package:jaibee1/core/utils/category_utils.dart';
+import 'package:jaibee/data/models/trancs.dart';
+import 'package:jaibee/l10n/s.dart';
+import 'package:jaibee/features/transactions/edit_transaction.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
+import 'package:jaibee/data/models/category.dart';
+import 'package:jaibee/core/theme/mint_jade_theme.dart';
+import 'package:jaibee/features/transactions/category_progress_screen.dart';
+import 'package:jaibee/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:jaibee1/data/models/budget.dart';
+import 'package:jaibee/data/models/budget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/currency_utils.dart';
 

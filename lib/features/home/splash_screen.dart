@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jaibee1/features/home/jaibee_home_screen.dart';
-import 'package:jaibee1/features/onboarding/onboarding_screen.dart';
+import 'package:jaibee/features/home/jaibee_home_screen.dart';
+import 'package:jaibee/features/onboarding/onboarding_screen.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {

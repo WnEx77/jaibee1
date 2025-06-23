@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:hive/hive.dart';
-import 'package:jaibee1/data/models/trancs.dart';
-import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/features/advice/financial_advice_screen.dart'; // Adjust path as needed
-import 'package:jaibee1/data/models/goal_model.dart';
-// import 'package:jaibee1/screens/edit_goal_dialog.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart'; // Import your background widget
-import 'package:jaibee1/core/theme/mint_jade_theme.dart';
-import 'package:jaibee1/data/models/category.dart'; // Adjust path as needed
-import 'package:jaibee1/core/utils/category_utils.dart'; // Add this import
+import 'package:jaibee/data/models/trancs.dart';
+import 'package:jaibee/l10n/s.dart';
+import 'package:jaibee/features/advice/financial_advice_screen.dart'; // Adjust path as needed
+import 'package:jaibee/data/models/goal_model.dart';
+// import 'package:jaibee/screens/edit_goal_dialog.dart';
+import 'package:jaibee/shared/widgets/app_background.dart'; // Import your background widget
+import 'package:jaibee/core/theme/mint_jade_theme.dart';
+import 'package:jaibee/data/models/category.dart'; // Adjust path as needed
+import 'package:jaibee/core/utils/category_utils.dart'; // Add this import
 import 'package:syncfusion_flutter_charts/charts.dart';
-// import 'package:jaibee1/data/models/budget.dart'; // Adjust path as needed
-import 'package:jaibee1/core/utils/currency_utils.dart'; // Adjust path as needed
+// import 'package:jaibee/data/models/budget.dart'; // Adjust path as needed
+import 'package:jaibee/core/utils/currency_utils.dart'; // Adjust path as needed
 // import 'package:shared_preferences/shared_preferences.dart'; // For currency symbol
-import 'package:jaibee1/shared/widgets/global_date_picker.dart';
-import 'package:jaibee1/features/reports/all_categories_chart_screen.dart'; // Adjust path as needed
+import 'package:jaibee/shared/widgets/global_date_picker.dart';
+import 'package:jaibee/features/reports/all_categories_chart_screen.dart'; // Adjust path as needed
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});

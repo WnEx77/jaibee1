@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jaibee1/data/models/category.dart';
-import 'package:jaibee1/l10n/s.dart';
+import 'package:jaibee/data/models/category.dart';
+import 'package:jaibee/l10n/s.dart';
 
 String getLocalizedCategory(String name, S localizer) {
   final map = {

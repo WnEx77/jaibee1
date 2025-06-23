@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:jaibee1/data/models/category.dart';
-import 'package:jaibee1/l10n/s.dart';
-import 'package:jaibee1/core/utils/category_utils.dart';
-import 'package:jaibee1/shared/widgets/app_background.dart';
-import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
+import 'package:jaibee/data/models/category.dart';
+import 'package:jaibee/l10n/s.dart';
+import 'package:jaibee/core/utils/category_utils.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
+import 'package:jaibee/shared/widgets/custom_app_bar.dart';
 
 class AllCategoriesChartScreen extends StatelessWidget {
   final Map<String, double> categoryExpenses;

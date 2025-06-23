@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:jaibee1/secrets.dart';
+import 'package:jaibee/secrets.dart';
 
 Future<String> fetchFinancialAdvice(String prompt) async {
   final response = await http.post(
