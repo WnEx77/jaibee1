@@ -236,5 +236,8 @@
   "couldNotLaunchEmailClient": "Could not launch email client",
   "usDollar": "US Dollar",
   "euro": "Euro",
-  "saudiRiyal": "Saudi Riyal"
+  "saudiRiyal": "Saudi Riyal",
+  "allCategories": "All Categories",
+  "monthlyExpenses": "Monthly Expenses",
+  "clickToSeeAllCategoriesInfo": "Click to see all categories"
 }

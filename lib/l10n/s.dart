@@ -1332,6 +1332,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Saudi Riyal'**
   String get saudiRiyal;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get allCategories;
+
+  /// No description provided for @monthlyExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Expenses'**
+  String get monthlyExpenses;
+
+  /// No description provided for @clickToSeeAllCategoriesInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Click to see all categories'**
+  String get clickToSeeAllCategoriesInfo;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

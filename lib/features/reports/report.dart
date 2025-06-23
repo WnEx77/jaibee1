@@ -16,6 +16,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:jaibee1/core/utils/currency_utils.dart'; // Adjust path as needed
 // import 'package:shared_preferences/shared_preferences.dart'; // For currency symbol
 import 'package:jaibee1/shared/widgets/global_date_picker.dart';
+import 'package:jaibee1/features/reports/all_categories_chart_screen.dart'; // Adjust path as needed
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -179,10 +180,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   const SizedBox(height: 24),
                   if (dailyExpenses.isNotEmpty) ...[
                     Text(
-                      localizer.dailyExpenses,
+                      isMonthlyView
+                        ? localizer.dailyExpenses
+                        : localizer.monthlyExpenses,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -443,12 +446,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
             fontWeight: FontWeight.w600,
             fontSize: 12,
           ),
-          majorGridLines: const MajorGridLines(width: 0.5),
+          majorGridLines: const MajorGridLines(width: 0), // No vertical grid lines
         ),
         primaryYAxis: NumericAxis(
           labelStyle: const TextStyle(fontSize: 10),
           axisLine: const AxisLine(width: 0),
-          majorGridLines: const MajorGridLines(width: 0.5),
+          majorGridLines: const MajorGridLines(width: 0), // No horizontal grid lines
           minimum: 0,
           maximum: maxY + interval * 2,
           interval: interval,
@@ -470,7 +473,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
             dataLabelSettings: const DataLabelSettings(isVisible: false),
             enableTooltip: true,
           ),
-          // Optionally, add an area below the line for a modern look:
           AreaSeries<_LineChartData, String>(
             dataSource: chartData,
             xValueMapper: (data, _) =>
@@ -523,12 +525,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
             fontWeight: FontWeight.w600,
             fontSize: 12,
           ),
-          majorGridLines: const MajorGridLines(width: 0.5),
+          majorGridLines: const MajorGridLines(width: 0), // No vertical grid lines
         ),
         primaryYAxis: NumericAxis(
           labelStyle: const TextStyle(fontSize: 10),
           axisLine: const AxisLine(width: 0),
-          majorGridLines: const MajorGridLines(width: 0.5),
+          majorGridLines: const MajorGridLines(width: 0), // No horizontal grid lines
           minimum: 0,
           maximum: maxExpense + interval * 2,
           interval: interval,
@@ -573,126 +575,147 @@ class _ReportsScreenState extends State<ReportsScreen> {
   Widget _buildBarChart(Map<String, double> categoryExpenses) {
     final localizer = S.of(context)!;
     final categoryBox = Hive.box<Category>('categories');
-    final existingCategoryNames = categoryBox.values
-        .map((cat) => cat.name)
-        .toSet();
+    final existingCategoryNames = categoryBox.values.map((cat) => cat.name).toSet();
 
-    final sortedCategories =
-        categoryExpenses.entries
-            .where((entry) => existingCategoryNames.contains(entry.key))
-            .toList()
-          ..sort((a, b) => b.value.compareTo(a.value));
+    final sortedCategories = categoryExpenses.entries
+        .where((entry) => existingCategoryNames.contains(entry.key))
+        .toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
 
-    final topCategories = sortedCategories.take(5).toList();
+    final topCategories = sortedCategories.take(4).toList();
 
     if (topCategories.isEmpty) {
       return const Center(child: Text("No valid categories to display."));
     }
 
-    return Container(
-      height: 320,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
-      ),
-      child: SfCartesianChart(
-        primaryXAxis: CategoryAxis(
-          labelStyle: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 12,
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => AllCategoriesChartScreen(categoryExpenses: categoryExpenses),
           ),
-        ),
-        primaryYAxis: NumericAxis(
-          labelStyle: const TextStyle(fontSize: 10),
-          axisLine: const AxisLine(width: 0),
-          majorGridLines: const MajorGridLines(width: 0.5),
-        ),
-        tooltipBehavior: TooltipBehavior(enable: true),
-        series: <CartesianSeries>[
-          ColumnSeries<MapEntry<String, double>, String>(
-            dataSource: topCategories,
-            xValueMapper: (entry, _) =>
-                getLocalizedCategory(entry.key, localizer),
-            yValueMapper: (entry, _) => entry.value,
-            dataLabelSettings: const DataLabelSettings(isVisible: true),
-            pointColorMapper: (entry, idx) =>
-                Colors.primaries[idx % Colors.primaries.length],
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
-            gradient: LinearGradient(
-              colors: [Colors.redAccent, Colors.orange],
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 320,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPieChart(Map<String, double> categoryExpenses) {
-    final localizer = S.of(context)!;
-    final categoryBox = Hive.box<Category>('categories');
-    final existingCategoryNames = categoryBox.values
-        .map((cat) => cat.name)
-        .toSet();
-
-    final sortedEntries =
-        categoryExpenses.entries
-            .where((entry) => existingCategoryNames.contains(entry.key))
-            .toList()
-          ..sort((a, b) => b.value.compareTo(a.value));
-
-    final topEntries = sortedEntries.take(5).toList();
-    final total = topEntries.fold(0.0, (sum, item) => sum + item.value);
-
-    if (topEntries.isEmpty) {
-      return const Center(child: Text("No valid categories to display."));
-    }
-
-    return Container(
-      height: 320,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
-      ),
-      child: SfCircularChart(
-        legend: Legend(
-          isVisible: true,
-          overflowMode: LegendItemOverflowMode.wrap,
-          position: LegendPosition.bottom,
-          textStyle: const TextStyle(fontSize: 12),
-        ),
-        tooltipBehavior: TooltipBehavior(enable: true),
-        series: <PieSeries<MapEntry<String, double>, String>>[
-          PieSeries<MapEntry<String, double>, String>(
-            dataSource: topEntries,
-            xValueMapper: (entry, _) =>
-                getLocalizedCategory(entry.key, localizer),
-            yValueMapper: (entry, _) => entry.value,
-            dataLabelMapper: (entry, _) =>
-                '${getLocalizedCategory(entry.key, localizer)}\n${((entry.value / total) * 100).toStringAsFixed(1)}%',
-            dataLabelSettings: const DataLabelSettings(
-              isVisible: true,
-              labelPosition: ChartDataLabelPosition.outside,
-              connectorLineSettings: ConnectorLineSettings(
-                type: ConnectorType.curve,
+            child: SfCartesianChart(
+              primaryXAxis: CategoryAxis(
+                labelStyle: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+                majorGridLines: const MajorGridLines(width: 0), // No vertical grid lines
               ),
-              textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              primaryYAxis: NumericAxis(
+                labelStyle: const TextStyle(fontSize: 10),
+                axisLine: const AxisLine(width: 0),
+                majorGridLines: const MajorGridLines(width: 0), // No horizontal grid lines
+              ),
+              tooltipBehavior: TooltipBehavior(enable: true),
+              series: <CartesianSeries>[
+                ColumnSeries<MapEntry<String, double>, String>(
+                  dataSource: topCategories,
+                  xValueMapper: (entry, _) => getLocalizedCategory(entry.key, localizer),
+                  yValueMapper: (entry, _) => entry.value,
+                  dataLabelSettings: const DataLabelSettings(isVisible: true),
+                  pointColorMapper: (entry, idx) => Colors.primaries[idx % Colors.primaries.length],
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  gradient: LinearGradient(
+                    colors: [Colors.redAccent, Colors.orange],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+              ],
             ),
-            pointColorMapper: (entry, idx) =>
-                Colors.primaries[idx % Colors.primaries.length],
-            explode: true,
-            explodeIndex: 0,
-            radius: '90%',
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: Text(
+              localizer.clickToSeeAllCategoriesInfo ?? "Click to see all categories info",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
+
+  // Widget _buildPieChart(Map<String, double> categoryExpenses) {
+  //   final localizer = S.of(context)!;
+  //   final categoryBox = Hive.box<Category>('categories');
+  //   final existingCategoryNames = categoryBox.values
+  //       .map((cat) => cat.name)
+  //       .toSet();
+
+  //   final sortedEntries =
+  //       categoryExpenses.entries
+  //           .where((entry) => existingCategoryNames.contains(entry.key))
+  //           .toList()
+  //         ..sort((a, b) => b.value.compareTo(a.value));
+
+  //   final topEntries = sortedEntries.take(5).toList();
+  //   final total = topEntries.fold(0.0, (sum, item) => sum + item.value);
+
+  //   if (topEntries.isEmpty) {
+  //     return const Center(child: Text("No valid categories to display."));
+  //   }
+
+  //   return Container(
+  //     height: 320,
+  //     padding: const EdgeInsets.all(16),
+  //     decoration: BoxDecoration(
+  //       color: Theme.of(context).cardColor,
+  //       borderRadius: BorderRadius.circular(20),
+  //       boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+  //     ),
+  //     child: SfCircularChart(
+  //       legend: Legend(
+  //         isVisible: true,
+  //         overflowMode: LegendItemOverflowMode.wrap,
+  //         position: LegendPosition.bottom,
+  //         textStyle: const TextStyle(fontSize: 12),
+  //       ),
+  //       tooltipBehavior: TooltipBehavior(enable: true),
+  //       series: <PieSeries<MapEntry<String, double>, String>>[
+  //         PieSeries<MapEntry<String, double>, String>(
+  //           dataSource: topEntries,
+  //           xValueMapper: (entry, _) =>
+  //               getLocalizedCategory(entry.key, localizer),
+  //           yValueMapper: (entry, _) => entry.value,
+  //           dataLabelMapper: (entry, _) =>
+  //               '${getLocalizedCategory(entry.key, localizer)}\n${((entry.value / total) * 100).toStringAsFixed(1)}%',
+  //           dataLabelSettings: const DataLabelSettings(
+  //             isVisible: true,
+  //             labelPosition: ChartDataLabelPosition.outside,
+  //             connectorLineSettings: ConnectorLineSettings(
+  //               type: ConnectorType.curve,
+  //             ),
+  //             textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+  //           ),
+  //           pointColorMapper: (entry, idx) =>
+  //               Colors.primaries[idx % Colors.primaries.length],
+  //           explode: true,
+  //           explodeIndex: 0,
+  //           radius: '90%',
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildGoalProgressCard(Goal goal, int index) {
     final localizer = S.of(context)!;

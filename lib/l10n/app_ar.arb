@@ -217,5 +217,8 @@
   "couldNotLaunchEmailClient": "تعذر فتح تطبيق البريد الإلكتروني",
   "usDollar": "دولار أمريكي",
   "euro": "يورو",
-  "saudiRiyal": "ريال سعودي"
+  "saudiRiyal": "ريال سعودي",
+  "allCategories": "جميع الفئات",
+  "monthlyExpenses": "المصاريف الشهرية",
+  "clickToSeeAllCategoriesInfo": "انقر لرؤية جميع الفئات"
 }

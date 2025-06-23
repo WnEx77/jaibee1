@@ -644,4 +644,13 @@ class SEn extends S {
 
   @override
   String get saudiRiyal => 'Saudi Riyal';
+
+  @override
+  String get allCategories => 'All Categories';
+
+  @override
+  String get monthlyExpenses => 'Monthly Expenses';
+
+  @override
+  String get clickToSeeAllCategoriesInfo => 'Click to see all categories';
 }

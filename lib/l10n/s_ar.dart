@@ -651,4 +651,13 @@ class SAr extends S {
 
   @override
   String get saudiRiyal => 'ريال سعودي';
+
+  @override
+  String get allCategories => 'جميع الفئات';
+
+  @override
+  String get monthlyExpenses => 'المصاريف الشهرية';
+
+  @override
+  String get clickToSeeAllCategoriesInfo => 'انقر لرؤية جميع الفئات';
 }
