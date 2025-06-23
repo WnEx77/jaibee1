@@ -122,7 +122,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
         );
 
     DateTimeRange? selectedRange = tempRange;
-
     bool userPressedDone = false;
 
     await showDialog(
@@ -131,59 +130,45 @@ class _TransactionScreenState extends State<TransactionScreen> {
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(24),
           ),
           backgroundColor: Theme.of(context).cardColor,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             child: StatefulBuilder(
               builder: (context, setState) {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.all(8),
-                          child: const Icon(
-                            Icons.filter_alt,
-                            color: Colors.blue,
-                            size: 28,
-                          ),
+                        Icon(
+                          Icons.filter_alt,
+                          color: Colors.purple.shade700,
+                          size: 28,
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 10),
                         Text(
                           localizer.filterByRange,
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue.shade800,
+                                color: Colors.purple.shade700,
                               ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ListTile(
-                            title: Text(localizer.startDate),
-                            subtitle: Text(
-                              DateFormat.yMMMd().format(selectedRange!.start),
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.grey[300]
-                                    : Colors.grey[700],
-                              ),
-                            ),
-                            trailing: Icon(
-                              Icons.edit_calendar,
-                              color: Colors.blue.shade700,
-                            ),
+                    Material(
+                      color: Colors.transparent,
+                      child: Column(
+                        children: [
+                          _RangeDateTile(
+                            icon: Icons.calendar_today,
+                            color: Colors.blue.shade700,
+                            label: localizer.startDate,
+                            date: selectedRange!.start,
                             onTap: () async {
                               final picked =
                                   await showGlobalCupertinoDatePicker(
@@ -204,23 +189,11 @@ class _TransactionScreenState extends State<TransactionScreen> {
                               }
                             },
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: ListTile(
-                            title: Text(localizer.endDate),
-                            subtitle: Text(
-                              DateFormat.yMMMd().format(selectedRange!.end),
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.grey[300]
-                                    : Colors.grey[700],
-                              ),
-                            ),
-                            trailing: Icon(
-                              Icons.edit_calendar,
-                              color: Colors.blue.shade700,
-                            ),
+                          _RangeDateTile(
+                            icon: Icons.event,
+                            color: Colors.green.shade700,
+                            label: localizer.endDate,
+                            date: selectedRange!.end,
                             onTap: () async {
                               final picked =
                                   await showGlobalCupertinoDatePicker(
@@ -241,10 +214,10 @@ class _TransactionScreenState extends State<TransactionScreen> {
                               }
                             },
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 28),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -268,15 +241,16 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade700,
+                            backgroundColor: Colors.purple.shade700,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(14),
                             ),
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
+                              horizontal: 28,
+                              vertical: 14,
                             ),
+                            elevation: 2,
                           ),
                           child: Text(localizer.done),
                         ),
@@ -734,6 +708,31 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     fontSize: 16,
                                   ),
                                 ),
+                                const SizedBox(width: 12),
+                                OutlinedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _selectedRange = null;
+                                      _selectedPeriod = 'monthly';
+                                      _selectedMonth = DateTime.now();
+                                    });
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.purple.shade700,
+                                    side: BorderSide(
+                                      color: Colors.purple.shade700,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 0,
+                                    ),
+                                    minimumSize: const Size(0, 36),
+                                  ),
+                                  child: Text(S.of(context)!.clearFilter),
+                                ),
                                 const Spacer(),
                                 IconButton(
                                   icon: Icon(
@@ -1106,20 +1105,31 @@ class _ModernFilterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selectedBgColor = isDark
+        ? color.withOpacity(0.22)
+        : color.withOpacity(0.12);
+    final unselectedBgColor = isDark
+        ? Colors.grey.shade900
+        : Colors.grey.shade100;
+    final selectedTextColor = isDark ? Colors.white : color;
+    final unselectedTextColor = isDark ? Colors.white70 : Colors.grey.shade900;
+    final selectedBorderColor = isDark ? color.withOpacity(0.7) : color;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       margin: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
-        color: selected ? color.withOpacity(0.12) : Colors.grey.shade100,
+        color: selected ? selectedBgColor : unselectedBgColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: selected ? color : Colors.transparent,
+          color: selected ? selectedBorderColor : Colors.transparent,
           width: 2,
         ),
         boxShadow: selected
             ? [
                 BoxShadow(
-                  color: color.withOpacity(0.08),
+                  color: color.withOpacity(0.10),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -1127,15 +1137,71 @@ class _ModernFilterTile extends StatelessWidget {
             : [],
       ),
       child: ListTile(
-        leading: Icon(icon, color: selected ? color : Colors.grey.shade600),
+        leading: Icon(
+          icon,
+          color: selected ? selectedTextColor : unselectedTextColor,
+        ),
         title: Text(
           label,
           style: TextStyle(
-            color: selected ? color : Colors.grey.shade900,
+            color: selected ? selectedTextColor : unselectedTextColor,
             fontWeight: FontWeight.w600,
           ),
         ),
-        trailing: selected ? Icon(Icons.check_circle, color: color) : null,
+        trailing: selected
+            ? Icon(Icons.check_circle, color: selectedTextColor)
+            : null,
+        onTap: onTap,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+}
+
+// Add this widget at the end of the file:
+class _RangeDateTile extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String label;
+  final DateTime date;
+  final VoidCallback onTap;
+
+  const _RangeDateTile({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.date,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark ? color.withOpacity(0.18) : color.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withOpacity(isDark ? 0.7 : 1),
+          width: 2,
+        ),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: color),
+        title: Text(
+          label,
+          style: TextStyle(color: color, fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          DateFormat.yMMMd().format(date),
+          style: TextStyle(
+            color: isDark ? Colors.white70 : Colors.grey.shade900,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing: Icon(Icons.edit_calendar, color: color),
         onTap: onTap,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),

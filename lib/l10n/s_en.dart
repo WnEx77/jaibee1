@@ -658,7 +658,7 @@ class SEn extends S {
   String get filterByRange => 'Filter';
 
   @override
-  String get clearFilter => 'Clear Filter';
+  String get clearFilter => 'Clear';
 
   @override
   String get chooseDateRange => 'Choose Date Range';

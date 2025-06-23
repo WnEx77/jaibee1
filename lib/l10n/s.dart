@@ -1360,7 +1360,7 @@ abstract class S {
   /// No description provided for @clearFilter.
   ///
   /// In en, this message translates to:
-  /// **'Clear Filter'**
+  /// **'Clear'**
   String get clearFilter;
 
   /// No description provided for @chooseDateRange.

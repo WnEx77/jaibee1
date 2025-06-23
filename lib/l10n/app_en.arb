@@ -241,7 +241,7 @@
   "monthlyExpenses": "Monthly Expenses",
   "clickToSeeAllCategoriesInfo": "Click to see all categories",
   "filterByRange": "Filter",
-  "clearFilter": "Clear Filter",
+  "clearFilter": "Clear",
   "chooseDateRange": "Choose Date Range",
   "currencyUpdated": "Currency updated successfully",
   "goalUpdated": "Goal updated successfully",
