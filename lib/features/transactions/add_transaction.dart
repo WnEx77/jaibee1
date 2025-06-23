@@ -13,6 +13,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/currency_utils.dart';
 import 'package:jaibee/shared/widgets/global_date_picker.dart';
+import 'package:jaibee/data/models/budget.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -188,7 +189,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           borderRadius: BorderRadius.circular(12),
           borderWidth: 1.5,
           selectedColor: selectedTextColor,
-          fillColor: _isIncome ? Colors.green : Colors.red,
+          fillColor: _isIncome ? Colors.green : Colors.redAccent,
           color: unselectedTextColor,
           constraints: const BoxConstraints(minWidth: 120, minHeight: 45),
           children: [
@@ -298,6 +299,32 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             : null,
       );
 
+      // Check if limit is exceeded for this category (only for expenses)
+      bool exceededLimit = false;
+      if (!_isIncome) {
+        final budgetBox = Hive.box<Budget>('budgets'); // Do NOT open the box again!
+        final budget = budgetBox.get(_category);
+        if (budget != null && budget.limit != null) {
+          final categoryLimit = budget.limit;
+          // Calculate total spent for this category this month
+          final transactionBox = Hive.box('transactions');
+          final now = DateTime.now();
+          final totalSpent = transactionBox.values
+              .where(
+                (t) =>
+                    t is Transaction &&
+                    t.category == _category &&
+                    !t.isIncome &&
+                    t.date.year == now.year &&
+                    t.date.month == now.month,
+              )
+              .fold<double>(0.0, (sum, t) => sum + (t.amount as double));
+          if (totalSpent + transaction.amount > categoryLimit) {
+            exceededLimit = true;
+          }
+        }
+      }
+
       Hive.box('transactions').add(transaction);
 
       setState(() {
@@ -309,12 +336,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       });
 
       Flushbar(
-        message: localizer.transactionAdded,
+        message: exceededLimit
+            ? localizer.categoryLimitExceeded
+            : localizer.transactionAdded,
         duration: const Duration(seconds: 2),
-        backgroundColor: Colors.green,
+        backgroundColor: exceededLimit ? Colors.red : Colors.green,
         margin: const EdgeInsets.all(16),
         borderRadius: BorderRadius.circular(12),
-        icon: const Icon(Icons.check_circle, color: Colors.white),
+        icon: Icon(
+          exceededLimit ? Icons.warning_amber_rounded : Icons.check_circle,
+          color: Colors.white,
+        ),
       ).show(context);
     }
   }
@@ -339,7 +371,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     final iconColor = isDark ? Colors.tealAccent : Colors.teal;
 
     if (currency.asset != null) {
-      return Image.asset(currency.asset!, width: 22, height: 22, color: iconColor);
+      return Image.asset(
+        currency.asset!,
+        width: 22,
+        height: 22,
+        color: iconColor,
+      );
     } else {
       return Text(
         currency.symbol,

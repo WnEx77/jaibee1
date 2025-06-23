@@ -669,4 +669,14 @@ class SAr extends S {
 
   @override
   String get chooseDateRange => 'اختر نطاق التاريخ';
+
+  @override
+  String get currencyUpdated => 'تم تحديث العملة بنجاح';
+
+  @override
+  String get goalUpdated => 'تم تحديث الهدف بنجاح';
+
+  @override
+  String get categoryLimitExceeded =>
+      'تمت إضافة المصروف، ولكنك تجاوزت الحد المسموح به لهذه الفئة';
 }

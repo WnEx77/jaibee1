@@ -54,11 +54,11 @@ Future<Widget> buildCurrencySymbolWidget(
   final symbolColor = color ?? (isDark ? Colors.white : Colors.black);
 
   if (asset != null) {
-    return Image.asset(asset, width: 22, height: 22, color: symbolColor);
+    return Image.asset(asset, width: 16, height: 16, color: symbolColor);
   } else {
     return Text(
       currency.symbol,
-      style: TextStyle(fontSize: 22, color: symbolColor),
+      style: TextStyle(fontSize: 16, color: symbolColor),
     );
   }
 }

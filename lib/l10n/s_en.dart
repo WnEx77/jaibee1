@@ -662,4 +662,14 @@ class SEn extends S {
 
   @override
   String get chooseDateRange => 'Choose Date Range';
+
+  @override
+  String get currencyUpdated => 'Currency updated successfully';
+
+  @override
+  String get goalUpdated => 'Goal updated successfully';
+
+  @override
+  String get categoryLimitExceeded =>
+      'Transaction added, but you have exceeded the category limit ';
 }

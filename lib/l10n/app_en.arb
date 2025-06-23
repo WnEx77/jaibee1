@@ -242,5 +242,8 @@
   "clickToSeeAllCategoriesInfo": "Click to see all categories",
   "filterByRange": "Filter",
   "clearFilter": "Clear Filter",
-  "chooseDateRange": "Choose Date Range"
+  "chooseDateRange": "Choose Date Range",
+  "currencyUpdated": "Currency updated successfully",
+  "goalUpdated": "Goal updated successfully",
+  "categoryLimitExceeded": "Transaction added, but you have exceeded the category limit "
 }

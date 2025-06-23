@@ -289,62 +289,72 @@ class _BudgetScreenState extends State<BudgetScreen> {
                     ),
                   ),
                 ),
-                if (isMismatch) ...[
-                  const SizedBox(height: 12),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: LinearProgressIndicator(
-                      value: progressRatio.clamp(0.0, 1.0),
-                      minHeight: 10,
-                      backgroundColor: Colors.grey.shade200,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        totalCategoryLimits > monthlyLimitValue
-                            ? Colors.red
-                            : (progressRatio < 1.0
-                                  ? Colors.orange
-                                  : Colors.green),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          S
-                              .of(context)!
-                              .budgetProgressInfo(
-                                totalCategoryLimits,
-                                monthlyLimitValue,
+                if (isMismatch) ...[const SizedBox(height: 12)],
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 350),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  child: isMismatch
+                      ? Column(
+                          key: const ValueKey('progress-bar'),
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: LinearProgressIndicator(
+                                value: progressRatio.clamp(0.0, 1.0),
+                                minHeight: 10,
+                                backgroundColor: Colors.grey.shade200,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  totalCategoryLimits > monthlyLimitValue
+                                      ? Colors.red
+                                      : (progressRatio < 1.0
+                                            ? Colors.orange
+                                            : Colors.green),
+                                ),
                               ),
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: progressRatio > 1.0
-                                ? Colors.red
-                                : (progressRatio < 1.0
-                                      ? Colors.orange
-                                      : mintTheme.buttonColor),
-                            fontWeight: FontWeight.w500,
-                          ),
-                          overflow: TextOverflow.visible,
-                          softWrap: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (monthlyLimitValue > totalCategoryLimits) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      '${S.of(context)!.amountToReachMonthlyLimit} ${(monthlyLimitValue - totalCategoryLimits).toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.teal,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 16),
-                ],
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    S
+                                        .of(context)!
+                                        .budgetProgressInfo(
+                                          totalCategoryLimits,
+                                          monthlyLimitValue,
+                                        ),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: progressRatio > 1.0
+                                          ? Colors.red
+                                          : (progressRatio < 1.0
+                                                ? Colors.orange
+                                                : mintTheme.buttonColor),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    overflow: TextOverflow.visible,
+                                    softWrap: true,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (monthlyLimitValue > totalCategoryLimits) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                '${S.of(context)!.amountToReachMonthlyLimit} ${(monthlyLimitValue - totalCategoryLimits).toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.teal,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 16),
+                          ],
+                        )
+                      : const SizedBox.shrink(key: ValueKey('no-progress-bar')),
+                ),
                 const SizedBox(height: 12),
                 Divider(thickness: 1.2, color: Colors.grey.shade300),
                 const SizedBox(height: 8),
@@ -391,32 +401,73 @@ class _BudgetScreenState extends State<BudgetScreen> {
                             child: FutureBuilder<Widget>(
                               future: buildCurrencySymbolWidget(context),
                               builder: (context, snapshot) {
-                                return TextField(
-                                  controller: _controllers[category.name],
-                                  keyboardType: TextInputType.number,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                  decoration: InputDecoration(
-                                    prefixIcon: snapshot.hasData
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(13.0),
-                                            child: snapshot.data,
-                                          )
-                                        : const SizedBox(width: 16, height: 16),
-                                    labelText: null,
-                                    filled: true,
-                                    fillColor:
-                                        _isInvalidInput(
-                                          _controllers[category.name]?.text,
-                                        )
-                                        ? Colors.red.withOpacity(0.05)
-                                        : Colors.grey.withOpacity(0.05),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide.none,
+                                final controller = _controllers[category.name];
+                                final isEmpty =
+                                    controller?.text.trim().isEmpty ?? true;
+                                return Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: [
+                                    if (isEmpty)
+                                      Positioned.fill(
+                                        child: Container(
+                                          alignment: Alignment.centerLeft,
+                                          // decoration: BoxDecoration(
+                                          //   color: Colors.orange.withOpacity(
+                                          //     0.13,
+                                          //   ),
+                                          //   borderRadius: BorderRadius.circular(
+                                          //     10,
+                                          //   ),
+                                          // ),
+                                          padding: const EdgeInsets.only(
+                                            left: 44,
+                                            right: 8,
+                                          ),
+                                          child: Text(
+                                            'Not Set',
+                                            style: TextStyle(
+                                              color: Colors.orange.shade800,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    TextField(
+                                      controller: controller,
+                                      keyboardType: TextInputType.number,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge,
+                                      decoration: InputDecoration(
+                                        prefixIcon: snapshot.hasData
+                                            ? Padding(
+                                                padding: const EdgeInsets.all(
+                                                  13.0,
+                                                ),
+                                                child: snapshot.data,
+                                              )
+                                            : const SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                              ),
+                                        labelText: null,
+                                        filled: true,
+                                        fillColor:
+                                            _isInvalidInput(controller?.text)
+                                            ? Colors.red.withOpacity(0.05)
+                                            : Colors.grey.withOpacity(0.05),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        isDense: true,
+                                      ),
+                                      onChanged: (_) => setState(() {}),
                                     ),
-                                    isDense: true,
-                                  ),
-                                  onChanged: (_) => setState(() {}),
+                                  ],
                                 );
                               },
                             ),

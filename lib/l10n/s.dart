@@ -1368,6 +1368,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Choose Date Range'**
   String get chooseDateRange;
+
+  /// No description provided for @currencyUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency updated successfully'**
+  String get currencyUpdated;
+
+  /// No description provided for @goalUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal updated successfully'**
+  String get goalUpdated;
+
+  /// No description provided for @categoryLimitExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction added, but you have exceeded the category limit '**
+  String get categoryLimitExceeded;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

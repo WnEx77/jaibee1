@@ -223,5 +223,8 @@
   "clickToSeeAllCategoriesInfo": "انقر لرؤية جميع الفئات",
   "filterByRange": "تصفية",
   "clearFilter": "مسح التصفية",
-  "chooseDateRange": "اختر نطاق التاريخ"
+  "chooseDateRange": "اختر نطاق التاريخ",
+  "currencyUpdated": "تم تحديث العملة بنجاح",
+  "goalUpdated": "تم تحديث الهدف بنجاح",
+  "categoryLimitExceeded": "تمت إضافة المصروف، ولكنك تجاوزت الحد المسموح به لهذه الفئة"
 }

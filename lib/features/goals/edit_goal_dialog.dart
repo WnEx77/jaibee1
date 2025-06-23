@@ -75,6 +75,16 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
       );
       widget.onUpdate(updatedGoal, widget.index);
       Navigator.pop(context);
+      // Show success flushbar
+      Flushbar(
+        message: S.of(context)!.goalUpdated,
+        icon: const Icon(Icons.check_circle, color: Colors.white, size: 28),
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.green,
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(12),
+        flushbarPosition: FlushbarPosition.BOTTOM,
+      ).show(context);
     }
   }
 
@@ -92,11 +102,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
       // Show success message
       Flushbar(
         message: localizer.goalDeleted,
-        icon: const Icon(
-          Icons.check_circle,
-          color: Colors.white,
-          size: 28,
-        ),
+        icon: const Icon(Icons.check_circle, color: Colors.white, size: 28),
         duration: const Duration(seconds: 2),
         backgroundColor: Colors.redAccent,
         margin: const EdgeInsets.all(16),
@@ -114,10 +120,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: CustomAppBar(
-        title: localizer.editGoal,
-        showBackButton: true,
-      ),
+      appBar: CustomAppBar(title: localizer.editGoal, showBackButton: true),
       body: AppBackground(
         child: Center(
           child: Container(
@@ -161,7 +164,8 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        validator: (value) => value == null || value.trim().isEmpty
+                        validator: (value) =>
+                            value == null || value.trim().isEmpty
                             ? localizer.requiredField
                             : null,
                       ),
@@ -207,7 +211,10 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                             return localizer.enterValidAmount;
                           }
                           final target =
-                              double.tryParse(_targetAmountController.text.trim()) ?? 0;
+                              double.tryParse(
+                                _targetAmountController.text.trim(),
+                              ) ??
+                              0;
                           if (parsed > target) {
                             return localizer.savedAmountExceedsTarget;
                           }
@@ -229,8 +236,9 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                             ),
                             controller: TextEditingController(
                               text: _targetDate != null
-                                  ? DateFormat.yMMMd(localizer.localeName)
-                                      .format(_targetDate!)
+                                  ? DateFormat.yMMMd(
+                                      localizer.localeName,
+                                    ).format(_targetDate!)
                                   : '',
                             ),
                             validator: (_) =>
@@ -245,7 +253,9 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                             child: OutlinedButton.icon(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               label: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
                                 child: Text(
                                   localizer.delete,
                                   style: const TextStyle(
@@ -268,7 +278,9 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                             child: ElevatedButton.icon(
                               icon: const Icon(Icons.save),
                               label: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
                                 child: Text(
                                   localizer.save,
                                   style: const TextStyle(fontSize: 16),

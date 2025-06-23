@@ -234,6 +234,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         await prefs.setString('currency_code', currency.code);
                         Navigator.pop(context);
                         setState(() {}); // Refresh UI
+                        // Show flushbar after currency update
+                        Flushbar(
+                          message: s.currencyUpdated,
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: Colors.green,
+                          margin: const EdgeInsets.all(16),
+                          borderRadius: BorderRadius.circular(12),
+                          icon: const Icon(
+                            Icons.check_circle,
+                            color: Colors.white,
+                          ),
+                        ).show(context);
                       },
                       // Localize currency name:
                       localizedName: _getLocalizedCurrencyName(currency, s),
@@ -311,9 +323,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final asset = currency.getAsset(isDarkMode: isDark);
     if (asset != null) {
-      return Image.asset(asset, width: 26, height: 26,color: Colors.teal);
+      return Image.asset(asset, width: 26, height: 26, color: Colors.teal);
     } else {
-      return Text(currency.symbol, style: const TextStyle(fontSize: 26, color: Colors.teal));
+      return Text(
+        currency.symbol,
+        style: const TextStyle(fontSize: 26, color: Colors.teal),
+      );
     }
   }
 
@@ -354,27 +369,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Column(
                         children: [
-                            ListTile(
+                          ListTile(
                             leading: FutureBuilder<Widget>(
                               future: buildCurrencySymbolWidget(context),
                               builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                                return snapshot.data!;
-                              }
-                              return const SizedBox(
-                                width: 28,
-                                height: 28,
-                                child: Center(
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                                ),
-                              );
+                                if (snapshot.connectionState ==
+                                        ConnectionState.done &&
+                                    snapshot.hasData) {
+                                  return snapshot.data!;
+                                }
+                                return const SizedBox(
+                                  width: 28,
+                                  height: 28,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                             title: Text(
                               s.currency,
                               style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
                               ),
                             ),
                             trailing: const Icon(
@@ -391,7 +410,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             minLeadingWidth: 0,
-                            ),
+                          ),
                           _buildDivider(),
                           ListTile(
                             leading: const Icon(
