@@ -335,11 +335,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     final prefs = await SharedPreferences.getInstance();
     final code = prefs.getString('currency_code') ?? 'SAR';
     final currency = getCurrencyByCode(code);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDark ? Colors.tealAccent : Colors.teal;
 
     if (currency.asset != null) {
-      return Image.asset(currency.asset!, width: 22, height: 22);
+      return Image.asset(currency.asset!, width: 22, height: 22, color: iconColor);
     } else {
-      return Text(currency.symbol, style: const TextStyle(fontSize: 22));
+      return Text(
+        currency.symbol,
+        style: TextStyle(fontSize: 22, color: iconColor),
+      );
     }
   }
 

@@ -734,6 +734,16 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     fontSize: 16,
                                   ),
                                 ),
+                                const Spacer(),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.filter_list,
+                                    color: Colors.blue.shade700,
+                                    size: 28,
+                                  ),
+                                  tooltip: S.of(context)!.filter,
+                                  onPressed: () => _showFilterDialog(context),
+                                ),
                               ],
                             )
                           : Row(
@@ -756,33 +766,26 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.arrow_forward_ios),
-                                  onPressed: _nextPeriod,
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.arrow_forward_ios),
+                                      onPressed: _nextPeriod,
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.filter_list,
+                                        color: Colors.blue.shade700,
+                                        size: 28,
+                                      ),
+                                      tooltip: S.of(context)!.filter,
+                                      onPressed: () =>
+                                          _showFilterDialog(context),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 4,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.filter_list,
-                              color: Colors.blue.shade700,
-                              size: 28,
-                            ),
-                            tooltip: S.of(context)!.filter,
-                            onPressed: () => _showFilterDialog(context),
-                          ),
-                        ],
-                      ),
                     ),
                     Expanded(
                       child: filteredTransactions.isEmpty

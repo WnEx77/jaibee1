@@ -114,7 +114,7 @@ class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
           navBarColor: Color(0xFFFFFFFF),
           selectedIconColor: Color(0xFFA8E6CF),
           unselectedIconColor: Color(0xFF9EB6B3),
-          buttonColor: Color.fromARGB(255, 137, 225, 140),
+          buttonColor: Colors.teal,
         ),
       ],
     );
