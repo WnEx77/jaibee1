@@ -268,46 +268,21 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Row(
+                    Column(
                       children: [
-                        Expanded(
-                          child: ListTile(
-                            title: Text(localizer.startDate),
-                            subtitle: Text(
-                              DateFormat.yMMMd().format(_selectedRange!.start),
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.grey[300]
-                                    : Colors.grey[700],
-                              ),
-                            ),
-                            trailing: Icon(
-                              Icons.edit_calendar,
-                              color: mintTheme.selectedIconColor,
-                            ),
-                            onTap: () =>
-                                _pickSingleDate(context, isStart: true),
-                          ),
+                        _RangeDateTile(
+                          icon: Icons.calendar_today,
+                          color: Colors.blue.shade700,
+                          label: localizer.startDate,
+                          date: _selectedRange!.start,
+                          onTap: () => _pickSingleDate(context, isStart: true),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: ListTile(
-                            title: Text(localizer.endDate),
-                            subtitle: Text(
-                              DateFormat.yMMMd().format(_selectedRange!.end),
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.grey[300]
-                                    : Colors.grey[700],
-                              ),
-                            ),
-                            trailing: Icon(
-                              Icons.edit_calendar,
-                              color: mintTheme.selectedIconColor,
-                            ),
-                            onTap: () =>
-                                _pickSingleDate(context, isStart: false),
-                          ),
+                        _RangeDateTile(
+                          icon: Icons.event,
+                          color: Colors.green.shade700,
+                          label: localizer.endDate,
+                          date: _selectedRange!.end,
+                          onTap: () => _pickSingleDate(context, isStart: false),
                         ),
                       ],
                     ),
@@ -353,6 +328,56 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _RangeDateTile extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String label;
+  final DateTime date;
+  final VoidCallback onTap;
+
+  const _RangeDateTile({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.date,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark ? color.withOpacity(0.18) : color.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withOpacity(isDark ? 0.7 : 1),
+          width: 2,
+        ),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: color),
+        title: Text(
+          label,
+          style: TextStyle(color: color, fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          DateFormat.yMMMd().format(date),
+          style: TextStyle(
+            color: isDark ? Colors.white70 : Colors.grey.shade900,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing: Icon(Icons.edit_calendar, color: color),
+        onTap: onTap,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
