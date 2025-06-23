@@ -220,5 +220,8 @@
   "saudiRiyal": "ريال سعودي",
   "allCategories": "جميع الفئات",
   "monthlyExpenses": "المصاريف الشهرية",
-  "clickToSeeAllCategoriesInfo": "انقر لرؤية جميع الفئات"
+  "clickToSeeAllCategoriesInfo": "انقر لرؤية جميع الفئات",
+  "filterByRange": "تصفية",
+  "clearFilter": "مسح التصفية",
+  "chooseDateRange": "اختر نطاق التاريخ"
 }

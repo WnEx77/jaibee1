@@ -660,4 +660,13 @@ class SAr extends S {
 
   @override
   String get clickToSeeAllCategoriesInfo => 'انقر لرؤية جميع الفئات';
+
+  @override
+  String get filterByRange => 'Filter';
+
+  @override
+  String get clearFilter => 'Clear Filter';
+
+  @override
+  String get chooseDateRange => 'Choose Date Range';
 }

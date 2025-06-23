@@ -1350,6 +1350,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Click to see all categories'**
   String get clickToSeeAllCategoriesInfo;
+
+  /// No description provided for @filterByRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get filterByRange;
+
+  /// No description provided for @clearFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filter'**
+  String get clearFilter;
+
+  /// No description provided for @chooseDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Date Range'**
+  String get chooseDateRange;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -239,5 +239,8 @@
   "saudiRiyal": "Saudi Riyal",
   "allCategories": "All Categories",
   "monthlyExpenses": "Monthly Expenses",
-  "clickToSeeAllCategoriesInfo": "Click to see all categories"
+  "clickToSeeAllCategoriesInfo": "Click to see all categories",
+  "filterByRange": "Filter",
+  "clearFilter": "Clear Filter",
+  "chooseDateRange": "Choose Date Range"
 }

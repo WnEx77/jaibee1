@@ -653,4 +653,13 @@ class SEn extends S {
 
   @override
   String get clickToSeeAllCategoriesInfo => 'Click to see all categories';
+
+  @override
+  String get filterByRange => 'Filter';
+
+  @override
+  String get clearFilter => 'Clear Filter';
+
+  @override
+  String get chooseDateRange => 'Choose Date Range';
 }

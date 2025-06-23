@@ -13,6 +13,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee/data/models/budget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/currency_utils.dart';
+import 'package:jaibee/shared/widgets/global_date_picker.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({super.key});
@@ -22,10 +23,11 @@ class TransactionScreen extends StatefulWidget {
 }
 
 class _TransactionScreenState extends State<TransactionScreen> {
-  final Set<String> _selectedFilters = {'income'}; // Always includes 'income'
+  final Set<String> _selectedFilters = {'income'};
   DateTime _selectedMonth = DateTime.now();
-  String _selectedPeriod = 'monthly'; // 'daily', 'weekly', 'monthly'
-  double? _monthlyLimit; // retrieved from budget box
+  String _selectedPeriod = 'monthly';
+  double? _monthlyLimit;
+  DateTimeRange? _selectedRange;
 
   @override
   void initState() {
@@ -46,27 +48,10 @@ class _TransactionScreenState extends State<TransactionScreen> {
     final categoryBox = Hive.box<Category>('categories');
     final categories = categoryBox.values
         .map((cat) => cat.name)
-        .where((name) => name.toLowerCase() != 'income') // Exclude income
+        .where((name) => name.toLowerCase() != 'income')
         .toList();
-
     setState(() {
-      _selectedFilters.addAll(categories); // Select all by default
-    });
-  }
-
-  void _previousMonth() {
-    setState(() {
-      _selectedMonth = DateTime(_selectedMonth.year, _selectedMonth.month - 1);
-    });
-  }
-
-  void _nextMonth() {
-    final now = DateTime.now();
-    if (_selectedMonth.year == now.year && _selectedMonth.month == now.month) {
-      return;
-    }
-    setState(() {
-      _selectedMonth = DateTime(_selectedMonth.year, _selectedMonth.month + 1);
+      _selectedFilters.addAll(categories);
     });
   }
 
@@ -113,7 +98,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
     final prefs = await SharedPreferences.getInstance();
     final code = prefs.getString('currency_code') ?? 'SAR';
     final currency = getCurrencyByCode(code);
-
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final asset = currency.getAsset(isDarkMode: isDark);
     if (asset != null) {
@@ -125,6 +109,331 @@ class _TransactionScreenState extends State<TransactionScreen> {
       );
     }
   }
+
+  Future<void> _pickRange(BuildContext context) async {
+    print('test');
+    final localizer = S.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    DateTimeRange? tempRange =
+        _selectedRange ??
+        DateTimeRange(
+          start: DateTime.now().subtract(const Duration(days: 10)),
+          end: DateTime.now(),
+        );
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        DateTimeRange selectedRange = tempRange!;
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: Theme.of(context).cardColor,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          child: const Icon(
+                            Icons.filter_alt,
+                            color: Colors.blue,
+                            size: 28,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          localizer.filterByRange,
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade800,
+                              ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ListTile(
+                            title: Text(localizer.startDate),
+                            subtitle: Text(
+                              DateFormat.yMMMd().format(selectedRange.start),
+                              style: TextStyle(
+                                color: isDark
+                                    ? Colors.grey[300]
+                                    : Colors.grey[700],
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.edit_calendar,
+                              color: Colors.blue.shade700,
+                            ),
+                            onTap: () async {
+                              final picked =
+                                  await showGlobalCupertinoDatePicker(
+                                    context: context,
+                                    initialDate: selectedRange.start,
+                                    minDate: DateTime(2000),
+                                    maxDate: selectedRange.end,
+                                  );
+                              if (picked != null) {
+                                setState(() {
+                                  selectedRange = DateTimeRange(
+                                    start: picked,
+                                    end: selectedRange.end.isBefore(picked)
+                                        ? picked
+                                        : selectedRange.end,
+                                  );
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ListTile(
+                            title: Text(localizer.endDate),
+                            subtitle: Text(
+                              DateFormat.yMMMd().format(selectedRange.end),
+                              style: TextStyle(
+                                color: isDark
+                                    ? Colors.grey[300]
+                                    : Colors.grey[700],
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.edit_calendar,
+                              color: Colors.blue.shade700,
+                            ),
+                            onTap: () async {
+                              final picked =
+                                  await showGlobalCupertinoDatePicker(
+                                    context: context,
+                                    initialDate: selectedRange.end,
+                                    minDate: selectedRange.start,
+                                    maxDate: DateTime.now(),
+                                  );
+                              if (picked != null) {
+                                setState(() {
+                                  selectedRange = DateTimeRange(
+                                    start: selectedRange.start,
+                                    end: picked.isBefore(selectedRange.start)
+                                        ? selectedRange.start
+                                        : picked,
+                                  );
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            setState(() {
+                              _selectedPeriod = 'monthly';
+                              _selectedRange = null;
+                              _selectedMonth = DateTime.now();
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey.shade700,
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          child: Text(localizer.cancel),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            tempRange = selectedRange;
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                          ),
+                          child: Text(localizer.done),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    if (tempRange != null) {
+      setState(() {
+        _selectedRange = tempRange;
+        _selectedPeriod = 'range';
+      });
+    }
+  }
+
+  void _showFilterDialog(BuildContext context) {
+  final localizer = S.of(context)!;
+  showDialog(
+    context: context,
+    builder: (context) {
+      String tempPeriod = _selectedPeriod;
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        backgroundColor: Theme.of(context).cardColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.filter_list, color: Colors.blue.shade700, size: 28),
+                      const SizedBox(width: 10),
+                      Text(
+                        localizer.filter,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade800,
+                            ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Material(
+                    color: Colors.transparent,
+                    child: Column(
+                      children: [
+                        _ModernFilterTile(
+                          icon: Icons.today,
+                          color: Colors.blue.shade700,
+                          label: localizer.daily,
+                          selected: tempPeriod == 'daily',
+                          onTap: () => setStateDialog(() => tempPeriod = 'daily'),
+                        ),
+                        _ModernFilterTile(
+                          icon: Icons.calendar_month,
+                          color: Colors.green.shade700,
+                          label: localizer.monthly,
+                          selected: tempPeriod == 'monthly',
+                          onTap: () => setStateDialog(() => tempPeriod = 'monthly'),
+                        ),
+                        _ModernFilterTile(
+                          icon: Icons.filter_alt,
+                          color: Colors.purple.shade700,
+                          label: localizer.filterByRange,
+                          selected: tempPeriod == 'range',
+                          onTap: () => setStateDialog(() => tempPeriod = 'range'),
+                        ),
+                        if (_selectedPeriod == 'range' && _selectedRange != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  _selectedRange = null;
+                                  _selectedPeriod = 'monthly';
+                                  _selectedMonth = DateTime.now();
+                                });
+                              },
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.purple.shade700,
+                                side: BorderSide(color: Colors.purple.shade700),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                              ),
+                              child: Text(localizer.clearFilter),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey.shade700,
+                          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        child: Text(localizer.cancel),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () async {
+                          Navigator.of(context).pop(tempPeriod);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade700,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                          elevation: 2,
+                        ),
+                        child: Text(localizer.done),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      );
+    },
+  ).then((result) async {
+    if (result == null) return;
+    if (result == 'range') {
+      await _pickRange(context);
+    } else {
+      setState(() {
+        _selectedPeriod = result;
+        _selectedRange = null;
+        _selectedMonth = DateTime.now();
+      });
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +452,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 .where((name) => name != 'income')
                 .toList();
 
-            // Maintain consistency in selected filters
             _selectedFilters.removeWhere(
               (cat) => cat != 'income' && !currentCategories.contains(cat),
             );
@@ -160,20 +468,16 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 final allTransactions = box.values
                     .whereType<Transaction>()
                     .where((t) {
+                      if (_selectedPeriod == 'range' &&
+                          _selectedRange != null) {
+                        return !t.date.isBefore(_selectedRange!.start) &&
+                            !t.date.isAfter(_selectedRange!.end);
+                      }
                       if (_selectedPeriod == 'daily') {
                         return t.date.year == _selectedMonth.year &&
                             t.date.month == _selectedMonth.month &&
                             t.date.day == _selectedMonth.day;
-                      } else if (_selectedPeriod == 'weekly') {
-                        final weekDay = _selectedMonth.weekday;
-                        final weekStart = _selectedMonth.subtract(
-                          Duration(days: weekDay - 1),
-                        );
-                        final weekEnd = weekStart.add(const Duration(days: 6));
-                        return !t.date.isBefore(weekStart) &&
-                            !t.date.isAfter(weekEnd);
                       } else {
-                        // monthly
                         return t.date.year == _selectedMonth.year &&
                             t.date.month == _selectedMonth.month;
                       }
@@ -188,9 +492,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                           ),
                         )
                         .toList()
-                      ..sort(
-                        (a, b) => b.date.compareTo(a.date),
-                      ); // Sort by date descending
+                      ..sort((a, b) => b.date.compareTo(a.date));
 
                 for (var t in filteredTransactions) {
                   if (t.isIncome) {
@@ -395,123 +697,78 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         ),
                       ),
                     ),
-
-                    // Month navigation
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back_ios),
-                            onPressed: _previousPeriod,
-                          ),
-                          Text(
-                            _selectedPeriod == 'daily'
-                                ? DateFormat.yMMMMd().format(_selectedMonth)
-                                : DateFormat.yMMM().format(_selectedMonth),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      child:
+                          _selectedPeriod == 'range' && _selectedRange != null
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.filter_alt,
+                                  color: Colors.purple.shade700,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${DateFormat.yMMMd().format(_selectedRange!.start)} - ${DateFormat.yMMMd().format(_selectedRange!.end)}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.arrow_back_ios),
+                                  onPressed: _previousPeriod,
+                                ),
+                                Text(
+                                  _selectedPeriod == 'daily'
+                                      ? DateFormat.yMMMMd().format(
+                                          _selectedMonth,
+                                        )
+                                      : DateFormat.yMMM().format(
+                                          _selectedMonth,
+                                        ),
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.arrow_forward_ios),
+                                  onPressed: _nextPeriod,
+                                ),
+                              ],
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.arrow_forward_ios),
-                            onPressed: _nextPeriod,
-                          ),
-                        ],
-                      ),
                     ),
+
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 4,
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          ChoiceChip(
-                            label: Row(
-                              children: [
-                                const Icon(Icons.today, size: 18),
-                                const SizedBox(width: 4),
-                                Text(localizer.daily),
-                              ],
+                          IconButton(
+                            icon: Icon(
+                              Icons.filter_list,
+                              color: Colors.blue.shade700,
+                              size: 28,
                             ),
-                            selected: _selectedPeriod == 'daily',
-                            selectedColor: Colors.blue.shade100,
-                            backgroundColor: Colors.grey.shade200,
-                            labelStyle: TextStyle(
-                              color: _selectedPeriod == 'daily'
-                                  ? Colors.blue.shade800
-                                  : Colors.black87,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            onSelected: (_) {
-                              setState(() {
-                                _selectedPeriod = 'daily';
-                                _selectedMonth = DateTime.now();
-                              });
-                            },
-                          ),
-                          const SizedBox(width: 12),
-                          // ChoiceChip(
-                          //   label: Row(
-                          //     children: [
-                          //       const Icon(Icons.calendar_view_week, size: 18),
-                          //       const SizedBox(width: 4),
-                          //       Text(localizer.weekly),
-                          //     ],
-                          //   ),
-                          //   selected: _selectedPeriod == 'weekly',
-                          //   selectedColor: Colors.orange.shade100,
-                          //   backgroundColor: Colors.grey.shade200,
-                          //   labelStyle: TextStyle(
-                          //     color: _selectedPeriod == 'weekly'
-                          //         ? Colors.orange.shade800
-                          //         : Colors.black87,
-                          //     fontWeight: FontWeight.w600,
-                          //   ),
-                          //   onSelected: (_) {
-                          //     setState(() {
-                          //       _selectedPeriod = 'weekly';
-                          //       _selectedMonth = DateTime.now();
-                          //     });
-                          //   },
-                          // ),
-                          // const SizedBox(width: 12),
-                          ChoiceChip(
-                            label: Row(
-                              children: [
-                                const Icon(Icons.calendar_month, size: 18),
-                                const SizedBox(width: 4),
-                                Text(localizer.monthly),
-                              ],
-                            ),
-                            selected: _selectedPeriod == 'monthly',
-                            selectedColor: Colors.green.shade100,
-                            backgroundColor: Colors.grey.shade200,
-                            labelStyle: TextStyle(
-                              color: _selectedPeriod == 'monthly'
-                                  ? Colors.green.shade800
-                                  : Colors.black87,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            onSelected: (_) {
-                              setState(() {
-                                _selectedPeriod = 'monthly';
-                                _selectedMonth = DateTime.now();
-                              });
-                            },
+                            tooltip: S.of(context)!.filter,
+                            onPressed: () => _showFilterDialog(context),
                           ),
                         ],
                       ),
                     ),
-
-                    // Transaction list
                     Expanded(
                       child: filteredTransactions.isEmpty
                           ? Center(
@@ -675,7 +932,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     }
                                     return false;
                                   },
-
                                   child: Card(
                                     elevation: 2,
                                     shape: RoundedRectangleBorder(
@@ -810,6 +1066,61 @@ class _TransactionScreenState extends State<TransactionScreen> {
           ],
         ),
       ],
+    );
+  }
+}
+
+// Modern filter tile widget for the filter dialog
+class _ModernFilterTile extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ModernFilterTile({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: selected ? color.withOpacity(0.12) : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: selected ? color : Colors.transparent,
+          width: 2,
+        ),
+        boxShadow: selected
+            ? [
+                BoxShadow(
+                  color: color.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : [],
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: selected ? color : Colors.grey.shade600),
+        title: Text(
+          label,
+          style: TextStyle(
+            color: selected ? color : Colors.grey.shade900,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        trailing: selected ? Icon(Icons.check_circle, color: color) : null,
+        onTap: onTap,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
     );
   }
 }
