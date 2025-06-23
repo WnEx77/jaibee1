@@ -186,10 +186,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.attach_money,
+                  supportedCurrencies
+                              .firstWhere(
+                                (c) => c.code == currentCode,
+                                orElse: () => supportedCurrencies.first,
+                              )
+                              .asset !=
+                          null
+                      ? null
+                      : Icons.attach_money,
                   size: 52,
                   color: Theme.of(context).colorScheme.primary,
                 ),
+                if (supportedCurrencies
+                        .firstWhere(
+                          (c) => c.code == currentCode,
+                          orElse: () => supportedCurrencies.first,
+                        )
+                        .asset !=
+                    null)
+                  Image.asset(
+                    supportedCurrencies
+                        .firstWhere(
+                          (c) => c.code == currentCode,
+                          orElse: () => supportedCurrencies.first,
+                        )
+                        .asset!,
+                    width: 52,
+                    height: 52,
+                  ),
                 const SizedBox(height: 12),
                 Text(
                   s.selectCurrency,
@@ -277,6 +302,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<Widget> buildCurrencySymbolWidget(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final code = prefs.getString('currency_code') ?? 'SAR';
+    final currency = getCurrencyByCode(code);
+
+    // Use theme from context for dark mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final asset = currency.getAsset(isDarkMode: isDark);
+    if (asset != null) {
+      return Image.asset(asset, width: 26, height: 26,color: Colors.teal);
+    } else {
+      return Text(currency.symbol, style: const TextStyle(fontSize: 26, color: Colors.teal));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context)!;
@@ -314,11 +354,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Column(
                         children: [
-                          _buildCardTile(
-                            icon: Icons.attach_money,
-                            label: s.currency,
+                            ListTile(
+                            leading: FutureBuilder<Widget>(
+                              future: buildCurrencySymbolWidget(context),
+                              builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                return snapshot.data!;
+                              }
+                              return const SizedBox(
+                                width: 28,
+                                height: 28,
+                                child: Center(
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              );
+                              },
+                            ),
+                            title: Text(
+                              s.currency,
+                              style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              ),
+                            ),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
                             onTap: () => _showCurrencyPicker(context),
-                          ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 2,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            minLeadingWidth: 0,
+                            ),
                           _buildDivider(),
                           ListTile(
                             leading: const Icon(

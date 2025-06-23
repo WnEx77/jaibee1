@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jaibee1/l10n/s.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:jaibee1/shared/widgets/global_date_picker.dart';
 
 class EditGoalDialog extends StatefulWidget {
   final Goal goal;
@@ -47,66 +48,17 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
     final now = DateTime.now();
     final initial = _targetDate ?? now;
 
-    showDialog(
+    final picked = await showGlobalCupertinoDatePicker(
       context: context,
-      builder: (BuildContext context) {
-        DateTime validInitialDate = initial.isBefore(now) ? now : initial;
-        DateTime tempPickedDate = validInitialDate;
-
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        final textColor = isDark ? Colors.white : Colors.black;
-
-        return AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          content: SizedBox(
-            width: 320,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: 250,
-                  child: CupertinoTheme(
-                    data: CupertinoThemeData(
-                      brightness: isDark ? Brightness.dark : Brightness.light,
-                      textTheme: CupertinoTextThemeData(
-                        dateTimePickerTextStyle: TextStyle(
-                          color: textColor,
-                          fontSize: 22,
-                        ),
-                      ),
-                    ),
-                    child: CupertinoDatePicker(
-                      mode: CupertinoDatePickerMode.date,
-                      initialDateTime: validInitialDate,
-                      minimumDate: now,
-                      maximumDate: DateTime(now.year + 5),
-                      onDateTimeChanged: (DateTime date) {
-                        tempPickedDate = date;
-                      },
-                    ),
-                  ),
-                ),
-                CupertinoButton(
-                  child: Text(
-                    S.of(context)!.done,
-                    style: TextStyle(color: textColor),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _targetDate = tempPickedDate;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+      initialDate: initial.isBefore(now) ? now : initial,
+      minDate: now,
+      maxDate: DateTime(now.year + 5),
     );
+    if (picked != null) {
+      setState(() {
+        _targetDate = picked;
+      });
+    }
   }
 
   void _submit() {
@@ -182,15 +134,19 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
                       Navigator.of(context).pop(); // Close dialog
                       Navigator.of(context).pop(); // Return to previous
                       // Show success message
-                        Flushbar(
+                      Flushbar(
                         message: S.of(context)!.goalDeleted,
-                        icon: const Icon(Icons.check_circle, color: Colors.white, size: 28),
+                        icon: const Icon(
+                          Icons.check_circle,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                         duration: const Duration(seconds: 2),
                         backgroundColor: Colors.redAccent,
                         margin: const EdgeInsets.all(16),
                         borderRadius: BorderRadius.circular(12),
                         flushbarPosition: FlushbarPosition.BOTTOM,
-                        ).show(context);
+                      ).show(context);
                     },
                   ),
                 ],

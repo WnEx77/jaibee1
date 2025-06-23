@@ -14,7 +14,8 @@ import 'package:jaibee1/core/utils/category_utils.dart'; // Add this import
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:jaibee1/data/models/budget.dart'; // Adjust path as needed
 import 'package:jaibee1/core/utils/currency_utils.dart'; // Adjust path as needed
-import 'package:shared_preferences/shared_preferences.dart'; // For currency symbol
+// import 'package:shared_preferences/shared_preferences.dart'; // For currency symbol
+import 'package:jaibee1/shared/widgets/global_date_picker.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -76,14 +77,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   void _pickMonth(BuildContext context) async {
-    final picked = await showDatePicker(
+    final picked = await showGlobalCupertinoDatePicker(
       context: context,
       initialDate: selectedMonth,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-      helpText: 'Select Month',
-      fieldHintText: 'MM/YYYY',
-      initialEntryMode: DatePickerEntryMode.calendarOnly,
+      minDate: DateTime(2020),
+      maxDate: DateTime.now(),
     );
     if (picked != null) {
       setState(() {
@@ -116,15 +114,18 @@ class _ReportsScreenState extends State<ReportsScreen> {
       );
     }
 
+    final sortedDailyEntries = dailyExpenses.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+
     List<FlSpot> expenseSpots = [];
     List<String> dateLabels = [];
     int index = 0;
 
-    dailyExpenses.forEach((date, amount) {
-      expenseSpots.add(FlSpot(index.toDouble(), amount));
-      dateLabels.add(date);
+    for (final entry in sortedDailyEntries) {
+      expenseSpots.add(FlSpot(index.toDouble(), entry.value));
+      dateLabels.add(entry.key);
       index++;
-    });
+    }
 
     double maxExpense = dailyExpenses.isNotEmpty
         ? dailyExpenses.values.reduce((a, b) => a > b ? a : b)
@@ -135,6 +136,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
         : 0;
     double totalExpense = dailyExpenses.values.fold(0, (a, b) => a + b);
 
+    Map<String, double> monthlyExpenses = {};
+    if (!isMonthlyView) {
+      for (var txn in filteredTransactions) {
+        final monthKey = DateFormat('yyyy-MM').format(txn.date);
+        monthlyExpenses.update(
+          monthKey,
+          (v) => v + txn.amount,
+          ifAbsent: () => txn.amount,
+        );
+      }
+    }
     return Scaffold(
       // appBar: AppBar(
       //   title: Text(localizer.reportTitle),
@@ -185,12 +197,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildLineChart(
-                      expenseSpots,
-                      dateLabels,
-                      interval,
-                      maxExpense,
-                    ),
+                    if (isMonthlyView)
+                      _buildLineChart(
+                        expenseSpots,
+                        dateLabels,
+                        interval,
+                        maxExpense,
+                      )
+                    else
+                      _buildMonthlyLineChart(monthlyExpenses),
                     const SizedBox(height: 32),
                     Text(
                       localizer.mostSpentCategories,
@@ -221,9 +236,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      ...goals
-                          .map((goal) => _buildGoalProgressCard(goal, index))
-                          ,
+                      ...goals.map(
+                        (goal) => _buildGoalProgressCard(goal, index),
+                      ),
                       const SizedBox(height: 50),
                     ],
                   ],
@@ -258,9 +273,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             Text(
               localizer.noDataAdvice,
               style: TextStyle(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
           ],
@@ -374,13 +387,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
               Text(avg.toStringAsFixed(2)),
               const SizedBox(width: 4),
               FutureBuilder<Widget>(
-              future: buildCurrencySymbolWidget(context),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                return snapshot.data!;
-                }
-                return const SizedBox(width: 22, height: 22);
-              },
+                future: buildCurrencySymbolWidget(context),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.hasData) {
+                    return snapshot.data!;
+                  }
+                  return const SizedBox(width: 22, height: 22);
+                },
               ),
             ],
           ),
@@ -392,13 +406,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
               Text(total.toStringAsFixed(2)),
               const SizedBox(width: 4),
               FutureBuilder<Widget>(
-              future: buildCurrencySymbolWidget(context),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                return snapshot.data!;
-                }
-                return const SizedBox(width: 22, height: 22);
-              },
+                future: buildCurrencySymbolWidget(context),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.hasData) {
+                    return snapshot.data!;
+                  }
+                  return const SizedBox(width: 22, height: 22);
+                },
               ),
             ],
           ),
@@ -471,6 +486,83 @@ class _ReportsScreenState extends State<ReportsScreen> {
             dataSource: chartData,
             xValueMapper: (data, _) =>
                 DateFormat('MM/dd').format(DateTime.parse(data.label)),
+            yValueMapper: (data, _) => data.value,
+            gradient: LinearGradient(
+              colors: [
+                Colors.redAccent.withOpacity(0.3),
+                Colors.orange.withOpacity(0.1),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderColor: Colors.transparent,
+            borderWidth: 0,
+            opacity: 0.7,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMonthlyLineChart(Map<String, double> monthlyExpenses) {
+    // Prepare data for Syncfusion (x: month, y: amount)
+    final List<_LineChartData> chartData = monthlyExpenses.entries.map((entry) {
+      return _LineChartData(label: entry.key, value: entry.value);
+    }).toList();
+
+    if (chartData.isEmpty) {
+      return const Center(child: Text("No data to display."));
+    }
+
+    final double maxExpense = chartData
+        .map((e) => e.value)
+        .fold(0.0, (a, b) => a > b ? a : b);
+    final double interval = (maxExpense / 4).ceilToDouble();
+
+    return Container(
+      height: 320,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+      ),
+      child: SfCartesianChart(
+        tooltipBehavior: TooltipBehavior(enable: true),
+        primaryXAxis: CategoryAxis(
+          labelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
+          majorGridLines: const MajorGridLines(width: 0.5),
+        ),
+        primaryYAxis: NumericAxis(
+          labelStyle: const TextStyle(fontSize: 10),
+          axisLine: const AxisLine(width: 0),
+          majorGridLines: const MajorGridLines(width: 0.5),
+          minimum: 0,
+          maximum: maxExpense + interval * 2,
+          interval: interval,
+        ),
+        series: <CartesianSeries<_LineChartData, String>>[
+          LineSeries<_LineChartData, String>(
+            dataSource: chartData,
+            xValueMapper: (data, _) => data.label,
+            yValueMapper: (data, _) => data.value,
+            color: Colors.redAccent,
+            width: 4,
+            markerSettings: const MarkerSettings(
+              isVisible: true,
+              height: 8,
+              width: 8,
+              shape: DataMarkerType.circle,
+            ),
+            dataLabelSettings: const DataLabelSettings(isVisible: false),
+            enableTooltip: true,
+          ),
+          AreaSeries<_LineChartData, String>(
+            dataSource: chartData,
+            xValueMapper: (data, _) => data.label,
             yValueMapper: (data, _) => data.value,
             gradient: LinearGradient(
               colors: [

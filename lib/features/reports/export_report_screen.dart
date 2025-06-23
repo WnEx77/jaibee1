@@ -11,6 +11,7 @@ import 'package:printing/printing.dart';
 import 'package:jaibee1/shared/widgets/app_background.dart';
 import 'package:jaibee1/shared/widgets/custom_app_bar.dart';
 import 'package:jaibee1/core/theme/mint_jade_theme.dart';
+import 'package:jaibee1/shared/widgets/global_date_picker.dart';
 
 class ExportReportScreen extends StatefulWidget {
   const ExportReportScreen({super.key});
@@ -69,12 +70,18 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
     pw.Font? baseFont;
     pw.Font? boldFont;
     if (isArabic) {
-      final arabicFontData = await rootBundle.load('assets/fonts/NotoSansArabic-Regular.ttf');
+      final arabicFontData = await rootBundle.load(
+        'assets/fonts/NotoSansArabic-Regular.ttf',
+      );
       baseFont = pw.Font.ttf(arabicFontData);
       boldFont = baseFont;
     } else {
-      baseFont = pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Regular.ttf'));
-      boldFont = pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Bold.ttf'));
+      baseFont = pw.Font.ttf(
+        await rootBundle.load('assets/fonts/Roboto-Regular.ttf'),
+      );
+      boldFont = pw.Font.ttf(
+        await rootBundle.load('assets/fonts/Roboto-Bold.ttf'),
+      );
     }
 
     // period variable removed as it was unused
@@ -82,9 +89,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
     pdf.addPage(
       pw.MultiPage(
         theme: pw.ThemeData.withFont(base: baseFont, bold: boldFont),
-        textDirection: isArabic
-            ? pw.TextDirection.rtl
-            : pw.TextDirection.ltr,
+        textDirection: isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
         build: (context) => [
           // Header with logo
           pw.Row(
@@ -163,9 +168,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
               data: transactions
                   .map(
                     (t) => [
-                      DateFormat.yMMMd(
-                        localeCode,
-                      ).format(t.date),
+                      DateFormat.yMMMd(localeCode).format(t.date),
                       t.category,
                       t.amount.toStringAsFixed(2),
                       t.isIncome ? localizer.income : localizer.expense,
@@ -213,88 +216,32 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
     DateTime minDate = isStart ? DateTime(2000) : _selectedRange!.start;
     DateTime maxDate = isStart ? _selectedRange!.end : DateTime.now();
 
-    await showDialog(
+    final pickedDate = await showGlobalCupertinoDatePicker(
       context: context,
-      builder: (BuildContext context) {
-        DateTime pickedDate = initialDate;
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        final backgroundColor = isDark ? Colors.grey[900] : Colors.white;
-        final textColor = isDark ? Colors.white : Colors.black;
-
-        return AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          content: SizedBox(
-            width: 340,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 12),
-                Text(
-                  isStart
-                      ? S.of(context)!.startDate
-                      : S.of(context)!.endDate,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 180,
-                  width: 260,
-                  child: CupertinoTheme(
-                    data: CupertinoThemeData(
-                      brightness: isDark ? Brightness.dark : Brightness.light,
-                      textTheme: CupertinoTextThemeData(
-                        dateTimePickerTextStyle: TextStyle(
-                          color: textColor,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    child: CupertinoDatePicker(
-                      mode: CupertinoDatePickerMode.date,
-                      initialDateTime: initialDate,
-                      minimumDate: minDate,
-                      maximumDate: maxDate,
-                      onDateTimeChanged: (date) {
-                        pickedDate = date;
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                CupertinoButton(
-                  child: Text('Done', style: TextStyle(color: textColor)),
-                  onPressed: () {
-                    setState(() {
-                      if (isStart) {
-                        _selectedRange = DateTimeRange(
-                          start: pickedDate,
-                          end: _selectedRange!.end.isBefore(pickedDate)
-                              ? pickedDate
-                              : _selectedRange!.end,
-                        );
-                      } else {
-                        _selectedRange = DateTimeRange(
-                          start: _selectedRange!.start,
-                          end: pickedDate.isBefore(_selectedRange!.start)
-                              ? _selectedRange!.start
-                              : pickedDate,
-                        );
-                      }
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-                const SizedBox(height: 12),
-              ],
-            ),
-          ),
-          backgroundColor: backgroundColor,
-        );
-      },
+      initialDate: initialDate,
+      minDate: minDate,
+      maxDate: maxDate,
     );
+
+    if (pickedDate != null) {
+      setState(() {
+        if (isStart) {
+          _selectedRange = DateTimeRange(
+            start: pickedDate,
+            end: _selectedRange!.end.isBefore(pickedDate)
+                ? pickedDate
+                : _selectedRange!.end,
+          );
+        } else {
+          _selectedRange = DateTimeRange(
+            start: _selectedRange!.start,
+            end: pickedDate.isBefore(_selectedRange!.start)
+                ? _selectedRange!.start
+                : pickedDate,
+          );
+        }
+      });
+    }
   }
 
   @override

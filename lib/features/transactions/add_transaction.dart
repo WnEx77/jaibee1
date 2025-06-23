@@ -12,6 +12,7 @@ import 'package:jaibee1/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/currency_utils.dart';
+import 'package:jaibee1/shared/widgets/global_date_picker.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -35,8 +36,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     // No need to load categories here, handled by ValueListenableBuilder
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
@@ -59,7 +58,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   _buildAmountField(localizer),
                   const SizedBox(height: 16),
                   ValueListenableBuilder(
-                    valueListenable: Hive.box<Category>('categories').listenable(),
+                    valueListenable: Hive.box<Category>(
+                      'categories',
+                    ).listenable(),
                     builder: (context, Box<Category> box, _) {
                       final categories = box.values.toList();
                       return _buildCategoryDropdown(localizer, categories);
@@ -90,30 +91,32 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         future: buildCurrencySymbolWidget(),
         builder: (context, snapshot) {
           return TextFormField(
-        controller: _amountController,
-        keyboardType: TextInputType.number,
-        validator: (value) => (value == null || value.isEmpty)
-            ? localizer.pleaseEnterAmount
-            : null,
-        style: TextStyle(
-          color: isDark ? Colors.white : Colors.black,
-          fontSize: 16,
-        ),
-        decoration: InputDecoration(
-          labelText: localizer.amount,
-          prefixIcon: Padding(
-            padding: const EdgeInsets.all(12),
-            child: snapshot.connectionState == ConnectionState.done && snapshot.hasData
-            ? snapshot.data!
-            : SizedBox(width: 24, height: 24),
-          ),
-          hintText: localizer.enterAmount,
-          border: InputBorder.none,
-        ),
+            controller: _amountController,
+            keyboardType: TextInputType.number,
+            validator: (value) => (value == null || value.isEmpty)
+                ? localizer.pleaseEnterAmount
+                : null,
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+              fontSize: 16,
+            ),
+            decoration: InputDecoration(
+              labelText: localizer.amount,
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(12),
+                child:
+                    snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData
+                    ? snapshot.data!
+                    : SizedBox(width: 24, height: 24),
+              ),
+              hintText: localizer.enterAmount,
+              border: InputBorder.none,
+            ),
           );
         },
       ),
-      );
+    );
   }
 
   Widget _buildCategoryDropdown(S localizer, List<Category> categories) {
@@ -179,9 +182,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           onPressed: (int index) {
             setState(() {
               _isIncome = index == 1;
-              _category = _isIncome
-                  ? 'income'
-                  : '';
+              _category = _isIncome ? 'income' : '';
             });
           },
           borderRadius: BorderRadius.circular(12),
@@ -319,61 +320,28 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    DateTime tempSelectedDate = _selectedDate;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    await showCupertinoModalPopup<void>(
+    final picked = await showGlobalCupertinoDatePicker(
       context: context,
-      builder: (_) => Container(
-        height: 400,
-        padding: const EdgeInsets.only(top: 16),
-        color: isDark ? Colors.grey[900] : Colors.white,
-        child: Column(
-          children: [
-            Expanded(
-              child: CupertinoTheme(
-                data: CupertinoThemeData(
-                  brightness: isDark ? Brightness.dark : Brightness.light,
-                  textTheme: CupertinoTextThemeData(
-                    dateTimePickerTextStyle: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                      fontSize: 22,
-                    ),
-                  ),
-                ),
-                child: CupertinoDatePicker(
-                  initialDateTime: tempSelectedDate,
-                  minimumDate: DateTime(2000),
-                  maximumDate: DateTime.now(),
-                  mode: CupertinoDatePickerMode.date,
-                  onDateTimeChanged: (newDate) => tempSelectedDate = newDate,
-                ),
-              ),
-            ),
-            CupertinoButton(
-              child: const Text('Done'),
-              onPressed: () {
-                setState(() => _selectedDate = tempSelectedDate);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ),
+      initialDate: _selectedDate,
+      minDate: DateTime(2000),
+      maxDate: DateTime.now(),
     );
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
+    }
   }
 
   Future<Widget> buildCurrencySymbolWidget() async {
-  final prefs = await SharedPreferences.getInstance();
-  final code = prefs.getString('currency_code') ?? 'SAR';
-  final currency = getCurrencyByCode(code);
+    final prefs = await SharedPreferences.getInstance();
+    final code = prefs.getString('currency_code') ?? 'SAR';
+    final currency = getCurrencyByCode(code);
 
-  if (currency.asset != null) {
-    return Image.asset(currency.asset!, width: 22, height: 22);
-  } else {
-    return Text(currency.symbol, style: const TextStyle(fontSize: 22));
+    if (currency.asset != null) {
+      return Image.asset(currency.asset!, width: 22, height: 22);
+    } else {
+      return Text(currency.symbol, style: const TextStyle(fontSize: 22));
+    }
   }
-}
 
   Widget _styledContainer({required Widget child}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -399,6 +367,4 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       child: child,
     );
   }
-
-
 }

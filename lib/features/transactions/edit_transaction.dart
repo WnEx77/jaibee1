@@ -14,6 +14,7 @@ import 'package:jaibee1/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee1/core/utils/currency_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jaibee1/shared/widgets/global_date_picker.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -63,53 +64,17 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    DateTime tempSelectedDate = _selectedDate;
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    await showCupertinoModalPopup<void>(
+    final picked = await showGlobalCupertinoDatePicker(
       context: context,
-      builder: (_) => Container(
-        height: 400,
-        padding: const EdgeInsets.only(top: 16),
-        color: isDark ? Colors.grey[900] : Colors.white,
-        child: Column(
-          children: [
-            Expanded(
-              child: CupertinoTheme(
-                data: CupertinoThemeData(
-                  brightness: isDark ? Brightness.dark : Brightness.light,
-                  textTheme: CupertinoTextThemeData(
-                    dateTimePickerTextStyle: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                      fontSize: 22,
-                    ),
-                  ),
-                ),
-                child: CupertinoDatePicker(
-                  initialDateTime: tempSelectedDate,
-                  minimumDate: DateTime(2000),
-                  maximumDate: DateTime.now(),
-                  mode: CupertinoDatePickerMode.date,
-                  onDateTimeChanged: (DateTime newDate) {
-                    tempSelectedDate = newDate;
-                  },
-                ),
-              ),
-            ),
-            CupertinoButton(
-              child: const Text('Done'),
-              onPressed: () {
-                setState(() {
-                  _selectedDate = tempSelectedDate;
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ),
+      initialDate: _selectedDate,
+      minDate: DateTime(2000),
+      maxDate: DateTime.now(),
     );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   void _saveTransaction() {
@@ -149,9 +114,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       context: context,
       barrierDismissible: true,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: Theme.of(context).dialogBackgroundColor,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
@@ -162,9 +125,9 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
               const SizedBox(height: 16),
               Text(
                 S.of(context)!.deleteTransaction,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -211,7 +174,10 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                         margin: const EdgeInsets.all(8),
                         borderRadius: BorderRadius.circular(8),
                         flushbarPosition: FlushbarPosition.BOTTOM,
-                        icon: const Icon(Icons.check_circle, color: Colors.white),
+                        icon: const Icon(
+                          Icons.check_circle,
+                          color: Colors.white,
+                        ),
                       ).show(context);
                     },
                   ),
@@ -256,7 +222,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     }
   }
 
-    Future<Widget> buildCurrencySymbolWidget(BuildContext context) async {
+  Future<Widget> buildCurrencySymbolWidget(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final code = prefs.getString('currency_code') ?? 'SAR';
     final currency = getCurrencyByCode(code);
@@ -314,170 +280,200 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                            FutureBuilder<Widget>(
+                          FutureBuilder<Widget>(
                             future: buildCurrencySymbolWidget(context),
                             builder: (context, snapshot) {
                               return TextFormField(
-                              controller: _amountController,
-                              keyboardType: TextInputType.numberWithOptions(
-                                decimal: true,
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}'),
+                                controller: _amountController,
+                                keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true,
                                 ),
-                              ],
-                              decoration: InputDecoration(
-                                labelText: localizer.amount,
-                                border: InputBorder.none,
-                                filled: true,
-                                fillColor: Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.grey[900]
-                                  : Colors.white,
-                                contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d+\.?\d{0,2}'),
+                                  ),
+                                ],
+                                decoration: InputDecoration(
+                                  labelText: localizer.amount,
+                                  border: InputBorder.none,
+                                  filled: true,
+                                  fillColor:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey[900]
+                                      : Colors.white,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                    borderSide: BorderSide(
+                                      color:
+                                          Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.grey[800]!
+                                          : Colors.grey[200]!,
+                                      width: 1.2,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                    borderSide: const BorderSide(
+                                      color: Colors.teal,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  icon: snapshot.hasData
+                                      ? snapshot.data
+                                      : const SizedBox(width: 24, height: 24),
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(18),
-                                borderSide: BorderSide(
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.grey[800]!
-                                    : Colors.grey[200]!,
-                                  width: 1.2,
-                                ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(18),
-                                borderSide: const BorderSide(color: Colors.teal, width: 1.5),
-                                ),
-                                icon: snapshot.hasData
-                                  ? snapshot.data
-                                  : const SizedBox(width: 24, height: 24),
-                              ),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                return localizer.pleaseEnterAmount;
-                                }
-                                return null;
-                              },
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return localizer.pleaseEnterAmount;
+                                  }
+                                  return null;
+                                },
                               );
                             },
-                            ),
-                        const SizedBox(height: 16),
+                          ),
+                          const SizedBox(height: 16),
 
-                        DropdownButtonFormField<String>(
-                          value: _category.isNotEmpty ? _category : null,
-                          items: _buildCategoryItems(localizer),
-                          onChanged: _isIncome ? null : (val) => setState(() => _category = val!),
-                          decoration: InputDecoration(
-                            labelText: localizer.category,
-                            border: InputBorder.none,
-                            filled: true,
-                            fillColor: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.grey[900]
-                                : Colors.white,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 14,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.grey[800]!
-                                    : Colors.grey[200]!,
-                                width: 1.2,
+                          DropdownButtonFormField<String>(
+                            value: _category.isNotEmpty ? _category : null,
+                            items: _buildCategoryItems(localizer),
+                            onChanged: _isIncome
+                                ? null
+                                : (val) => setState(() => _category = val!),
+                            decoration: InputDecoration(
+                              labelText: localizer.category,
+                              border: InputBorder.none,
+                              filled: true,
+                              fillColor:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.grey[900]
+                                  : Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: const BorderSide(color: Colors.teal, width: 1.5),
-                            ),
-                            icon: Icon(
-                              getCategoryIcon(
-                                _customCategories.firstWhere(
-                                  (cat) => cat.name == _category,
-                                  orElse: () => Category(name: _category, icon: ''),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: BorderSide(
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey[800]!
+                                      : Colors.grey[200]!,
+                                  width: 1.2,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: const BorderSide(
+                                  color: Colors.teal,
+                                  width: 1.5,
+                                ),
+                              ),
+                              icon: Icon(
+                                getCategoryIcon(
+                                  _customCategories.firstWhere(
+                                    (cat) => cat.name == _category,
+                                    orElse: () =>
+                                        Category(name: _category, icon: ''),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          borderRadius: BorderRadius.circular(18),
-                          icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 28),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return localizer.pleaseSelectCategory;
-                            }
-                            return null;
-                          },
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        ListTile(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          // tileColor: Colors.blue.shade50.withOpacity(0.3),
-                          leading: Icon(
-                            Icons.calendar_today,
-                            color: mintJade!.buttonColor,
-                          ),
-                          title: Text(
-                            '${localizer.date}: ${DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(_selectedDate)}',
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          onTap: () => _selectDate(context),
-                        ),
-                        const SizedBox(height: 16),
-
-                        TextFormField(
-                          controller: _descriptionController,
-                          maxLines: 2,
-                          decoration: InputDecoration(
-                            labelText: localizer.description,
-                            border: InputBorder.none,
-                            filled: true,
-                            fillColor: Theme.of(context).brightness == Brightness.dark
-                                ? Colors.grey[900]
-                                : Colors.white,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 14,
+                            borderRadius: BorderRadius.circular(18),
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 28,
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.grey[800]!
-                                    : Colors.grey[200]!,
-                                width: 1.2,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: const BorderSide(color: Colors.teal, width: 1.5),
-                            ),
-                            icon: const Icon(Icons.notes),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return localizer.pleaseSelectCategory;
+                              }
+                              return null;
+                            },
                           ),
-                        ),
-                        const SizedBox(height: 24),
 
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.save),
-                          label: Text(localizer.saveChanges),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: mintJade.buttonColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          const SizedBox(height: 16),
+
+                          ListTile(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
+                            // tileColor: Colors.blue.shade50.withOpacity(0.3),
+                            leading: Icon(
+                              Icons.calendar_today,
+                              color: mintJade!.buttonColor,
+                            ),
+                            title: Text(
+                              '${localizer.date}: ${DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(_selectedDate)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            onTap: () => _selectDate(context),
                           ),
-                          onPressed: _saveTransaction,
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+
+                          TextFormField(
+                            controller: _descriptionController,
+                            maxLines: 2,
+                            decoration: InputDecoration(
+                              labelText: localizer.description,
+                              border: InputBorder.none,
+                              filled: true,
+                              fillColor:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.grey[900]
+                                  : Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: BorderSide(
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey[800]!
+                                      : Colors.grey[200]!,
+                                  width: 1.2,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: const BorderSide(
+                                  color: Colors.teal,
+                                  width: 1.5,
+                                ),
+                              ),
+                              icon: const Icon(Icons.notes),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.save),
+                            label: Text(localizer.saveChanges),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: mintJade.buttonColor,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: _saveTransaction,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -486,7 +482,6 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
           ),
         ),
       ),
-    )
     );
   }
 }
