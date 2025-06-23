@@ -662,11 +662,11 @@ class SAr extends S {
   String get clickToSeeAllCategoriesInfo => 'انقر لرؤية جميع الفئات';
 
   @override
-  String get filterByRange => 'Filter';
+  String get filterByRange => 'تصفية';
 
   @override
-  String get clearFilter => 'Clear Filter';
+  String get clearFilter => 'مسح التصفية';
 
   @override
-  String get chooseDateRange => 'Choose Date Range';
+  String get chooseDateRange => 'اختر نطاق التاريخ';
 }

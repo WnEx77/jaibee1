@@ -111,7 +111,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
   }
 
   Future<void> _pickRange(BuildContext context) async {
-    print('test');
     final localizer = S.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -122,11 +121,14 @@ class _TransactionScreenState extends State<TransactionScreen> {
           end: DateTime.now(),
         );
 
+    DateTimeRange? selectedRange = tempRange;
+
+    bool userPressedDone = false;
+
     await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        DateTimeRange selectedRange = tempRange!;
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -171,7 +173,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                           child: ListTile(
                             title: Text(localizer.startDate),
                             subtitle: Text(
-                              DateFormat.yMMMd().format(selectedRange.start),
+                              DateFormat.yMMMd().format(selectedRange!.start),
                               style: TextStyle(
                                 color: isDark
                                     ? Colors.grey[300]
@@ -186,17 +188,17 @@ class _TransactionScreenState extends State<TransactionScreen> {
                               final picked =
                                   await showGlobalCupertinoDatePicker(
                                     context: context,
-                                    initialDate: selectedRange.start,
+                                    initialDate: selectedRange!.start,
                                     minDate: DateTime(2000),
-                                    maxDate: selectedRange.end,
+                                    maxDate: selectedRange!.end,
                                   );
                               if (picked != null) {
                                 setState(() {
                                   selectedRange = DateTimeRange(
                                     start: picked,
-                                    end: selectedRange.end.isBefore(picked)
+                                    end: selectedRange!.end.isBefore(picked)
                                         ? picked
-                                        : selectedRange.end,
+                                        : selectedRange!.end,
                                   );
                                 });
                               }
@@ -208,7 +210,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                           child: ListTile(
                             title: Text(localizer.endDate),
                             subtitle: Text(
-                              DateFormat.yMMMd().format(selectedRange.end),
+                              DateFormat.yMMMd().format(selectedRange!.end),
                               style: TextStyle(
                                 color: isDark
                                     ? Colors.grey[300]
@@ -223,16 +225,16 @@ class _TransactionScreenState extends State<TransactionScreen> {
                               final picked =
                                   await showGlobalCupertinoDatePicker(
                                     context: context,
-                                    initialDate: selectedRange.end,
-                                    minDate: selectedRange.start,
+                                    initialDate: selectedRange!.end,
+                                    minDate: selectedRange!.start,
                                     maxDate: DateTime.now(),
                                   );
                               if (picked != null) {
                                 setState(() {
                                   selectedRange = DateTimeRange(
-                                    start: selectedRange.start,
-                                    end: picked.isBefore(selectedRange.start)
-                                        ? selectedRange.start
+                                    start: selectedRange!.start,
+                                    end: picked.isBefore(selectedRange!.start)
+                                        ? selectedRange!.start
                                         : picked,
                                   );
                                 });
@@ -249,11 +251,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
-                            setState(() {
-                              _selectedPeriod = 'monthly';
-                              _selectedRange = null;
-                              _selectedMonth = DateTime.now();
-                            });
                           },
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.grey.shade700,
@@ -266,6 +263,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         const SizedBox(width: 10),
                         ElevatedButton(
                           onPressed: () {
+                            userPressedDone = true;
                             tempRange = selectedRange;
                             Navigator.of(context).pop();
                           },
@@ -293,7 +291,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
       },
     );
 
-    if (tempRange != null) {
+    // Only update state if user pressed Done
+    if (userPressedDone && tempRange != null) {
       setState(() {
         _selectedRange = tempRange;
         _selectedPeriod = 'range';
@@ -302,138 +301,154 @@ class _TransactionScreenState extends State<TransactionScreen> {
   }
 
   void _showFilterDialog(BuildContext context) {
-  final localizer = S.of(context)!;
-  showDialog(
-    context: context,
-    builder: (context) {
-      String tempPeriod = _selectedPeriod;
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        backgroundColor: Theme.of(context).cardColor,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: StatefulBuilder(
-            builder: (context, setStateDialog) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.filter_list, color: Colors.blue.shade700, size: 28),
-                      const SizedBox(width: 10),
-                      Text(
-                        localizer.filter,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue.shade800,
-                            ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Material(
-                    color: Colors.transparent,
-                    child: Column(
+    final localizer = S.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) {
+        String tempPeriod = _selectedPeriod;
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          backgroundColor: Theme.of(context).cardColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: StatefulBuilder(
+              builder: (context, setStateDialog) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
                       children: [
-                        _ModernFilterTile(
-                          icon: Icons.today,
+                        Icon(
+                          Icons.filter_list,
                           color: Colors.blue.shade700,
-                          label: localizer.daily,
-                          selected: tempPeriod == 'daily',
-                          onTap: () => setStateDialog(() => tempPeriod = 'daily'),
+                          size: 28,
                         ),
-                        _ModernFilterTile(
-                          icon: Icons.calendar_month,
-                          color: Colors.green.shade700,
-                          label: localizer.monthly,
-                          selected: tempPeriod == 'monthly',
-                          onTap: () => setStateDialog(() => tempPeriod = 'monthly'),
-                        ),
-                        _ModernFilterTile(
-                          icon: Icons.filter_alt,
-                          color: Colors.purple.shade700,
-                          label: localizer.filterByRange,
-                          selected: tempPeriod == 'range',
-                          onTap: () => setStateDialog(() => tempPeriod = 'range'),
-                        ),
-                        if (_selectedPeriod == 'range' && _selectedRange != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12),
-                            child: OutlinedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                setState(() {
-                                  _selectedRange = null;
-                                  _selectedPeriod = 'monthly';
-                                  _selectedMonth = DateTime.now();
-                                });
-                              },
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.purple.shade700,
-                                side: BorderSide(color: Colors.purple.shade700),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
+                        const SizedBox(width: 10),
+                        Text(
+                          localizer.filter,
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade800,
                               ),
-                              child: Text(localizer.clearFilter),
-                            ),
-                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 28),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.grey.shade700,
-                          textStyle: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        child: Text(localizer.cancel),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () async {
-                          Navigator.of(context).pop(tempPeriod);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade700,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                    const SizedBox(height: 24),
+                    Material(
+                      color: Colors.transparent,
+                      child: Column(
+                        children: [
+                          _ModernFilterTile(
+                            icon: Icons.today,
+                            color: Colors.blue.shade700,
+                            label: localizer.daily,
+                            selected: tempPeriod == 'daily',
+                            onTap: () =>
+                                setStateDialog(() => tempPeriod = 'daily'),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                          elevation: 2,
-                        ),
-                        child: Text(localizer.done),
+                          _ModernFilterTile(
+                            icon: Icons.calendar_month,
+                            color: Colors.green.shade700,
+                            label: localizer.monthly,
+                            selected: tempPeriod == 'monthly',
+                            onTap: () =>
+                                setStateDialog(() => tempPeriod = 'monthly'),
+                          ),
+                          _ModernFilterTile(
+                            icon: Icons.filter_alt,
+                            color: Colors.purple.shade700,
+                            label: localizer.filterByRange,
+                            selected: tempPeriod == 'range',
+                            onTap: () =>
+                                setStateDialog(() => tempPeriod = 'range'),
+                          ),
+                          if (_selectedPeriod == 'range' &&
+                              _selectedRange != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  setState(() {
+                                    _selectedRange = null;
+                                    _selectedPeriod = 'monthly';
+                                    _selectedMonth = DateTime.now();
+                                  });
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.purple.shade700,
+                                  side: BorderSide(
+                                    color: Colors.purple.shade700,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                ),
+                                child: Text(localizer.clearFilter),
+                              ),
+                            ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
-              );
-            },
+                    ),
+                    const SizedBox(height: 28),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey.shade700,
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          child: Text(localizer.cancel),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop(tempPeriod);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 28,
+                              vertical: 14,
+                            ),
+                            elevation: 2,
+                          ),
+                          child: Text(localizer.done),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      );
-    },
-  ).then((result) async {
-    if (result == null) return;
-    if (result == 'range') {
-      await _pickRange(context);
-    } else {
-      setState(() {
-        _selectedPeriod = result;
-        _selectedRange = null;
-        _selectedMonth = DateTime.now();
-      });
-    }
-  });
-}
+        );
+      },
+    ).then((result) async {
+      if (result == null) return;
+      if (result == 'range') {
+        await _pickRange(context); // Only start filtering after Done
+      } else {
+        setState(() {
+          _selectedPeriod = result;
+          _selectedRange = null;
+          _selectedMonth = DateTime.now();
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
