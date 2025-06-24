@@ -351,97 +351,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: _showLanguageDialog,
                     ),
                     _buildDivider(),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.zero,
-                      color: Colors.transparent,
+                    ListTile(
+                      leading: Padding(
+                        padding: const EdgeInsets.only(left: 2, right: 2),
+                        child: Image.asset(
+                          'assets/images/Saudi_Riyal_Symbol.png', // Use your SAR symbol asset here
+                          width: 26,
+                          height: 26,
+                          color: Colors.teal,
+                        ),
+                      ),
+                      title: Text(
+                        S.of(context)!.currency,
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                      onTap: () => _showCurrencyPicker(context),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      minLeadingWidth: 0,
+                    ),
+                    _buildDivider(),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.brightness_6,
+                        color: Colors.blueGrey,
+                      ),
+                      title: Text(
+                        s.darkMode,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      trailing: Consumer<ThemeProvider>(
+                        builder: (context, themeProvider, _) {
+                          return Switch(
+                            value: themeProvider.isDarkTheme,
+                            onChanged: themeProvider.toggleTheme,
+                          );
+                        },
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 2,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            leading: SizedBox(
-                              width: 28, // Fixed width for all currency icons
-                              height: 28,
-                              child: Center(
-                                child: FutureBuilder<Widget>(
-                                  future: buildCurrencySymbolWidget(context),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                            ConnectionState.done &&
-                                        snapshot.hasData) {
-                                      return snapshot.data!;
-                                    }
-                                    return const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            title: Text(
-                              s.currency,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            trailing: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                              color: Colors.grey,
-                            ),
-                            onTap: () => _showCurrencyPicker(context),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 2,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            minLeadingWidth: 0,
-                            visualDensity: const VisualDensity(vertical: -2),
-                          ),
-                          _buildDivider(),
-                          ListTile(
-                            leading: const Icon(
-                              Icons.brightness_6,
-                              color: Colors.blueGrey,
-                            ),
-                            title: Text(
-                              s.darkMode,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                            ),
-                            trailing: Consumer<ThemeProvider>(
-                              builder: (context, themeProvider, _) {
-                                return Switch(
-                                  value: themeProvider.isDarkTheme,
-                                  onChanged: themeProvider.toggleTheme,
-                                );
-                              },
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 2,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            minLeadingWidth: 0,
-                          ),
-                        ],
-                      ),
+                      minLeadingWidth: 0,
                     ),
                   ],
                 ),

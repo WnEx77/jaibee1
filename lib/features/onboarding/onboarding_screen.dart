@@ -30,7 +30,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       OnboardingPageModel(
         title: S.of(context)!.welcomeTitle,
         description: S.of(context)!.welcomeDescription,
-        imageAsset: 'assets/images/logo.png',
+        lottieAsset: 'assets/animations/new_logo.json',
       ),
       OnboardingPageModel(
         title: S.of(context)!.trackTitle,

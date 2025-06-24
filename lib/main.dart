@@ -37,7 +37,7 @@ Future<void> main() async {
   await Hive.openBox<Goal>('goals');
   await Hive.openBox<Category>('userCategories');
 
-  // await prefs.clear(); // ← to test the onboarding screen ONLY
+  await prefs.clear(); // ← to test the onboarding screen ONLY
 
   // Remove this line in production
 

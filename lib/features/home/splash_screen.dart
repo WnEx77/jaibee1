@@ -12,15 +12,17 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-  with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
-    _controller =
-      AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
     _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
     _navigate();
@@ -32,9 +34,11 @@ class _SplashScreenState extends State<SplashScreen>
     final seenOnboarding = prefs.getBool('onboarding_completed') ?? false;
 
     if (mounted) {
-      Navigator.of(context).pushReplacement(_createRoute(
-        seenOnboarding ? const JaibeeHomeScreen() : const OnboardingScreen(),
-      ));
+      Navigator.of(context).pushReplacement(
+        _createRoute(
+          seenOnboarding ? const JaibeeHomeScreen() : const OnboardingScreen(),
+        ),
+      );
     }
   }
 
@@ -43,16 +47,13 @@ class _SplashScreenState extends State<SplashScreen>
       transitionDuration: const Duration(milliseconds: 700),
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final tween =
-          Tween(begin: const Offset(0.0, 1.0), end: Offset.zero).chain(
-          CurveTween(curve: Curves.ease),
-        );
+        final tween = Tween(
+          begin: const Offset(0.0, 1.0),
+          end: Offset.zero,
+        ).chain(CurveTween(curve: Curves.ease));
         return SlideTransition(
           position: animation.drive(tween),
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
@@ -84,19 +85,10 @@ class _SplashScreenState extends State<SplashScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          blurRadius: 30,
-                          spreadRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: Image.asset(
-                      'assets/images/logo.png',
-                      height: 120,
+                    child: Lottie.asset(
+                      'assets/animations/new_logo.json',
+                      height: 300,
+                      width: 300,
                     ),
                   ),
                   const SizedBox(height: 24),
