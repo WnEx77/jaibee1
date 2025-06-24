@@ -94,9 +94,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           return TextFormField(
             controller: _amountController,
             keyboardType: TextInputType.number,
-            validator: (value) => (value == null || value.isEmpty)
-                ? localizer.pleaseEnterAmount
-                : null,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return localizer.pleaseEnterAmount;
+              }
+              final numValue = double.tryParse(value);
+              if (numValue == null || numValue <= 1) {
+                return localizer
+                    .enterValidAmount; // Add this to your localization
+              }
+              return null;
+            },
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black,
               fontSize: 16,
@@ -302,7 +310,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       // Check if limit is exceeded for this category (only for expenses)
       bool exceededLimit = false;
       if (!_isIncome) {
-        final budgetBox = Hive.box<Budget>('budgets'); // Do NOT open the box again!
+        final budgetBox = Hive.box<Budget>(
+          'budgets',
+        ); // Do NOT open the box again!
         final budget = budgetBox.get(_category);
         if (budget != null) {
           final categoryLimit = budget.limit;

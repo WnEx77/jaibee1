@@ -93,7 +93,7 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
         budgets: budgets,
       );
 
-      final advice = await fetchFinancialAdvice(prompt);
+      final advice = await fetchFinancialAdvice(await prompt);
 
       setState(() {
         _summary = summary;

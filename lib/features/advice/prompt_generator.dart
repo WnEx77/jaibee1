@@ -1,105 +1,161 @@
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jaibee/core/utils/currency_utils.dart';
+
 import 'monthly_summary.dart';
 import 'dart:ui';
 
-String generatePrompt(
+Future<String> generatePrompt(
   MonthlySummary summary,
   Locale locale, {
   String? sex,
   int? age,
   List<Map<String, dynamic>> goals = const [],
   List<Map<String, dynamic>> budgets = const [],
-}) {
+}) async {
   final isArabic = locale.languageCode == 'ar';
   final prompt = StringBuffer();
 
+  // Get user's selected currency
+  final prefs = await SharedPreferences.getInstance();
+  final code = prefs.getString('currency_code') ?? 'SAR';
+  final currency = getCurrencyByCode(code);
+  final currencyLabel = currency.code == 'SAR' ? 'SAR' : currency.symbol;
+
   if (isArabic) {
-    prompt.writeln("جاوبني باللهجة السعودية العامية. أنت مستشار مالي ذكي وخبير، هدفك تعطيني نصيحة مالية عملية ومخصصة بناءً على وضعي الحالي.");
-    prompt.writeln("اعتمد على البيانات التالية، ووضح لي إذا كنت على الطريق الصحيح أو أحتاج أعدل من سلوكي المالي. إذا فيه أخطاء أو فرص للتحسين، وضحها بشكل واضح وبسيط.");
-    prompt.writeln("لا تكرر الأرقام، ركز على التحليل والنصائح العملية.");
-    prompt.writeln("إذا فيه تصنيفات صرف مرتفعة أو غير متوازنة، نبهني عليها واقترح حلول.");
-    prompt.writeln("إذا أهدافي غير واقعية أو تحتاج تعديل، وضح لي السبب واقترح خطة بديلة.");
-    prompt.writeln("إذا وضعي المالي ممتاز، امدحني واقترح كيف أطور أكثر.");
-    prompt.writeln("استخدم لغة سهلة وقصيرة، وركز على أهم نقطة واحدة أو نقطتين.");
+    prompt.writeln(
+      "ابدأ ردك دائمًا بالجملة التالية: عزيزي، بناءً على بياناتك المالية، هذا هو تحليلي ونصيحتي المخصصة لك:",
+    );
+    prompt.writeln(
+      "أنت مستشار مالي ذكي باللهجة السعودية. دورك تقدم تحليل مفصل ونصائح عملية بناءً على وضعي.",
+    );
+    prompt.writeln(
+      "لا تعيد ذكر الأرقام مثل ما هي، ركز على التحليل، التوجيه، والفرص.",
+    );
+    prompt.writeln(
+      "وضح لي إذا كنت أصرف بشكل متوازن، وإذا فيه تصنيفات تحتاج مراجعة.",
+    );
+    prompt.writeln("قيم أهدافي وإذا كانت مناسبة لوضعي الحالي أو تحتاج تعديل.");
+    prompt.writeln("إذا وضعي ممتاز، امدحني وعلمني كيف أطور نفسي أكثر.");
+    prompt.writeln("تكلم بلغة واضحة، قصيرة، وتركز على أهم نصيحتين أو ثلاث.");
 
     if (sex != null) prompt.writeln("الجنس: $sex");
     if (age != null) prompt.writeln("العمر: $age سنة");
 
-    if (budgets.isNotEmpty) {
-      prompt.writeln("\nتفصيل الميزانية حسب التصنيفات:");
-      for (var budget in budgets) {
-        prompt.writeln("- ${budget['category']}: الحد المخصص هو \$${budget['limit']}");
-      }
-    }
-
-    prompt.writeln("\nملخص الشهر الحالي:");
-    prompt.writeln("- الدخل الكلي: \$${summary.totalIncome.toStringAsFixed(2)}");
-    prompt.writeln("- مجموع المصروفات: \$${summary.totalExpenses.toStringAsFixed(2)}");
-
+    prompt.writeln("\n📊 ملخص الشهر:");
     prompt.writeln(
-      summary.monthlyLimit != null
-          ? "- الحد الشهري للصرف: \$${summary.monthlyLimit!.toStringAsFixed(2)}"
-          : "- ما حددت حد شهري للصرف.",
+      "- إجمالي الدخل: ${summary.totalIncome.toStringAsFixed(2)} $currencyLabel",
+    );
+    prompt.writeln(
+      "- إجمالي المصروفات: ${summary.totalExpenses.toStringAsFixed(2)} $currencyLabel",
     );
 
-    prompt.writeln("\nتفاصيل المصاريف حسب التصنيفات:");
+    if (summary.monthlyLimit != null) {
+      prompt.writeln(
+        "- الحد الشهري للصرف: ${summary.monthlyLimit!.toStringAsFixed(2)} $currencyLabel",
+      );
+    } else {
+      prompt.writeln("- ما تم تحديد حد شهري للصرف.");
+    }
+
+    prompt.writeln("\n💸 توزيع المصروفات حسب التصنيف:");
     summary.expensesByCategory.forEach((category, amount) {
-      prompt.writeln("- $category: \$${amount.toStringAsFixed(2)}");
+      prompt.writeln("- $category: ${amount.toStringAsFixed(2)} $currencyLabel");
     });
 
-    if (goals.isNotEmpty) {
-      prompt.writeln("\nأهدافي المالية الحالية:");
-      for (var goal in goals) {
-        prompt.writeln("- أبغى أوصل لهدف '${goal['item']}' عن طريق استثمار \$${goal['monthly']} شهريًا لمدة ${goal['months']} شهر (${goal['type']}).");
-      }
-    }
-
-    prompt.writeln(
-      "\nبناءً على كل المعلومات أعلاه، عطِني نصيحة مالية مختصرة وواضحة تناسب وضعي. قيم صرفي وأهدافي، واقترح لي أهم تعديل أو خطوة أبدأ فيها الآن.",
-    );
-  } else {
-    prompt.writeln("You are an expert personal finance advisor. Your goal is to give me actionable, personalized advice based on my current financial data.");
-    prompt.writeln("Analyze the data below and tell me if my spending and goals are on track, or if I need to make changes. Highlight any issues or opportunities for improvement.");
-    prompt.writeln("Do not repeat the numbers, focus on analysis and practical tips.");
-    prompt.writeln("If any expense categories are unusually high or unbalanced, point them out and suggest solutions.");
-    prompt.writeln("If my goals are unrealistic or need adjustment, explain why and suggest a better plan.");
-    prompt.writeln("If my finances are excellent, acknowledge that and suggest how I can improve even further.");
-    prompt.writeln("Use clear, concise language and focus on one or two key points.");
-
-    if (sex != null) prompt.writeln("Sex: $sex");
-    if (age != null) prompt.writeln("Age: $age");
-
     if (budgets.isNotEmpty) {
-      prompt.writeln("\nBudget breakdown by category:");
+      prompt.writeln("\n🧾 الميزانية المحددة لكل تصنيف:");
       for (var budget in budgets) {
-        prompt.writeln("- ${budget['category']}: Limit \$${budget['limit']}");
+        final category = budget['category'];
+        final limit = budget['limit'];
+        final spent = summary.expensesByCategory[category] ?? 0.0;
+        final status = spent > limit ? "🔴 فوق الحد" : "🟢 ضمن الحد";
+        prompt.writeln(
+          "- $category: صرفت ${spent.toStringAsFixed(2)} $currencyLabel (الحد: ${limit.toStringAsFixed(2)} $currencyLabel) $status",
+        );
       }
     }
 
-    prompt.writeln("\nMonthly Summary:");
-    prompt.writeln("Income: \$${summary.totalIncome.toStringAsFixed(2)}");
-    prompt.writeln("Expenses: \$${summary.totalExpenses.toStringAsFixed(2)}");
-    prompt.writeln(
-      summary.monthlyLimit != null
-          ? "Spending Limit: \$${summary.monthlyLimit!.toStringAsFixed(2)}"
-          : "No spending limit set.",
-    );
-
-    prompt.writeln("\nExpense breakdown by category:");
-    summary.expensesByCategory.forEach((category, amount) {
-      prompt.writeln("- $category: \$${amount.toStringAsFixed(2)}");
-    });
-
     if (goals.isNotEmpty) {
-      prompt.writeln("\nUser's financial goals:");
+      prompt.writeln("\n🎯 أهدافي المالية:");
       for (var goal in goals) {
         prompt.writeln(
-          "- Goal Type: ${goal['type']}, Item: ${goal['item']}, Monthly Investment: \$${goal['monthly']}, Timeframe: ${goal['months']} months",
+          "- أبغى أحقق '${goal['item']}' عن طريق توفير ${goal['monthly']} $currencyLabel شهرياً لمدة ${goal['months']} شهر (${goal['type']}).",
         );
       }
     }
 
     prompt.writeln(
-      "\nBased on all the above, give me a concise, practical financial advice tailored to my situation. Evaluate my spending and goals, and suggest the most important adjustment or next step I should take.",
+      "\n📌 عطِني تحليل صريح، مع أهم 2-3 نصائح ممكن تساعدني أبدأ أتحسن من اليوم.",
+    );
+  } else {
+    prompt.writeln(
+      "Start your response with this sentence exactly: Dear, based on your financial data, here is my analysis and tailored advice:",
+    );
+    prompt.writeln(
+      "You are a smart financial advisor. Your role is to provide personal, insightful, and actionable financial guidance.",
+    );
+    prompt.writeln(
+      "Do not simply repeat numbers. Focus on insight, trends, and decision-making.",
+    );
+    prompt.writeln("Tell me if my expenses are healthy or need adjustment.");
+    prompt.writeln(
+      "Evaluate my goals: Are they realistic? Are they aligned with my financial status?",
+    );
+    prompt.writeln(
+      "Praise me if I’m doing well, and suggest what to improve further.",
+    );
+    prompt.writeln(
+      "Keep your advice focused on the top 2–3 most impactful changes.",
+    );
+
+    if (sex != null) prompt.writeln("Sex: $sex");
+    if (age != null) prompt.writeln("Age: $age");
+
+    prompt.writeln("\n📊 Monthly Summary:");
+    prompt.writeln(
+      "- Total Income: ${summary.totalIncome.toStringAsFixed(2)} $currencyLabel",
+    );
+    prompt.writeln(
+      "- Total Expenses: ${summary.totalExpenses.toStringAsFixed(2)} $currencyLabel",
+    );
+
+    if (summary.monthlyLimit != null) {
+      prompt.writeln(
+        "- Monthly Spending Limit: ${summary.monthlyLimit!.toStringAsFixed(2)} $currencyLabel",
+      );
+    } else {
+      prompt.writeln("- No monthly spending limit has been set.");
+    }
+
+    prompt.writeln("\n💸 Expense Breakdown by Category:");
+    summary.expensesByCategory.forEach((category, amount) {
+      prompt.writeln("- $category: ${amount.toStringAsFixed(2)} $currencyLabel");
+    });
+
+    if (budgets.isNotEmpty) {
+      prompt.writeln("\n🧾 Budget Overview:");
+      for (var budget in budgets) {
+        final category = budget['category'];
+        final limit = budget['limit'];
+        final spent = summary.expensesByCategory[category] ?? 0.0;
+        final status = spent > limit ? "🔴 Over Budget" : "🟢 Within Budget";
+        prompt.writeln(
+          "- $category: Spent ${spent.toStringAsFixed(2)} $currencyLabel (Limit: ${limit.toStringAsFixed(2)} $currencyLabel) $status",
+        );
+      }
+    }
+
+    if (goals.isNotEmpty) {
+      prompt.writeln("\n🎯 My Financial Goals:");
+      for (var goal in goals) {
+        prompt.writeln(
+          "- Goal '${goal['item']}' — Saving ${goal['monthly']} $currencyLabel per month for ${goal['months']} months (${goal['type']}).",
+        );
+      }
+    }
+
+    prompt.writeln(
+      "\n📌 Based on all the above, provide a clear and actionable evaluation of my finances with your top 2–3 personalized recommendations.",
     );
   }
 
