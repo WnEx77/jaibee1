@@ -179,7 +179,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       (c) => c.code == 'SAR',
       orElse: () => supportedCurrencies.first,
     );
-    final saudiAsset = saudiRiyal.getAsset(isDarkMode: Theme.of(context).brightness == Brightness.dark);
+    final saudiAsset = saudiRiyal.getAsset(
+      isDarkMode: Theme.of(context).brightness == Brightness.dark,
+    );
 
     showDialog(
       context: context,
@@ -200,11 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: Colors.teal,
                   )
                 else
-                  Icon(
-                    Icons.attach_money,
-                    size: 52,
-                    color: Colors.teal,
-                  ),
+                  Icon(Icons.attach_money, size: 52, color: Colors.teal),
                 const SizedBox(height: 12),
                 Text(
                   s.selectCurrency,
@@ -363,24 +361,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Column(
                         children: [
                           ListTile(
-                            leading: FutureBuilder<Widget>(
-                              future: buildCurrencySymbolWidget(context),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                        ConnectionState.done &&
-                                    snapshot.hasData) {
-                                  return snapshot.data!;
-                                }
-                                return const SizedBox(
-                                  width: 28,
-                                  height: 28,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                );
-                              },
+                            leading: SizedBox(
+                              width: 28, // Fixed width for all currency icons
+                              height: 28,
+                              child: Center(
+                                child: FutureBuilder<Widget>(
+                                  future: buildCurrencySymbolWidget(context),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                            ConnectionState.done &&
+                                        snapshot.hasData) {
+                                      return snapshot.data!;
+                                    }
+                                    return const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
                             title: Text(
                               s.currency,
@@ -388,6 +392,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
                               ),
+                              textAlign: TextAlign.left,
                             ),
                             trailing: const Icon(
                               Icons.arrow_forward_ios,
@@ -403,6 +408,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             minLeadingWidth: 0,
+                            visualDensity: const VisualDensity(vertical: -2),
                           ),
                           _buildDivider(),
                           ListTile(

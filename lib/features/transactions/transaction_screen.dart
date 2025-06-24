@@ -100,6 +100,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
     final currency = getCurrencyByCode(code);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final asset = currency.getAsset(isDarkMode: isDark);
+
+
     if (asset != null) {
       return Image.asset(asset, width: 18, height: 18, color: color);
     } else {
@@ -112,6 +114,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   Future<void> _pickRange(BuildContext context) async {
     final localizer = S.of(context)!;
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+
+
 
     DateTimeRange? tempRange =
         _selectedRange ??
@@ -240,7 +245,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade700,
+                            backgroundColor: mintTheme.buttonColor,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -275,6 +280,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   void _showFilterDialog(BuildContext context) {
     final localizer = S.of(context)!;
+    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
     showDialog(
       context: context,
       builder: (context) {
@@ -387,7 +393,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             Navigator.of(context).pop(tempPeriod);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade700,
+                            backgroundColor: mintTheme.buttonColor,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
