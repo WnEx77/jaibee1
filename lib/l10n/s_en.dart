@@ -655,7 +655,7 @@ class SEn extends S {
   String get clickToSeeAllCategoriesInfo => 'Click to see all categories';
 
   @override
-  String get filterByRange => 'Filter';
+  String get filterByRange => 'Filter By Range';
 
   @override
   String get clearFilter => 'Clear';

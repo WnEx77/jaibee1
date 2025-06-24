@@ -112,7 +112,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   Future<void> _pickRange(BuildContext context) async {
     final localizer = S.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     DateTimeRange? tempRange =
         _selectedRange ??
@@ -241,7 +240,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.purple.shade700,
+                            backgroundColor: Colors.blue.shade700,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -296,7 +295,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                     Row(
                       children: [
                         Icon(
-                          Icons.filter_list,
+                          Icons.filter_alt,
                           color: Colors.blue.shade700,
                           size: 28,
                         ),
@@ -736,7 +735,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                 const Spacer(),
                                 IconButton(
                                   icon: Icon(
-                                    Icons.filter_list,
+                                    Icons.filter_alt,
                                     color: Colors.blue.shade700,
                                     size: 28,
                                   ),
@@ -773,7 +772,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     ),
                                     IconButton(
                                       icon: Icon(
-                                        Icons.filter_list,
+                                        Icons.filter_alt,
                                         color: Colors.blue.shade700,
                                         size: 28,
                                       ),

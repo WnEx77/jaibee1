@@ -203,6 +203,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ValueListenableBuilder(
       valueListenable: Hive.box<Category>('categories').listenable(),
@@ -381,7 +382,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         children: [
                           Icon(
                             getCategoryIcon(category),
-                            color: mintTheme.buttonColor,
+                            color: isDark ? Colors.tealAccent : Colors.teal,
                             size: 30,
                           ),
                           const SizedBox(width: 12),

@@ -1354,7 +1354,7 @@ abstract class S {
   /// No description provided for @filterByRange.
   ///
   /// In en, this message translates to:
-  /// **'Filter'**
+  /// **'Filter By Range'**
   String get filterByRange;
 
   /// No description provided for @clearFilter.
