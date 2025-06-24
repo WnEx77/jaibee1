@@ -174,6 +174,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     String currentCode = prefs.getString('currency_code') ?? 'SAR';
 
+    // Always show Saudi Riyal symbol with teal color
+    final saudiRiyal = supportedCurrencies.firstWhere(
+      (c) => c.code == 'SAR',
+      orElse: () => supportedCurrencies.first,
+    );
+    final saudiAsset = saudiRiyal.getAsset(isDarkMode: Theme.of(context).brightness == Brightness.dark);
+
     showDialog(
       context: context,
       builder: (_) => Dialog(
@@ -185,35 +192,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  supportedCurrencies
-                              .firstWhere(
-                                (c) => c.code == currentCode,
-                                orElse: () => supportedCurrencies.first,
-                              )
-                              .asset !=
-                          null
-                      ? null
-                      : Icons.attach_money,
-                  size: 52,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                if (supportedCurrencies
-                        .firstWhere(
-                          (c) => c.code == currentCode,
-                          orElse: () => supportedCurrencies.first,
-                        )
-                        .asset !=
-                    null)
+                if (saudiAsset != null)
                   Image.asset(
-                    supportedCurrencies
-                        .firstWhere(
-                          (c) => c.code == currentCode,
-                          orElse: () => supportedCurrencies.first,
-                        )
-                        .asset!,
+                    saudiAsset,
                     width: 52,
                     height: 52,
+                    color: Colors.teal,
+                  )
+                else
+                  Icon(
+                    Icons.attach_money,
+                    size: 52,
+                    color: Colors.teal,
                   ),
                 const SizedBox(height: 12),
                 Text(
@@ -264,8 +254,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required AppCurrency currency,
     required bool isSelected,
     required VoidCallback onTap,
-    String? localizedName, // <-- Add this parameter
+    String? localizedName,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final asset = currency.getAsset(isDarkMode: isDark);
+
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,
@@ -281,8 +274,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              currency.asset != null
-                  ? Image.asset(currency.asset!, width: 22, height: 22)
+              asset != null
+                  ? Image.asset(asset, width: 22, height: 22)
                   : Text(currency.symbol, style: const TextStyle(fontSize: 22)),
               const SizedBox(width: 12),
               Text(
@@ -320,8 +313,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final currency = getCurrencyByCode(code);
 
     // Use theme from context for dark mode
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final asset = currency.getAsset(isDarkMode: isDark);
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    final asset = currency.getAsset();
     if (asset != null) {
       return Image.asset(asset, width: 26, height: 26, color: Colors.teal);
     } else {
