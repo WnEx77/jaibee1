@@ -7,7 +7,7 @@ import 'package:jaibee/features/transactions/edit_transaction.dart';
 import 'package:jaibee/shared/widgets/app_background.dart';
 import 'package:jaibee/data/models/category.dart';
 import 'package:jaibee/core/theme/mint_jade_theme.dart';
-import 'package:jaibee/features/transactions/category_progress_screen.dart';
+import 'package:jaibee/features/categories/category_progress_screen.dart';
 import 'package:jaibee/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee/data/models/budget.dart';
