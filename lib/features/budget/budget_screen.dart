@@ -412,25 +412,17 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                       Positioned.fill(
                                         child: Container(
                                           alignment: Alignment.centerLeft,
-                                          // decoration: BoxDecoration(
-                                          //   color: Colors.orange.withOpacity(
-                                          //     0.13,
-                                          //   ),
-                                          //   borderRadius: BorderRadius.circular(
-                                          //     10,
-                                          //   ),
-                                          // ),
                                           padding: const EdgeInsets.only(
-                                            left: 44,
-                                            right: 8,
+                                          left: 44,
+                                          right: 8,
                                           ),
                                           child: Text(
-                                            'Not Set',
-                                            style: TextStyle(
-                                              color: Colors.orange.shade800,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                            ),
+                                          S.of(context)!.notSet,
+                                          style: TextStyle(
+                                            color: Colors.orange.shade800,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
                                           ),
                                         ),
                                       ),

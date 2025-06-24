@@ -111,7 +111,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     ? snapshot.data!
                     : SizedBox(width: 24, height: 24),
               ),
-              hintText: localizer.enterAmount,
+              // hintText: localizer.enterAmount,
               border: InputBorder.none,
             ),
           );
@@ -252,7 +252,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             Icons.notes_rounded,
             color: isDark ? Colors.tealAccent : Colors.teal,
           ),
-          hintText: localizer.enterDescription,
+          // hintText: localizer.enterDescription,
           border: InputBorder.none,
         ),
       ),

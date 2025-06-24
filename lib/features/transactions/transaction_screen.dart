@@ -773,7 +773,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     IconButton(
                                       icon: Icon(
                                         Icons.filter_alt,
-                                        color: Colors.blue.shade700,
+                                        // color: Colors.blue.shade700,
                                         size: 28,
                                       ),
                                       tooltip: S.of(context)!.filter,
@@ -788,33 +788,36 @@ class _TransactionScreenState extends State<TransactionScreen> {
                     Expanded(
                       child: filteredTransactions.isEmpty
                           ? Center(
-                              child: Column(
+                                child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   FutureBuilder<Widget>(
-                                    future: buildCurrencySymbolWidget(
-                                      Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                              ConnectionState.done &&
-                                          snapshot.hasData) {
-                                        return SizedBox(
-                                          width: 80,
-                                          height: 80,
-                                          child: Center(
-                                            child: Opacity(
-                                              opacity: 0.4,
-                                              child: snapshot.data!,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                      return SizedBox(width: 80, height: 80);
-                                    },
+                                  future: buildCurrencySymbolWidget(
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black,
+                                  ),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done &&
+                                      snapshot.hasData) {
+                                    return SizedBox(
+                                      width: 140,
+                                      height: 140,
+                                      child: Center(
+                                      child: Opacity(
+                                        opacity: 0.4,
+                                        child: Transform.scale(
+                                        scale: 5, // 18*16=288, close to 300
+                                        child: snapshot.data!,
+                                        ),
+                                      ),
+                                      ),
+                                    );
+                                    }
+                                    return SizedBox(width: 140, height: 140);
+                                  },
                                   ),
                                   const SizedBox(height: 16),
                                   Text(localizer.noTransactions),

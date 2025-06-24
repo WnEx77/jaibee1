@@ -33,6 +33,7 @@ String getLocalizedCategory(String name, S localizer) {
 IconData getCategoryIcon(Category category) {
   const iconMap = {
     'shopping_cart': Icons.shopping_cart,
+    'coffee': Icons.local_cafe,
     'local_hospital': Icons.local_hospital,
     'directions_car': Icons.directions_car,
     'restaurant': Icons.restaurant,

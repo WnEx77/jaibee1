@@ -103,9 +103,9 @@
   "save": "Save",
   "budgetsSaved": "Budgets Saved",
   "replaceAll": "Replace All",
-  "monthlyLimitValidation": "يجب أن يكون الحد الشهري ({monthly}) مساويًا لمجموع حدود جميع الفئات ({total}).",
+  "monthlyLimitValidation": "Monthly limit ({monthly}) must equal the sum of all category limits ({total}).",
   "@monthlyLimitValidation": {
-    "description": "تحذير عندما لا يساوي الحد الشهري مجموع حدود الفئات",
+    "description": "Warning when monthly limit does not equal the sum of category limits",
     "placeholders": {
       "monthly": {},
       "total": {}

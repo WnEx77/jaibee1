@@ -320,7 +320,7 @@ class SEn extends S {
 
   @override
   String monthlyLimitValidation(Object monthly, Object total) {
-    return 'يجب أن يكون الحد الشهري ($monthly) مساويًا لمجموع حدود جميع الفئات ($total).';
+    return 'Monthly limit ($monthly) must equal the sum of all category limits ($total).';
   }
 
   @override

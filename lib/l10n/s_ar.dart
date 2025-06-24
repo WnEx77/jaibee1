@@ -60,7 +60,7 @@ class SAr extends S {
   String get noTransactions => 'لا توجد مصاريف حتى الآن.';
 
   @override
-  String get transactionDeleted => 'تم حذف المعاملة';
+  String get transactionDeleted => 'تم حذف المصروف';
 
   @override
   String get totalIncome => 'إجمالي الدخل';
@@ -105,7 +105,7 @@ class SAr extends S {
   String get cancel => 'إلغاء';
 
   @override
-  String get addQuickTransaction => 'إضافة معاملة سريعة';
+  String get addQuickTransaction => 'إضافة مصروف سريعة';
 
   @override
   String get filterTransactions => 'تصفية المصاريف';
@@ -153,19 +153,19 @@ class SAr extends S {
   String get other => 'أخرى';
 
   @override
-  String get editTransaction => 'تعديل المعاملة';
+  String get editTransaction => 'تعديل المصروف';
 
   @override
   String get saveChanges => 'حفظ التغييرات';
 
   @override
-  String get transactionUpdated => 'تم تحديث المعاملة بنجاح';
+  String get transactionUpdated => 'تم تحديث المصروف بنجاح';
 
   @override
-  String get pleaseSelectCategory => 'يرجى اختيار نوع المعاملة';
+  String get pleaseSelectCategory => 'يرجى اختيار نوع المصروف';
 
   @override
-  String get deleteTransaction => 'حذف المعاملة';
+  String get deleteTransaction => 'حذف المصروف';
 
   @override
   String get delete => 'حذف';
@@ -423,11 +423,11 @@ class SAr extends S {
   String get invalidMonthlyLimit => 'الحد الشهري غير صالح';
 
   @override
-  String get confirmDeletion => 'تأكيد حذف المعاملة';
+  String get confirmDeletion => 'تأكيد حذف المصروف';
 
   @override
   String get areYouSureDeleteTransaction =>
-      'هل أنت متأكد أنك ترغب في حذف المعاملة؟';
+      'هل أنت متأكد أنك ترغب في حذف المصروف؟';
 
   @override
   String get budgetDistribution => 'طريقة توزيع الميزانية';
@@ -529,7 +529,7 @@ class SAr extends S {
   String get buyMeACoffee => 'لدعم مطور التطبيق';
 
   @override
-  String get enterDescription => 'يرجى إدخال وصف المعاملة (اختياري).';
+  String get enterDescription => 'يرجى إدخال وصف المصروف (اختياري).';
 
   @override
   String get contactUs => 'تواصل معنا';

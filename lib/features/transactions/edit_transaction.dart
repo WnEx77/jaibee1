@@ -119,8 +119,9 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     );
     if (confirmed == true) {
       Hive.box('transactions').delete(widget.transactionKey);
-      Navigator.of(context).pop(); // Close dialog
-      Navigator.of(context).pop(); // Return to previous
+      Navigator.of(
+        context,
+      ).popUntil((route) => route.isFirst); // Go to home screen
       Flushbar(
         message: localizer.transactionDeleted,
         duration: const Duration(seconds: 2),
@@ -128,10 +129,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
         margin: const EdgeInsets.all(8),
         borderRadius: BorderRadius.circular(8),
         flushbarPosition: FlushbarPosition.BOTTOM,
-        icon: const Icon(
-          Icons.check_circle,
-          color: Colors.white,
-        ),
+        icon: const Icon(Icons.check_circle, color: Colors.white),
       ).show(context);
     }
   }
@@ -196,13 +194,13 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
           child: CustomAppBar(
             title: localizer.editTransaction,
             showBackButton: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.delete),
-                tooltip: localizer.deleteTransaction,
-                onPressed: _confirmDelete,
-              ),
-            ],
+            // actions: [
+            //   IconButton(
+            //     icon: const Icon(Icons.delete),
+            //     tooltip: localizer.deleteTransaction,
+            //     onPressed: _confirmDelete,
+            //   ),
+            // ],
           ),
         ),
         body: GestureDetector(
@@ -405,18 +403,50 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                           ),
                           const SizedBox(height: 24),
 
-                          ElevatedButton.icon(
-                            icon: const Icon(Icons.save),
-                            label: Text(localizer.saveChanges),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: mintJade.buttonColor,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                  ),
+                                  label: Text(
+                                    localizer.deleteTransaction,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.redAccent,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed: _confirmDelete,
+                                ),
                               ),
-                            ),
-                            onPressed: _saveTransaction,
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  icon: const Icon(Icons.save),
+                                  label: Text(localizer.saveChanges),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: mintJade.buttonColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed: _saveTransaction,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

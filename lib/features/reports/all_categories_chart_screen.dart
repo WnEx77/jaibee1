@@ -49,50 +49,48 @@ class AllCategoriesChartScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              width:
-                  sortedCategories.length *
-                  80.0, // 80px per bar, adjust as needed
-              // ...existing code...
-              child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                  ),
-                  labelRotation: 45,
-                  maximumLabels: 20,
-                  majorGridLines: const MajorGridLines(
-                    width: 0,
-                  ), // <--- No vertical grid lines
-                ),
-                primaryYAxis: NumericAxis(
-                  labelStyle: const TextStyle(fontSize: 10),
-                  axisLine: const AxisLine(width: 0),
-                  majorGridLines: const MajorGridLines(
-                    width: 0,
-                  ), // <--- No horizontal grid lines
-                ),
-                tooltipBehavior: TooltipBehavior(enable: true),
-                series: <CartesianSeries>[
-                  ColumnSeries<MapEntry<String, double>, String>(
-                    dataSource: sortedCategories,
-                    xValueMapper: (entry, _) =>
-                        getLocalizedCategory(entry.key, localizer),
-                    yValueMapper: (entry, _) => entry.value,
-                    dataLabelSettings: const DataLabelSettings(isVisible: true),
-                    pointColorMapper: (entry, idx) =>
-                        Colors.primaries[idx % Colors.primaries.length],
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                    gradient: LinearGradient(
-                      colors: [Colors.redAccent, Colors.orange],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
+          child: Directionality(
+            textDirection: TextDirection.ltr, // Force LTR for chart and scroll
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: sortedCategories.length * 80.0,
+                child: SfCartesianChart(
+                  primaryXAxis: CategoryAxis(
+                    labelStyle: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
                     ),
+                    labelRotation: 45,
+                    maximumLabels: 20,
+                    majorGridLines: const MajorGridLines(width: 0),
                   ),
-                ],
+                  primaryYAxis: NumericAxis(
+                    labelStyle: const TextStyle(fontSize: 10),
+                    axisLine: const AxisLine(width: 0),
+                    majorGridLines: const MajorGridLines(width: 0),
+                  ),
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: <CartesianSeries>[
+                    ColumnSeries<MapEntry<String, double>, String>(
+                      dataSource: sortedCategories,
+                      xValueMapper: (entry, _) =>
+                          getLocalizedCategory(entry.key, localizer),
+                      yValueMapper: (entry, _) => entry.value,
+                      dataLabelSettings: const DataLabelSettings(
+                        isVisible: true,
+                      ),
+                      pointColorMapper: (entry, idx) =>
+                          Colors.primaries[idx % Colors.primaries.length],
+                      borderRadius: const BorderRadius.all(Radius.circular(12)),
+                      gradient: LinearGradient(
+                        colors: [Colors.redAccent, Colors.orange],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -23,6 +23,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
 
   final List<Category> defaultUserCategories = [
     Category(name: 'shopping', icon: 'shopping_cart'),
+    Category(name: 'coffee', icon: 'coffee'),
     Category(name: 'health', icon: 'local_hospital'),
     Category(name: 'transport', icon: 'directions_car'),
     Category(name: 'food', icon: 'restaurant'),
@@ -40,6 +41,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     Category(name: 'gifts', icon: 'cake'),
     // Category(name: 'savings', icon: 'savings'),
     Category(name: 'events', icon: 'event'),
+
   ];
 
   @override

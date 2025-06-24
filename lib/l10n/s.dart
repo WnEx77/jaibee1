@@ -715,10 +715,10 @@ abstract class S {
   /// **'Replace All'**
   String get replaceAll;
 
-  /// تحذير عندما لا يساوي الحد الشهري مجموع حدود الفئات
+  /// Warning when monthly limit does not equal the sum of category limits
   ///
   /// In en, this message translates to:
-  /// **'يجب أن يكون الحد الشهري ({monthly}) مساويًا لمجموع حدود جميع الفئات ({total}).'**
+  /// **'Monthly limit ({monthly}) must equal the sum of all category limits ({total}).'**
   String monthlyLimitValidation(Object monthly, Object total);
 
   /// No description provided for @manageCategories.
