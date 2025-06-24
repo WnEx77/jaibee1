@@ -15,7 +15,7 @@ Future<void> generatePdfArabic(BuildContext context, MonthlySummary summary, Str
   final pdf = pw.Document();
 
   // Load logo
-  final ByteData logoBytes = await rootBundle.load('assets/images/logo.png');
+  final ByteData logoBytes = await rootBundle.load('assets/images/icon_transparency.png');
   final Uint8List logoUint8List = logoBytes.buffer.asUint8List();
   final pw.MemoryImage logo = pw.MemoryImage(logoUint8List);
 
@@ -172,7 +172,7 @@ Future<void> generatePdfEnglish(BuildContext context, MonthlySummary summary, St
   final pdf = pw.Document();
 
   // Load logo
-  final ByteData logoBytes = await rootBundle.load('assets/images/logo.png');
+  final ByteData logoBytes = await rootBundle.load('assets/images/icon_transparency.png');
   final Uint8List logoUint8List = logoBytes.buffer.asUint8List();
   final pw.MemoryImage logo = pw.MemoryImage(logoUint8List);
 

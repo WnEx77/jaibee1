@@ -46,7 +46,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter_launcher_icons:
-  image_path: "assets/images/logo_borders_cropped.png"
+  image_path: "assets/images/icon.png"
   android: true
   ios: true
   remove_alpha_ios: true
@@ -77,8 +77,7 @@ flutter:
           
 flutter_native_splash:
   background_image: assets/images/background.png
-  image: assets/images/logo_borders_cropped.png
-  branding: assets/images/WnEx_signature.png
+  image: assets/images/icon_transparency.png
   branding_mode: bottom
   android: true
   ios: true
@@ -89,6 +88,5 @@ flutter_native_splash:
     # DO NOT use image for Android 12 to avoid the circular mask
     image: null
     background_image: assets/images/background.png
-    branding: assets/images/WnEx_signature.png
     branding_mode: bottom
 

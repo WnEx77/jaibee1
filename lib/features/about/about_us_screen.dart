@@ -84,7 +84,7 @@ class _AboutUsScreenState extends State<AboutUsScreen>
                 children: [
                   const SizedBox(height: 20),
                   Image.asset(
-                    'assets/images/logo.png',
+                    'assets/images/icon_transparency.png',
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
