@@ -672,4 +672,8 @@ class SEn extends S {
   @override
   String get categoryLimitExceeded =>
       'Transaction added, but you have exceeded the category limit ';
+
+  @override
+  String get pleaseSetLimitForCategory =>
+      'Please set a limit for this category.';
 }

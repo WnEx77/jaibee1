@@ -1386,6 +1386,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Transaction added, but you have exceeded the category limit '**
   String get categoryLimitExceeded;
+
+  /// No description provided for @pleaseSetLimitForCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Please set a limit for this category.'**
+  String get pleaseSetLimitForCategory;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

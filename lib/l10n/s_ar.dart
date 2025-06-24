@@ -679,4 +679,7 @@ class SAr extends S {
   @override
   String get categoryLimitExceeded =>
       'تمت إضافة المصروف، ولكنك تجاوزت الحد المسموح به لهذه الفئة';
+
+  @override
+  String get pleaseSetLimitForCategory => 'يرجى تعيين حد لهذه الفئة.';
 }

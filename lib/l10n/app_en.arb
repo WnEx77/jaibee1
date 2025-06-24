@@ -245,5 +245,6 @@
   "chooseDateRange": "Choose Date Range",
   "currencyUpdated": "Currency updated successfully",
   "goalUpdated": "Goal updated successfully",
-  "categoryLimitExceeded": "Transaction added, but you have exceeded the category limit "
+  "categoryLimitExceeded": "Transaction added, but you have exceeded the category limit ",
+  "pleaseSetLimitForCategory": "Please set a limit for this category."
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jaibee/features/transactions/add_transaction.dart';
 import 'package:jaibee/features/transactions/transaction_screen.dart';
 import 'package:jaibee/features/transactions/manage_categories.dart';
-import 'package:jaibee/features/reports/report.dart';
+import 'package:jaibee/features/reports/reports_screen.dart';
 import 'package:jaibee/features/profile/profile.dart';
 import 'package:jaibee/features/budget/budget_screen.dart';
 import 'package:jaibee/l10n/s.dart';
