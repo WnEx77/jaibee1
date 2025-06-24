@@ -249,7 +249,8 @@
   "pleaseSetLimitForCategory": "Please set a limit for this category.",
   "incomeAndExpenseSelected": "Income and Expense Selected",
   "onlyIncomeSelected": "Only Income Selected",
-  "onlyExpenseSelected": "Only Expense Selected"
+  "onlyExpenseSelected": "Only Expense Selected",
+  "termsOfService": "Terms of Service"
 
 
 }

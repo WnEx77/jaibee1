@@ -685,4 +685,7 @@ class SEn extends S {
 
   @override
   String get onlyExpenseSelected => 'Only Expense Selected';
+
+  @override
+  String get termsOfService => 'Terms of Service';
 }

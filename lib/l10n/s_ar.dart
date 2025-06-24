@@ -691,4 +691,7 @@ class SAr extends S {
 
   @override
   String get onlyExpenseSelected => 'تم اختيار المصروفات فقط';
+
+  @override
+  String get termsOfService => 'شروط الخدمة';
 }

@@ -14,6 +14,7 @@ import 'package:jaibee/features/reports/export_report_screen.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee/features/about/privacy_policy_screen.dart';
 import 'package:jaibee/core/utils/currency_utils.dart';
+import 'package:jaibee/features/about/terms_of_service_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -363,7 +364,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       title: Text(
                         S.of(context)!.currency,
-                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
                       ),
                       trailing: const Icon(
                         Icons.arrow_forward_ios,
@@ -371,8 +375,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: Colors.grey,
                       ),
                       onTap: () => _showCurrencyPicker(context),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       minLeadingWidth: 0,
                     ),
                     _buildDivider(),
@@ -477,6 +486,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (_) => const PrivacyPolicyScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildDivider(),
+                    _buildCardTile(
+                      icon: Icons.description_outlined,
+                      label: S
+                          .of(context)!
+                          .termsOfService, // Add to your localization files
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const TermsOfServiceScreen(),
                           ),
                         );
                       },

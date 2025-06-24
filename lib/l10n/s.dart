@@ -1410,6 +1410,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Only Expense Selected'**
   String get onlyExpenseSelected;
+
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

@@ -230,5 +230,6 @@
   "pleaseSetLimitForCategory": "يرجى تعيين حد لهذه الفئة.",
   "incomeAndExpenseSelected": "تم اختيار المصروفات والدخل",
   "onlyIncomeSelected": "تم اختيار الدخل فقط",
-  "onlyExpenseSelected": "تم اختيار المصروفات فقط"
+  "onlyExpenseSelected": "تم اختيار المصروفات فقط",
+  "termsOfService": "شروط الخدمة"
 }
