@@ -304,7 +304,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       if (!_isIncome) {
         final budgetBox = Hive.box<Budget>('budgets'); // Do NOT open the box again!
         final budget = budgetBox.get(_category);
-        if (budget != null && budget.limit != null) {
+        if (budget != null) {
           final categoryLimit = budget.limit;
           // Calculate total spent for this category this month
           final transactionBox = Hive.box('transactions');
