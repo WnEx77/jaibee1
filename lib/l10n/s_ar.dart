@@ -682,4 +682,13 @@ class SAr extends S {
 
   @override
   String get pleaseSetLimitForCategory => 'يرجى تعيين حد لهذه الفئة.';
+
+  @override
+  String get incomeAndExpenseSelected => 'Income and Expense Selected';
+
+  @override
+  String get onlyIncomeSelected => 'Only Income Selected';
+
+  @override
+  String get onlyExpenseSelected => 'Only Expense Selected';
 }

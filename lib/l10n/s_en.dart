@@ -676,4 +676,13 @@ class SEn extends S {
   @override
   String get pleaseSetLimitForCategory =>
       'Please set a limit for this category.';
+
+  @override
+  String get incomeAndExpenseSelected => 'Income and Expense Selected';
+
+  @override
+  String get onlyIncomeSelected => 'Only Income Selected';
+
+  @override
+  String get onlyExpenseSelected => 'Only Expense Selected';
 }

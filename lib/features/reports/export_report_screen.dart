@@ -59,6 +59,14 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
       return false;
     }).toList();
 
+    final double totalIncome = transactions
+        .where((t) => t.isIncome)
+        .fold(0.0, (sum, t) => sum + t.amount);
+
+    final double totalExpenses = transactions
+        .where((t) => !t.isIncome)
+        .fold(0.0, (sum, t) => sum + t.amount);
+
     final pdf = pw.Document();
 
     // Load logo
@@ -84,15 +92,22 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
       );
     }
 
-    // period variable removed as it was unused
-
     pdf.addPage(
       pw.MultiPage(
         theme: pw.ThemeData.withFont(base: baseFont, bold: boldFont),
         textDirection: isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
+        margin: const pw.EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         build: (context) => [
-          // Header with logo
+          // Logo at top right
           pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.end,
+            children: [pw.Image(logo, height: 40)],
+          ),
+          pw.SizedBox(height: 8),
+
+          // Title and Date Range Row
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Expanded(
@@ -101,58 +116,112 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
                   style: pw.TextStyle(
                     fontSize: 22,
                     fontWeight: pw.FontWeight.bold,
-                    color: PdfColors.redAccent,
+                    color: PdfColors.blueGrey900,
                     font: boldFont,
+                    letterSpacing: 1.1,
                   ),
                 ),
               ),
-              pw.Image(logo, height: 60),
-            ],
-          ),
-          pw.SizedBox(height: 8),
-          pw.Text(
-            localizer.reportTitle,
-            style: pw.TextStyle(
-              fontSize: 22,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.redAccent,
-              font: boldFont,
-            ),
-          ),
-          pw.SizedBox(height: 16),
-
-          // Section titles
-          pw.Row(
-            children: [
-              pw.Text(
-                localizer.expense,
-                style: pw.TextStyle(
-                  fontSize: 14,
-                  color: PdfColors.red,
-                  fontWeight: pw.FontWeight.bold,
+              pw.SizedBox(width: 10),
+              pw.Container(
+                padding: const pw.EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 12,
                 ),
-              ),
-              pw.SizedBox(width: 16),
-              pw.Text(
-                localizer.income,
-                style: pw.TextStyle(
-                  fontSize: 14,
-                  color: PdfColors.green,
-                  fontWeight: pw.FontWeight.bold,
+                decoration: pw.BoxDecoration(
+                  color: PdfColors.blue50,
+                  borderRadius: pw.BorderRadius.circular(10),
+                ),
+                child: pw.Text(
+                  '${DateFormat.yMMMd(localeCode).format(_selectedRange!.start)}  -  ${DateFormat.yMMMd(localeCode).format(_selectedRange!.end)}',
+                  style: pw.TextStyle(
+                    fontSize: 12,
+                    color: PdfColors.blue800,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
                 ),
               ),
             ],
           ),
-          pw.SizedBox(height: 8),
+          pw.SizedBox(height: 12),
 
-          // Table in a card-like container
+          // Totals Row
           pw.Container(
+            padding: const pw.EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             decoration: pw.BoxDecoration(
               color: PdfColors.grey100,
-              borderRadius: pw.BorderRadius.circular(8),
-              border: pw.Border.all(color: PdfColors.blueGrey, width: 1),
+              borderRadius: pw.BorderRadius.circular(10),
             ),
-            padding: const pw.EdgeInsets.all(12),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              children: [
+                pw.Text(
+                  '${localizer.totalIncome}: ',
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.green800,
+                    fontSize: 13,
+                  ),
+                ),
+                pw.Text(
+                  totalIncome.toStringAsFixed(2),
+                  style: pw.TextStyle(color: PdfColors.green800, fontSize: 13),
+                ),
+                pw.SizedBox(width: 24),
+                pw.Text(
+                  '${localizer.totalExpenses}: ',
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.red800,
+                    fontSize: 13,
+                  ),
+                ),
+                pw.Text(
+                  totalExpenses.toStringAsFixed(2),
+                  style: pw.TextStyle(color: PdfColors.red800, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+
+          pw.SizedBox(height: 10),
+
+          // Text next to the selected range
+          // pw.Align(
+          //   alignment: isArabic
+          //       ? pw.Alignment.centerRight
+          //       : pw.Alignment.centerLeft,
+          //   child: pw.Text(
+          //     (_includeIncome && _includeExpenses)
+          //         ? localizer.incomeAndExpenseSelected
+          //         : _includeIncome
+          //         ? localizer.onlyIncomeSelected
+          //         : localizer.onlyExpenseSelected,
+          //     style: pw.TextStyle(
+          //       fontSize: 12,
+          //       color: PdfColors.blueGrey700,
+          //       fontWeight: pw.FontWeight.normal,
+          //     ),
+          //   ),
+          // ),
+          // pw.SizedBox(height: 16),
+
+          // Modern Table in a card-like container
+          pw.Container(
+            decoration: pw.BoxDecoration(
+              color: PdfColors.white,
+              borderRadius: pw.BorderRadius.circular(14),
+              boxShadow: [
+                pw.BoxShadow(
+                  color: PdfColors.blueGrey100,
+                  blurRadius: 6,
+                  spreadRadius: 1,
+                  offset: const PdfPoint(0, 2),
+                ),
+              ],
+              border: pw.Border.all(color: PdfColors.blueGrey300, width: 1),
+            ),
+            padding: const pw.EdgeInsets.all(14),
             child: pw.TableHelper.fromTextArray(
               headers: [
                 localizer.date,
@@ -162,9 +231,20 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
               ],
               headerStyle: pw.TextStyle(
                 fontWeight: pw.FontWeight.bold,
-                color: PdfColors.blue800,
+                color: PdfColors.blueGrey900,
+                fontSize: 12,
+                letterSpacing: 0.5,
               ),
-              cellStyle: pw.TextStyle(font: baseFont, fontSize: 11),
+              headerDecoration: pw.BoxDecoration(
+                color: PdfColors.blueGrey50,
+                borderRadius: pw.BorderRadius.circular(8),
+              ),
+              cellStyle: pw.TextStyle(
+                font: baseFont,
+                fontSize: 11,
+                color: PdfColors.blueGrey800,
+              ),
+              oddRowDecoration: pw.BoxDecoration(color: PdfColors.blue50),
               data: transactions
                   .map(
                     (t) => [
@@ -180,22 +260,38 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
                   : pw.Alignment.centerLeft,
             ),
           ),
-          pw.SizedBox(height: 24),
+          pw.SizedBox(height: 28),
 
           // Disclaimer
-          pw.Text(
-            isArabic ? "تنويه" : "Disclaimer",
-            style: pw.TextStyle(
-              fontWeight: pw.FontWeight.bold,
-              fontSize: 14,
-              color: PdfColors.deepOrange,
+          pw.Container(
+            padding: const pw.EdgeInsets.symmetric(
+              vertical: 10,
+              horizontal: 16,
             ),
-          ),
-          pw.Text(
-            isArabic
-                ? "هذا التقرير المالي تم إنشاؤه بواسطة التطبيق لأغراض معلوماتية فقط. المطور غير مسؤول عن أي قرارات مالية يتم اتخاذها بناءً على هذا المحتوى."
-                : "This financial report is generated by the app for informational purposes only. The developer is not responsible for financial decisions made based on this content.",
-            style: pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
+            decoration: pw.BoxDecoration(
+              color: PdfColors.orange50,
+              borderRadius: pw.BorderRadius.circular(10),
+            ),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  isArabic ? "تنويه" : "Disclaimer",
+                  style: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: 14,
+                    color: PdfColors.deepOrange,
+                  ),
+                ),
+                pw.SizedBox(height: 2),
+                pw.Text(
+                  isArabic
+                      ? "هذا التقرير المالي تم إنشاؤه بواسطة التطبيق لأغراض معلوماتية فقط. المطور غير مسؤول عن أي قرارات مالية يتم اتخاذها بناءً على هذا المحتوى."
+                      : "This financial report is generated by the app for informational purposes only. The developer is not responsible for financial decisions made based on this content.",
+                  style: pw.TextStyle(fontSize: 10, color: PdfColors.orange800),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -203,8 +299,6 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
 
     await Printing.layoutPdf(onLayout: (format) => pdf.save());
   }
-
-  // ...existing code...
 
   Future<void> _pickSingleDate(
     BuildContext context, {

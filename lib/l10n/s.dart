@@ -1392,6 +1392,24 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Please set a limit for this category.'**
   String get pleaseSetLimitForCategory;
+
+  /// No description provided for @incomeAndExpenseSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Income and Expense Selected'**
+  String get incomeAndExpenseSelected;
+
+  /// No description provided for @onlyIncomeSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Only Income Selected'**
+  String get onlyIncomeSelected;
+
+  /// No description provided for @onlyExpenseSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Only Expense Selected'**
+  String get onlyExpenseSelected;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
