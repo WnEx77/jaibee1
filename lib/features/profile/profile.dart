@@ -15,6 +15,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee/features/about/privacy_policy_screen.dart';
 import 'package:jaibee/core/utils/currency_utils.dart';
 import 'package:jaibee/features/about/terms_of_service_screen.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -324,6 +325,88 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _showFeedbackForm() {
+    final s = S.of(context)!;
+    final _nameController = TextEditingController();
+    final _emailController = TextEditingController();
+    final _messageController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(s.supportAndFeedback),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: s.name),
+              ),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(labelText: s.email),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              TextField(
+                controller: _messageController,
+                decoration: InputDecoration(labelText: s.message),
+                maxLines: 4,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(s.cancel),
+          ),
+          ElevatedButton(
+            // ...inside _showFeedbackForm's onPressed for the Send button...
+            onPressed: () async {
+              final name = _nameController.text.trim();
+              final email = _emailController.text.trim();
+              final message = _messageController.text.trim();
+              if (message.isEmpty) return;
+
+              // Replace with your Google Form's real entry IDs
+              final formUrl =
+                  "https://docs.google.com/forms/d/e/1FAIpQLSc2jr5yYVYnK9Oxh6AWKvp8yo9m6f50ct_ydlb_J_jDJ8375g/formResponse";
+              final Map<String, String> body = {
+                "entry.257464318": name,
+                "entry.737850348": email,
+                "entry.1968950375": message,
+              };
+
+              try {
+                await http.post(Uri.parse(formUrl), body: body);
+                Navigator.pop(context); // Close the dialog
+                Flushbar(
+                  message: s.feedbackSent,
+                  duration: const Duration(seconds: 2),
+                  backgroundColor: Colors.green,
+                  margin: const EdgeInsets.all(16),
+                  borderRadius: BorderRadius.circular(12),
+                  icon: const Icon(Icons.check_circle, color: Colors.white),
+                ).show(context);
+              } catch (e) {
+                Flushbar(
+                  message: s.couldNotSendFeedback,
+                  duration: const Duration(seconds: 2),
+                  backgroundColor: Colors.redAccent,
+                  margin: const EdgeInsets.all(16),
+                  borderRadius: BorderRadius.circular(12),
+                  icon: const Icon(Icons.error_outline, color: Colors.white),
+                ).show(context);
+              }
+            },
+            child: Text(s.send),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context)!;
@@ -534,6 +617,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.support_agent,
                       label: s.supportAndFeedback,
                       onTap: _openSupportPage,
+                    ),
+                    _buildDivider(),
+                    _buildCardTile(
+                      icon: Icons.support_agent,
+                      label: s.supportAndFeedback,
+                      onTap: _showFeedbackForm,
                     ),
                   ],
                 ),

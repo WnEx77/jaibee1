@@ -1416,6 +1416,42 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Terms of Service'**
   String get termsOfService;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @message.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get message;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @feedbackSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback Sent'**
+  String get feedbackSent;
+
+  /// No description provided for @couldNotSendFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Could Not Send Feedback'**
+  String get couldNotSendFeedback;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

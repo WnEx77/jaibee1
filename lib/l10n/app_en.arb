@@ -250,7 +250,13 @@
   "incomeAndExpenseSelected": "Income and Expense Selected",
   "onlyIncomeSelected": "Only Income Selected",
   "onlyExpenseSelected": "Only Expense Selected",
-  "termsOfService": "Terms of Service"
+  "termsOfService": "Terms of Service",
+  "name": "Name",
+  "email": "Email",
+  "message": "Message",
+  "send": "Send",
+  "feedbackSent": "Feedback Sent",
+  "couldNotSendFeedback": "Could Not Send Feedback"
 
 
 }

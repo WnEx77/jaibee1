@@ -688,4 +688,22 @@ class SEn extends S {
 
   @override
   String get termsOfService => 'Terms of Service';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get message => 'Message';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get feedbackSent => 'Feedback Sent';
+
+  @override
+  String get couldNotSendFeedback => 'Could Not Send Feedback';
 }
