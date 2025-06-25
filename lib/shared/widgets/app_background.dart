@@ -17,7 +17,7 @@ class AppBackground extends StatelessWidget {
               image: AssetImage(
                 isDarkMode
                     ? 'assets/images/background3.png' // dark mode
-                    : 'assets/images/background6.png', // light mode
+                    : 'assets/images/background9.png', // light mode
               ),
               fit: BoxFit.cover,
             ),

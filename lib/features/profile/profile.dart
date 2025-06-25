@@ -629,7 +629,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                     },
                   ),
-
+                  _buildDivider(),
                   _buildCardTile(
                     icon: Icons.flag_outlined,
                     label: s.setGoals,

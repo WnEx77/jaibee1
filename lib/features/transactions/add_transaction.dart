@@ -134,8 +134,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ? [Category(name: 'income', icon: 'attach_money')]
         : categories;
 
-    // Ensure _category is valid
-    if (!_isIncome && dropdownCategories.isNotEmpty && !_category.isNotEmpty) {
+    final categoryNames = dropdownCategories.map((c) => c.name).toList();
+
+    // Reset _category if it's no longer valid
+    if (_category.isNotEmpty && !categoryNames.contains(_category)) {
+      _category = '';
+    }
+
+    // Set default if needed
+    if (!_isIncome && dropdownCategories.isNotEmpty && _category.isEmpty) {
       _category = dropdownCategories.first.name;
     } else if (_isIncome) {
       _category = 'income';
