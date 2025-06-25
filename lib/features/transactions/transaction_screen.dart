@@ -113,19 +113,17 @@ class _TransactionScreenState extends State<TransactionScreen> {
     }
   }
 
-  Future<void> _pickRange(BuildContext context) async {
+  Future<void> _showCombinedFilterDialog(BuildContext context) async {
     final localizer = S.of(context)!;
     final mintJade = Theme.of(context).extension<MintJadeColors>()!;
 
+    String tempPeriod = _selectedPeriod;
     DateTimeRange? tempRange =
         _selectedRange ??
         DateTimeRange(
           start: DateTime.now().subtract(const Duration(days: 10)),
           end: DateTime.now(),
         );
-
-    DateTimeRange? selectedRange = tempRange;
-    bool userPressedDone = false;
 
     await showDialog(
       context: context,
@@ -139,160 +137,36 @@ class _TransactionScreenState extends State<TransactionScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             child: StatefulBuilder(
-              builder: (context, setState) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.filter_alt,
-                          color: Colors.purple.shade700,
-                          size: 28,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          localizer.filterByRange,
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.purple.shade700,
-                              ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Material(
-                      color: Colors.transparent,
-                      child: Column(
-                        children: [
-                          _RangeDateTile(
-                            icon: Icons.calendar_today,
-                            color: Colors.blue.shade700,
-                            label: localizer.startDate,
-                            date: selectedRange!.start,
-                            onTap: () async {
-                              final picked =
-                                  await showGlobalCupertinoDatePicker(
-                                    context: context,
-                                    initialDate: selectedRange!.start,
-                                    minDate: DateTime(2000),
-                                    maxDate: selectedRange!.end,
-                                  );
-                              if (picked != null) {
-                                setState(() {
-                                  selectedRange = DateTimeRange(
-                                    start: picked,
-                                    end: selectedRange!.end.isBefore(picked)
-                                        ? picked
-                                        : selectedRange!.end,
-                                  );
-                                });
-                              }
-                            },
-                          ),
-                          _RangeDateTile(
-                            icon: Icons.event,
-                            color: Colors.green.shade700,
-                            label: localizer.endDate,
-                            date: selectedRange!.end,
-                            onTap: () async {
-                              final picked =
-                                  await showGlobalCupertinoDatePicker(
-                                    context: context,
-                                    initialDate: selectedRange!.end,
-                                    minDate: selectedRange!.start,
-                                    maxDate: DateTime.now(),
-                                  );
-                              if (picked != null) {
-                                setState(() {
-                                  selectedRange = DateTimeRange(
-                                    start: selectedRange!.start,
-                                    end: picked.isBefore(selectedRange!.start)
-                                        ? selectedRange!.start
-                                        : picked,
-                                  );
-                                });
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.grey.shade700,
-                            textStyle: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          child: Text(localizer.cancel),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            userPressedDone = true;
-                            tempRange = selectedRange;
-                            Navigator.of(context).pop();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: mintJade.buttonColor,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 28,
-                              vertical: 14,
-                            ),
-                            elevation: 2,
-                          ),
-                          child: Text(localizer.done),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
-
-    // Only update state if user pressed Done
-    if (userPressedDone && tempRange != null) {
-      setState(() {
-        _selectedRange = tempRange;
-        _selectedPeriod = 'range';
-      });
-    }
-  }
-
-  void _showFilterDialog(BuildContext context) {
-    final localizer = S.of(context)!;
-    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
-    showDialog(
-      context: context,
-      builder: (context) {
-        String tempPeriod = _selectedPeriod;
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          backgroundColor: Theme.of(context).cardColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            child: StatefulBuilder(
               builder: (context, setStateDialog) {
+                // Helper to pick a date for start or end inside dialog
+                Future<void> pickDate({required bool isStart}) async {
+                  final picked = await showGlobalCupertinoDatePicker(
+                    context: context,
+                    initialDate: isStart ? tempRange!.start : tempRange!.end,
+                    minDate: isStart ? DateTime(2000) : tempRange!.start,
+                    maxDate: isStart ? tempRange!.end : DateTime.now(),
+                  );
+                  if (picked != null) {
+                    setStateDialog(() {
+                      if (isStart) {
+                        tempRange = DateTimeRange(
+                          start: picked,
+                          end: tempRange!.end.isBefore(picked)
+                              ? picked
+                              : tempRange!.end,
+                        );
+                      } else {
+                        tempRange = DateTimeRange(
+                          start: tempRange!.start,
+                          end: picked.isBefore(tempRange!.start)
+                              ? tempRange!.start
+                              : picked,
+                        );
+                      }
+                    });
+                  }
+                }
+
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -301,7 +175,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
                       children: [
                         Icon(
                           Icons.filter_alt,
-                          color: Colors.blue.shade700,
+                          color: tempPeriod == 'range'
+                              ? Colors.purple.shade700
+                              : Colors.blue.shade700,
                           size: 28,
                         ),
                         const SizedBox(width: 10),
@@ -310,12 +186,16 @@ class _TransactionScreenState extends State<TransactionScreen> {
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue.shade800,
+                                color: tempPeriod == 'range'
+                                    ? Colors.purple.shade700
+                                    : Colors.blue.shade700,
                               ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 24),
+
+                    // Always show filter options
                     Material(
                       color: Colors.transparent,
                       child: Column(
@@ -344,34 +224,47 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             onTap: () =>
                                 setStateDialog(() => tempPeriod = 'range'),
                           ),
-                          if (_selectedPeriod == 'range' &&
-                              _selectedRange != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12),
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  setState(() {
-                                    _selectedRange = null;
-                                    _selectedPeriod = 'monthly';
-                                    _selectedMonth = DateTime.now();
-                                  });
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.purple.shade700,
-                                  side: BorderSide(
-                                    color: Colors.purple.shade700,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                ),
-                                child: Text(localizer.clearFilter),
-                              ),
-                            ),
                         ],
                       ),
                     ),
+
+                    // Show date pickers only if 'range' selected
+                    if (tempPeriod == 'range') ...[
+                      const SizedBox(height: 20),
+                      _RangeDateTile(
+                        icon: Icons.calendar_today,
+                        color: Colors.blue.shade700,
+                        label: localizer.startDate,
+                        date: tempRange!.start,
+                        onTap: () => pickDate(isStart: true),
+                      ),
+                      _RangeDateTile(
+                        icon: Icons.event,
+                        color: Colors.green.shade700,
+                        label: localizer.endDate,
+                        date: tempRange!.end,
+                        onTap: () => pickDate(isStart: false),
+                      ),
+                      const SizedBox(height: 16),
+                      if (_selectedRange != null)
+                        OutlinedButton(
+                          onPressed: () {
+                            setStateDialog(() {
+                              tempRange = null;
+                              tempPeriod = 'monthly';
+                            });
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.purple.shade700,
+                            side: BorderSide(color: Colors.purple.shade700),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                          ),
+                          child: Text(localizer.clearFilter),
+                        ),
+                    ],
+
                     const SizedBox(height: 28),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -388,8 +281,10 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         ),
                         const SizedBox(width: 10),
                         ElevatedButton(
-                          onPressed: () async {
-                            Navigator.of(context).pop(tempPeriod);
+                          onPressed: () {
+                            Navigator.of(
+                              context,
+                            ).pop({'period': tempPeriod, 'range': tempRange});
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: mintJade.buttonColor,
@@ -414,15 +309,21 @@ class _TransactionScreenState extends State<TransactionScreen> {
           ),
         );
       },
-    ).then((result) async {
+    ).then((result) {
       if (result == null) return;
-      if (result == 'range') {
-        await _pickRange(context); // Only start filtering after Done
-      } else {
+      final selectedPeriod = result['period'] as String?;
+      final selectedRange = result['range'] as DateTimeRange?;
+
+      if (selectedPeriod != null) {
         setState(() {
-          _selectedPeriod = result;
-          _selectedRange = null;
-          _selectedMonth = DateTime.now();
+          _selectedPeriod = selectedPeriod;
+          if (selectedPeriod == 'range' && selectedRange != null) {
+            _selectedRange = selectedRange;
+            _selectedMonth = DateTime.now();
+          } else {
+            _selectedRange = null;
+            _selectedMonth = DateTime.now();
+          }
         });
       }
     });
@@ -775,7 +676,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     size: 28,
                                   ),
                                   tooltip: S.of(context)!.filter,
-                                  onPressed: () => _showFilterDialog(context),
+                                  onPressed: () =>
+                                      _showCombinedFilterDialog(context),
                                 ),
                               ],
                             )
@@ -813,7 +715,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                       ),
                                       tooltip: S.of(context)!.filter,
                                       onPressed: () =>
-                                          _showFilterDialog(context),
+                                          _showCombinedFilterDialog(context),
                                     ),
                                   ],
                                 ),
