@@ -1464,6 +1464,42 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Name and email are optional, but if you include them, we can follow up to help you better.'**
   String get optionalNameEmailNote;
+
+  /// No description provided for @generalSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'General Settings'**
+  String get generalSettings;
+
+  /// No description provided for @appFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'App Features'**
+  String get appFeatures;
+
+  /// No description provided for @infoAndLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Info & Legal'**
+  String get infoAndLegal;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @setDailyReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Daily Reminder'**
+  String get setDailyReminder;
+
+  /// No description provided for @reminderSetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily reminder set successfully!'**
+  String get reminderSetSuccess;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

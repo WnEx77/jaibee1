@@ -28,6 +28,13 @@
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>
+		<key>NSUserNotificationUsageDescription</key>
+		<string>This app uses notifications to remind you to log your expenses daily.</string>
+		<key>UIBackgroundModes</key>
+		<array>
+    		<string>fetch</string>
+    		<string>remote-notification</string>
+		</array>
 		<key>UISupportedInterfaceOrientations</key>
 		<array>
 			<string>UIInterfaceOrientationPortrait</string>

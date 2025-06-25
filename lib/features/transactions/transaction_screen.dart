@@ -714,30 +714,30 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                OutlinedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedRange = null;
-                                      _selectedPeriod = 'monthly';
-                                      _selectedMonth = DateTime.now();
-                                    });
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.purple.shade700,
-                                    side: BorderSide(
-                                      color: Colors.purple.shade700,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 14,
-                                      vertical: 0,
-                                    ),
-                                    minimumSize: const Size(0, 36),
-                                  ),
-                                  child: Text(S.of(context)!.clearFilter),
-                                ),
+                                // OutlinedButton(
+                                //   onPressed: () {
+                                //     setState(() {
+                                //       _selectedRange = null;
+                                //       _selectedPeriod = 'monthly';
+                                //       _selectedMonth = DateTime.now();
+                                //     });
+                                //   },
+                                //   style: OutlinedButton.styleFrom(
+                                //     foregroundColor: Colors.purple.shade700,
+                                //     side: BorderSide(
+                                //       color: Colors.purple.shade700,
+                                //     ),
+                                //     shape: RoundedRectangleBorder(
+                                //       borderRadius: BorderRadius.circular(24),
+                                //     ),
+                                //     padding: const EdgeInsets.symmetric(
+                                //       horizontal: 14,
+                                //       vertical: 0,
+                                //     ),
+                                //     minimumSize: const Size(0, 36),
+                                //   ),
+                                //   child: Text(S.of(context)!.clearFilter),
+                                // ),
                                 const Spacer(),
                                 IconButton(
                                   icon: Icon(

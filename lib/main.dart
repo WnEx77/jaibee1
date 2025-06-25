@@ -12,10 +12,12 @@ import 'data/models/category.dart';
 import 'data/models/goal_model.dart';
 import 'data/models/trancs.dart';
 import 'features/home/splash_screen.dart';
+import 'core/services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  await NotificationService.init();
 
   final prefs = await SharedPreferences.getInstance();
   final seenOnboarding = prefs.getBool('onboarding_completed') ?? false;

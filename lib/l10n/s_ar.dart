@@ -711,7 +711,8 @@ class SAr extends S {
   String get feedbackSent => 'تم إرسال ردك بنجاح';
 
   @override
-  String get couldNotSendFeedback => 'Could Not Send Feedback';
+  String get couldNotSendFeedback =>
+      'تعذّر إرسال ردك. يرجى المحاولة مرة أخرى لاحقًا';
 
   @override
   String get sending => 'جاري الإرسال';
@@ -719,4 +720,22 @@ class SAr extends S {
   @override
   String get optionalNameEmailNote =>
       'لمساعدتك بشكل أفضل يرجى إدخال الاسم والبريد الإلكتروني';
+
+  @override
+  String get generalSettings => 'الإعدادات العامة';
+
+  @override
+  String get appFeatures => 'ميزات التطبيق';
+
+  @override
+  String get infoAndLegal => 'المعلومات والشروط';
+
+  @override
+  String get support => 'الدعم';
+
+  @override
+  String get setDailyReminder => 'ضبط تذكير يومي';
+
+  @override
+  String get reminderSetSuccess => 'تم ضبط التذكير اليومي بنجاح!';
 }

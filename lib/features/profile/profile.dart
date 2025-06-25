@@ -17,6 +17,7 @@ import 'package:jaibee/core/utils/currency_utils.dart';
 import 'package:jaibee/features/about/terms_of_service_screen.dart';
 import 'package:http/http.dart' as http;
 import '../../core/theme/mint_jade_theme.dart';
+import '../../core/services/notification_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -133,27 +134,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Future<void> _contactSupport() async {
-    final s = S.of(context)!;
-    final Uri emailLaunchUri = Uri(
-      scheme: 'mailto',
-      path: 'jaibee.care@gmail.com',
-      query: 'subject=Contact%20Support',
-    );
-    if (await canLaunchUrl(emailLaunchUri)) {
-      await launchUrl(emailLaunchUri);
-    } else {
-      // ignore: use_build_context_synchronously
-      Flushbar(
-        message: s.couldNotLaunchEmailClient,
-        duration: const Duration(seconds: 2),
-        backgroundColor: Colors.redAccent,
-        margin: const EdgeInsets.all(16),
-        borderRadius: BorderRadius.circular(12),
-        icon: const Icon(Icons.error_outline, color: Colors.white),
-      ).show(context);
-    }
-  }
+  // Future<void> _contactSupport() async {
+  //   final s = S.of(context)!;
+  //   final Uri emailLaunchUri = Uri(
+  //     scheme: 'mailto',
+  //     path: 'jaibee.care@gmail.com',
+  //     query: 'subject=Contact%20Support',
+  //   );
+  //   if (await canLaunchUrl(emailLaunchUri)) {
+  //     await launchUrl(emailLaunchUri);
+  //   } else {
+  //     // ignore: use_build_context_synchronously
+  //     Flushbar(
+  //       message: s.couldNotLaunchEmailClient,
+  //       duration: const Duration(seconds: 2),
+  //       backgroundColor: Colors.redAccent,
+  //       margin: const EdgeInsets.all(16),
+  //       borderRadius: BorderRadius.circular(12),
+  //       icon: const Icon(Icons.error_outline, color: Colors.white),
+  //     ).show(context);
+  //   }
+  // }
 
   // Future<void> _openSupportPage() async {
   //   final s = S.of(context)!;
@@ -533,217 +534,230 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               const SizedBox(height: 10),
 
-              // Settings Section
-              Card(
-                elevation: 3,
-                margin: const EdgeInsets.only(bottom: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  children: [
-                    _buildCardTile(
-                      icon: Icons.language,
-                      label: s.changeLanguage,
-                      onTap: _showLanguageDialog,
+              _buildSectionCard(
+                title: s.generalSettings,
+                children: [
+                  _buildCardTile(
+                    icon: Icons.language_outlined,
+                    label: s.changeLanguage,
+                    onTap: _showLanguageDialog,
+                  ),
+                  _buildDivider(),
+                  ListTile(
+                    leading: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Image.asset(
+                        'assets/images/Saudi_Riyal_Symbol.png',
+                        width: 26,
+                        height: 26,
+                        color: Colors.teal,
+                      ),
                     ),
-                    _buildDivider(),
-                    ListTile(
-                      leading: Padding(
-                        padding: const EdgeInsets.only(left: 2, right: 2),
-                        child: Image.asset(
-                          'assets/images/Saudi_Riyal_Symbol.png', // Use your SAR symbol asset here
-                          width: 26,
-                          height: 26,
-                          color: Colors.teal,
-                        ),
+                    title: Text(
+                      s.currency,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
                       ),
-                      title: Text(
-                        S.of(context)!.currency,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        color: Colors.grey,
-                      ),
-                      onTap: () => _showCurrencyPicker(context),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 2,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      minLeadingWidth: 0,
                     ),
-                    _buildDivider(),
-                    ListTile(
-                      leading: const Icon(
-                        Icons.brightness_6,
-                        color: Colors.blueGrey,
-                      ),
-                      title: Text(
-                        s.darkMode,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      trailing: Consumer<ThemeProvider>(
-                        builder: (context, themeProvider, _) {
-                          return Switch(
-                            value: themeProvider.isDarkTheme,
-                            onChanged: themeProvider.toggleTheme,
-                          );
-                        },
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 2,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      minLeadingWidth: 0,
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: Colors.grey,
                     ),
-                  ],
-                ),
+                    onTap: () => _showCurrencyPicker(context),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 2,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minLeadingWidth: 0,
+                  ),
+                  _buildDivider(),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.dark_mode_outlined,
+                      color: Colors.blueGrey,
+                    ),
+                    title: Text(
+                      s.darkMode,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                    trailing: Consumer<ThemeProvider>(
+                      builder: (context, themeProvider, _) {
+                        return Switch(
+                          value: themeProvider.isDarkTheme,
+                          onChanged: themeProvider.toggleTheme,
+                        );
+                      },
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 2,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minLeadingWidth: 0,
+                  ),
+                ],
               ),
 
-              // Main Actions Section
-              Card(
-                elevation: 3,
-                margin: const EdgeInsets.only(bottom: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  children: [
-                    _buildCardTile(
-                      icon: Icons.flag,
-                      label: s.setGoals,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const GoalsScreen(),
-                          ),
+              _buildSectionCard(
+                title: s.appFeatures,
+                children: [
+                  _buildCardTile(
+                    icon: Icons.alarm,
+                    label: s.setDailyReminder,
+                    onTap: () async {
+                      final pickedTime = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
+
+                      if (pickedTime != null) {
+                        await NotificationService.scheduleDailyReminder(
+                          pickedTime,
                         );
-                      },
-                    ),
-                    _buildDivider(),
-                    _buildCardTile(
-                      icon: Icons.picture_as_pdf,
-                      label: s.exportTransactionsAsPdf,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ExportReportScreen(),
-                          ),
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(s.reminderSetSuccess)),
                         );
-                      },
-                    ),
-                  ],
-                ),
+                      }
+                    },
+                  ),
+
+                  _buildCardTile(
+                    icon: Icons.flag_outlined,
+                    label: s.setGoals,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const GoalsScreen()),
+                      );
+                    },
+                  ),
+                  _buildDivider(),
+                  _buildCardTile(
+                    icon: Icons.picture_as_pdf_outlined,
+                    label: s.exportTransactionsAsPdf,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ExportReportScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
 
-              // Info Section
-              Card(
-                elevation: 3,
-                margin: const EdgeInsets.only(bottom: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  children: [
-                    _buildCardTile(
-                      icon: Icons.account_circle_outlined,
-                      label: s.aboutUs,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const AboutUsScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildDivider(),
-                    _buildCardTile(
-                      icon: Icons.privacy_tip_outlined,
-                      label: s.privacyPolicy,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const PrivacyPolicyScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildDivider(),
-                    _buildCardTile(
-                      icon: Icons.description_outlined,
-                      label: S
-                          .of(context)!
-                          .termsOfService, // Add to your localization files
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const TermsOfServiceScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildDivider(),
-                    _buildCardTile(
-                      icon: Icons.email_outlined,
-                      label: s.contactUs,
-                      onTap: _contactSupport,
-                    ),
-                  ],
-                ),
+              _buildSectionCard(
+                title: s.infoAndLegal,
+                children: [
+                  _buildCardTile(
+                    icon: Icons.info_outline,
+                    label: s.aboutUs,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AboutUsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildDivider(),
+                  _buildCardTile(
+                    icon: Icons.privacy_tip_outlined,
+                    label: s.privacyPolicy,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PrivacyPolicyScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildDivider(),
+                  _buildCardTile(
+                    icon: Icons.description_outlined,
+                    label: s.termsOfService,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TermsOfServiceScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
 
-              // Support Section
-              Card(
-                elevation: 3,
-                margin: const EdgeInsets.only(bottom: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  children: [
-                    _buildCardTile(
-                      icon: Icons.local_cafe_outlined,
-                      label: s.buyMeACoffee,
-                      onTap: _launchBuyMeACoffee,
-                    ),
-                    _buildDivider(),
-                    // _buildCardTile(
-                    //   icon: Icons.support_agent,
-                    //   label: s.supportAndFeedback,
-                    //   onTap: _openSupportPage,
-                    // ),
-                    // _buildDivider(),
-                    _buildCardTile(
-                      icon: Icons.support_agent,
-                      label: s.supportAndFeedback,
-                      onTap: _showFeedbackForm,
-                    ),
-                  ],
-                ),
+              _buildSectionCard(
+                title: s.support,
+                children: [
+                  _buildCardTile(
+                    icon: Icons.support_agent_outlined,
+                    label: s.supportAndFeedback,
+                    onTap:
+                        _showFeedbackForm, // Combine contact and support here
+                  ),
+                  _buildDivider(),
+                  _buildCardTile(
+                    icon: Icons.local_cafe_outlined,
+                    label: s.buyMeACoffee,
+                    onTap: _launchBuyMeACoffee,
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ),
+            Card(
+              elevation: 3,
+              margin: const EdgeInsets.only(bottom: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Column(children: children),
+            ),
+          ],
+        );
+      },
     );
   }
 

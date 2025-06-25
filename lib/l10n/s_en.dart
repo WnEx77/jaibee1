@@ -713,4 +713,22 @@ class SEn extends S {
   @override
   String get optionalNameEmailNote =>
       'Name and email are optional, but if you include them, we can follow up to help you better.';
+
+  @override
+  String get generalSettings => 'General Settings';
+
+  @override
+  String get appFeatures => 'App Features';
+
+  @override
+  String get infoAndLegal => 'Info & Legal';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get setDailyReminder => 'Set Daily Reminder';
+
+  @override
+  String get reminderSetSuccess => 'Daily reminder set successfully!';
 }

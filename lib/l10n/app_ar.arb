@@ -238,5 +238,12 @@
   "message": "الرسالة",
   "send": "إرسال",
   "feedbackSent": "تم إرسال ردك بنجاح",
-  "optionalNameEmailNote": "لمساعدتك بشكل أفضل يرجى إدخال الاسم والبريد الإلكتروني"
+  "couldNotSendFeedback": "تعذّر إرسال ردك. يرجى المحاولة مرة أخرى لاحقًا",
+  "optionalNameEmailNote": "لمساعدتك بشكل أفضل يرجى إدخال الاسم والبريد الإلكتروني",
+  "generalSettings": "الإعدادات العامة",
+  "appFeatures": "ميزات التطبيق",
+  "infoAndLegal": "المعلومات والشروط",
+  "support": "الدعم",
+  "setDailyReminder": "ضبط تذكير يومي",
+  "reminderSetSuccess": "تم ضبط التذكير اليومي بنجاح!"
 }
