@@ -58,6 +58,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
   }
 
   void _previousPeriod() {
+    _selectedCategory = 'all';
     setState(() {
       if (_selectedPeriod == 'daily') {
         _selectedMonth = _selectedMonth.subtract(const Duration(days: 1));
@@ -71,6 +72,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
   }
 
   void _nextPeriod() {
+    _selectedCategory = 'all';
     final now = DateTime.now();
     if (_selectedPeriod == 'daily') {
       final today = DateTime(now.year, now.month, now.day);
@@ -358,6 +360,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
     );
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
@@ -445,184 +449,259 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         horizontal: 16,
                         vertical: 8,
                       ),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CategoryProgressScreen(
-                                selectedMonth: _selectedMonth,
+                      child: _selectedCategory != 'all'
+                          ? Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
                               ),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 16,
-                            ),
-                            child: Column(
-                              children: [
-                                if (_monthlyLimit != null) ...[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        localizer.monthlyLimit,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            totalExpenses.toStringAsFixed(2),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: usagePercent >= 1
-                                                  ? Colors.red
-                                                  : Colors.green,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          FutureBuilder<Widget>(
-                                            future: buildCurrencySymbolWidget(
-                                              usagePercent >= 1
-                                                  ? Colors.red
-                                                  : Colors.green,
-                                            ),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                      ConnectionState.done &&
-                                                  snapshot.hasData) {
-                                                return snapshot.data!;
-                                              }
-                                              return const SizedBox(
-                                                width: 16,
-                                                height: 16,
-                                              );
-                                            },
-                                          ),
-                                          Text(
-                                            ' / ',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: usagePercent >= 1
-                                                  ? Colors.red
-                                                  : Colors.green,
-                                            ),
-                                          ),
-                                          Text(
-                                            _monthlyLimit!.toStringAsFixed(2),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: usagePercent >= 1
-                                                  ? Colors.red
-                                                  : Colors.green,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          FutureBuilder<Widget>(
-                                            future: buildCurrencySymbolWidget(
-                                              usagePercent >= 1
-                                                  ? Colors.red
-                                                  : Colors.green,
-                                            ),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                      ConnectionState.done &&
-                                                  snapshot.hasData) {
-                                                return snapshot.data!;
-                                              }
-                                              return const SizedBox(
-                                                width: 16,
-                                                height: 16,
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: LinearProgressIndicator(
-                                      value: usagePercent,
-                                      minHeight: 10,
-                                      backgroundColor: Colors.grey.shade300,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        usagePercent < 0.6
-                                            ? Colors.green
-                                            : usagePercent < 0.9
-                                            ? Colors.orange
-                                            : Colors.red,
-                                      ),
-                                    ),
-                                  ),
-                                  if (_selectedMonth.month ==
-                                          DateTime.now().month &&
-                                      _selectedMonth.year ==
-                                          DateTime.now().year)
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          '${DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day - DateTime.now().day} ${localizer.daysRemaining}',
-                                          style: TextStyle(
-                                            color: Colors.grey.shade600,
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  const SizedBox(height: 12),
-                                ],
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 16,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment
+                                      .center, // Center horizontally
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    _summaryItem(
-                                      title: localizer.totalIncome,
-                                      amount: totalIncome,
-                                      color: Colors.green,
+                                    Center(
+                                      child: Text(
+                                        localizer.totalExpensesInCategory + getLocalizedCategory(_selectedCategory, localizer),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      
                                     ),
-                                    _summaryItem(
-                                      title: localizer.totalExpenses,
-                                      amount: totalExpenses,
-                                      color: Colors.red,
-                                    ),
-                                    _summaryItem(
-                                      title: localizer.balance,
-                                      amount: balance,
-                                      color: balance >= 0
-                                          ? Colors.green
-                                          : Colors.red,
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .center, // Center Row content
+                                      children: [
+                                        Text(
+                                          totalExpenses.toStringAsFixed(2),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        FutureBuilder<Widget>(
+                                          future: buildCurrencySymbolWidget(
+                                            Colors.red,
+                                          ),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                    ConnectionState.done &&
+                                                snapshot.hasData) {
+                                              return snapshot.data!;
+                                            }
+                                            return const SizedBox(
+                                              width: 16,
+                                              height: 16,
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  localizer.clickForMoreInfo,
-                                  style: TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
+                              ),
+                            )
+                          : GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CategoryProgressScreen(
+                                      selectedMonth: _selectedMonth,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 16,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      if (_monthlyLimit != null) ...[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              localizer.monthlyLimit,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  totalExpenses.toStringAsFixed(
+                                                    2,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: usagePercent >= 1
+                                                        ? Colors.red
+                                                        : Colors.green,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 4),
+                                                FutureBuilder<Widget>(
+                                                  future:
+                                                      buildCurrencySymbolWidget(
+                                                        usagePercent >= 1
+                                                            ? Colors.red
+                                                            : Colors.green,
+                                                      ),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.connectionState ==
+                                                            ConnectionState
+                                                                .done &&
+                                                        snapshot.hasData) {
+                                                      return snapshot.data!;
+                                                    }
+                                                    return const SizedBox(
+                                                      width: 16,
+                                                      height: 16,
+                                                    );
+                                                  },
+                                                ),
+                                                Text(
+                                                  ' / ',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: usagePercent >= 1
+                                                        ? Colors.red
+                                                        : Colors.green,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  _monthlyLimit!
+                                                      .toStringAsFixed(2),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: usagePercent >= 1
+                                                        ? Colors.red
+                                                        : Colors.green,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 4),
+                                                FutureBuilder<Widget>(
+                                                  future:
+                                                      buildCurrencySymbolWidget(
+                                                        usagePercent >= 1
+                                                            ? Colors.red
+                                                            : Colors.green,
+                                                      ),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.connectionState ==
+                                                            ConnectionState
+                                                                .done &&
+                                                        snapshot.hasData) {
+                                                      return snapshot.data!;
+                                                    }
+                                                    return const SizedBox(
+                                                      width: 16,
+                                                      height: 16,
+                                                    );
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 6),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          child: LinearProgressIndicator(
+                                            value: usagePercent,
+                                            minHeight: 10,
+                                            backgroundColor:
+                                                Colors.grey.shade300,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  usagePercent < 0.6
+                                                      ? Colors.green
+                                                      : usagePercent < 0.9
+                                                      ? Colors.orange
+                                                      : Colors.red,
+                                                ),
+                                          ),
+                                        ),
+                                        if (_selectedMonth.month ==
+                                                DateTime.now().month &&
+                                            _selectedMonth.year ==
+                                                DateTime.now().year)
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 8,
+                                            ),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                '${DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day - DateTime.now().day} ${localizer.daysRemaining}',
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade600,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        const SizedBox(height: 12),
+                                      ],
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          _summaryItem(
+                                            title: localizer.totalIncome,
+                                            amount: totalIncome,
+                                            color: Colors.green,
+                                          ),
+                                          _summaryItem(
+                                            title: localizer.totalExpenses,
+                                            amount: totalExpenses,
+                                            color: Colors.red,
+                                          ),
+                                          _summaryItem(
+                                            title: localizer.balance,
+                                            amount: balance,
+                                            color: balance >= 0
+                                                ? Colors.green
+                                                : Colors.red,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        localizer.clickForMoreInfo,
+                                        style: TextStyle(
+                                          color: Colors.blueGrey,
+                                          fontSize: 12,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(

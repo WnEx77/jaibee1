@@ -734,4 +734,7 @@ class SEn extends S {
 
   @override
   String get all => 'All';
+
+  @override
+  String get totalExpensesInCategory => 'Total Expenses In Category ';
 }

@@ -246,5 +246,6 @@
   "support": "الدعم",
   "setDailyReminder": "ضبط تذكير يومي",
   "reminderSetSuccess": "تم ضبط التذكير اليومي بنجاح!",
-  "all": "كل الفئات"
+  "all": "كل الفئات",
+  "totalExpensesInCategory": "إجمالي المصروفات في فئة "
 }

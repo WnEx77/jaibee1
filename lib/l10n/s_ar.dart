@@ -741,4 +741,7 @@ class SAr extends S {
 
   @override
   String get all => 'كل الفئات';
+
+  @override
+  String get totalExpensesInCategory => 'إجمالي المصروفات في فئة ';
 }

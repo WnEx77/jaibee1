@@ -265,5 +265,6 @@
   "support": "Support",
   "setDailyReminder": "Set Daily Reminder",
   "reminderSetSuccess": "Daily reminder set successfully!",
-  "all": "All"
+  "all": "All",
+  "totalExpensesInCategory": "Total Expenses In Category "
 }

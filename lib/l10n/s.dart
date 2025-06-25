@@ -1506,6 +1506,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'All'**
   String get all;
+
+  /// No description provided for @totalExpensesInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Expenses In Category '**
+  String get totalExpensesInCategory;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
