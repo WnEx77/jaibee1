@@ -609,38 +609,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildSectionCard(
                 title: s.appFeatures,
                 children: [
-                  _buildCardTile(
-                    icon: Icons.alarm,
-                    label: s.setDailyReminder,
-                    onTap: () async {
-                      final pickedTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
+                  // _buildCardTile(
+                  //   icon: Icons.alarm,
+                  //   label: s.setDailyReminder,
+                  //   onTap: () async {
+                  //     final pickedTime = await showTimePicker(
+                  //       context: context,
+                  //       initialTime: TimeOfDay.now(),
+                  //     );
 
-                      if (pickedTime != null) {
-                        await NotificationService.scheduleDailyReminder(
-                          pickedTime,
-                        );
+                  //     if (pickedTime != null) {
+                  //       await NotificationService.scheduleDailyReminder(
+                  //         pickedTime,
+                  //       );
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(s.reminderSetSuccess)),
-                        );
-                      }
-                    },
-                  ),
-                  _buildDivider(),
-                  _buildCardTile(
-                    icon: Icons.flag_outlined,
-                    label: s.setGoals,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const GoalsScreen()),
-                      );
-                    },
-                  ),
-                  _buildDivider(),
+                  //       ScaffoldMessenger.of(context).showSnackBar(
+                  //         SnackBar(content: Text(s.reminderSetSuccess)),
+                  //       );
+                  //     }
+                  //   },
+                  // ),
+                  // _buildDivider(),
+                  // _buildCardTile(
+                  //   icon: Icons.flag_outlined,
+                  //   label: s.setGoals,
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (_) => const GoalsScreen()),
+                  //     );
+                  //   },
+                  // ),
+                  // _buildDivider(),
                   _buildCardTile(
                     icon: Icons.picture_as_pdf_outlined,
                     label: s.exportTransactionsAsPdf,

@@ -777,7 +777,7 @@ class SAr extends S {
 
   @override
   String get budgetScreenFooter =>
-      'نصيحة: قم بتعديل حدودك في أي وقت للبقاء على المسار الصحيح!';
+      'نصيحة: قم بتعديل ميزانيتك في أي وقت حسب احتياجاتك!';
 
   @override
   String get summaryHint => 'يجب أن يطابق المبلغ المخصص حد الميزانية الشهرية.';
