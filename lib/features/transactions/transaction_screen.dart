@@ -28,6 +28,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
   String _selectedPeriod = 'monthly';
   double? _monthlyLimit;
   DateTimeRange? _selectedRange;
+  String _selectedCategory = 'all';
 
   @override
   void initState() {
@@ -47,9 +48,10 @@ class _TransactionScreenState extends State<TransactionScreen> {
   Future<void> _loadCategories() async {
     final categoryBox = Hive.box<Category>('categories');
     final categories = categoryBox.values
-        .map((cat) => cat.name)
-        .where((name) => name.toLowerCase() != 'income')
+        .map((cat) => cat.name.toLowerCase())
+        .where((name) => name != 'income')
         .toList();
+
     setState(() {
       _selectedFilters.addAll(categories);
     });
@@ -101,7 +103,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final asset = currency.getAsset(isDarkMode: isDark);
 
-
     if (asset != null) {
       return Image.asset(asset, width: 18, height: 18, color: color);
     } else {
@@ -115,8 +116,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
   Future<void> _pickRange(BuildContext context) async {
     final localizer = S.of(context)!;
     final mintJade = Theme.of(context).extension<MintJadeColors>()!;
-
-
 
     DateTimeRange? tempRange =
         _selectedRange ??
@@ -429,6 +428,32 @@ class _TransactionScreenState extends State<TransactionScreen> {
     });
   }
 
+  Widget _buildCategoryChip(BuildContext context, String category) {
+    final isSelected = _selectedCategory == category.toLowerCase();
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: ChoiceChip(
+        label: Text(
+          category[0].toUpperCase() + category.substring(1),
+          style: TextStyle(
+            color: isSelected ? Colors.blue : Colors.grey.shade800,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        selected: isSelected,
+        onSelected: (_) {
+          setState(() {
+            _selectedCategory = category.toLowerCase();
+          });
+        },
+        selectedColor: Colors.blue.shade100,
+        backgroundColor: Colors.grey.shade200,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
@@ -478,12 +503,16 @@ class _TransactionScreenState extends State<TransactionScreen> {
                     })
                     .toList();
 
+                final usedCategoryNames = allTransactions
+                    .map((t) => t.category.toLowerCase())
+                    .toSet();
+
                 final filteredTransactions =
                     allTransactions
                         .where(
-                          (t) => _selectedFilters.contains(
-                            t.category.toLowerCase(),
-                          ),
+                          (t) =>
+                              _selectedCategory == 'all' ||
+                              t.category.toLowerCase() == _selectedCategory,
                         )
                         .toList()
                       ..sort((a, b) => b.date.compareTo(a.date));
@@ -791,39 +820,70 @@ class _TransactionScreenState extends State<TransactionScreen> {
                               ],
                             ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: SizedBox(
+                        height: 40,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            _buildCategoryChip(context, 'all'),
+                            ...categoryBox.values
+                                .where(
+                                  (category) => usedCategoryNames.contains(
+                                    category.name.toLowerCase(),
+                                  ),
+                                )
+                                .map(
+                                  (category) => _buildCategoryChip(
+                                    context,
+                                    category.name,
+                                  ),
+                                )
+                                .toList(),
+                          ],
+                        ),
+                      ),
+                    ),
+
                     Expanded(
                       child: filteredTransactions.isEmpty
                           ? Center(
-                                child: Column(
+                              child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   FutureBuilder<Widget>(
-                                  future: buildCurrencySymbolWidget(
-                                    Theme.of(context).brightness ==
-                                        Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  ),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done &&
-                                      snapshot.hasData) {
-                                    return SizedBox(
-                                      width: 140,
-                                      height: 140,
-                                      child: Center(
-                                      child: Opacity(
-                                        opacity: 0.4,
-                                        child: Transform.scale(
-                                        scale: 5, // 18*16=288, close to 300
-                                        child: snapshot.data!,
-                                        ),
-                                      ),
-                                      ),
-                                    );
-                                    }
-                                    return SizedBox(width: 140, height: 140);
-                                  },
+                                    future: buildCurrencySymbolWidget(
+                                      Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                              ConnectionState.done &&
+                                          snapshot.hasData) {
+                                        return SizedBox(
+                                          width: 140,
+                                          height: 140,
+                                          child: Center(
+                                            child: Opacity(
+                                              opacity: 0.4,
+                                              child: Transform.scale(
+                                                scale:
+                                                    5, // 18*16=288, close to 300
+                                                child: snapshot.data!,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return SizedBox(width: 140, height: 140);
+                                    },
                                   ),
                                   const SizedBox(height: 16),
                                   Text(localizer.noTransactions),
