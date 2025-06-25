@@ -408,7 +408,7 @@ class SAr extends S {
   String get developedBy => 'تم تطويره بواسطة';
 
   @override
-  String get categoryBudgets => 'ميزانية الفئات';
+  String get categoryBudgets => 'حدد ميزانية كل تصنيف حسب احتياجك';
 
   @override
   String get limitExceedsMonthly => 'تجاوزت الحد الشهري المسموح به';
@@ -744,4 +744,16 @@ class SAr extends S {
 
   @override
   String get totalExpensesInCategory => 'إجمالي المصروفات في فئة ';
+
+  @override
+  String get budgetSummary => 'ملخص الميزانية';
+
+  @override
+  String get monthlyLimitLabel => 'الحد الشهري';
+
+  @override
+  String get allocatedLabel => 'الحد المخصص';
+
+  @override
+  String get remainingLabel => 'الحد المتبقي';
 }

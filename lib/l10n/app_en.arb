@@ -144,15 +144,15 @@
   "aboutUs": "About Us",
   "aboutAppDescription": "JaiBee is a simple and intuitive app for tracking your income and expenses. We aim to help you take control of your finances with ease.",
   "developedBy": "Developed by",
-  "categoryBudgets": "Category Budgets",
+  "categoryBudgets": "Set Your Budget Per Category",
   "limitExceedsMonthly": "Limit Exceeds Monthly",
   "enterValidNumber": "Enter Valid Number",
   "invalidLimit": "Invalid Limit",
   "invalidMonthlyLimit": "Invalid Monthly Limit",
   "confirmDeletion": "Confirm Deletion",
-"areYouSureDeleteTransaction": "Are you sure you want to delete this transaction?",
-"budgetDistribution": "Budget Distribution",
-"expectedDate": "Expected Date",
+  "areYouSureDeleteTransaction": "Are you sure you want to delete this transaction?",
+  "budgetDistribution": "Budget Distribution",
+  "expectedDate": "Expected Date",
   "addNewGoal": "Add New Goal",
   "goalName": "Goal Name",
   "targetAmount": "Target Amount",
@@ -266,5 +266,10 @@
   "setDailyReminder": "Set Daily Reminder",
   "reminderSetSuccess": "Daily reminder set successfully!",
   "all": "All",
-  "totalExpensesInCategory": "Total Expenses In Category "
+  "totalExpensesInCategory": "Total Expenses In Category ",
+  "budgetSummary": "Budget Summary",
+  "monthlyLimitLabel": "Limit",
+  "allocatedLabel": "Allocated",
+  "remainingLabel": "Remaining"
+
 }

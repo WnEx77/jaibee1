@@ -886,7 +886,7 @@ abstract class S {
   /// No description provided for @categoryBudgets.
   ///
   /// In en, this message translates to:
-  /// **'Category Budgets'**
+  /// **'Set Your Budget Per Category'**
   String get categoryBudgets;
 
   /// No description provided for @limitExceedsMonthly.
@@ -1512,6 +1512,30 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Total Expenses In Category '**
   String get totalExpensesInCategory;
+
+  /// No description provided for @budgetSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget Summary'**
+  String get budgetSummary;
+
+  /// No description provided for @monthlyLimitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit'**
+  String get monthlyLimitLabel;
+
+  /// No description provided for @allocatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocated'**
+  String get allocatedLabel;
+
+  /// No description provided for @remainingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get remainingLabel;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

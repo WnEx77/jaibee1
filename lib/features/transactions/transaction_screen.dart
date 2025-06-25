@@ -343,7 +343,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
               ? localizer.all
               : getLocalizedCategory(category, localizer),
           style: TextStyle(
-            color: isSelected ? Colors.blue : Colors.grey.shade800,
+            color: isSelected ? Colors.black : Colors.grey.shade800,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -353,7 +353,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
             _selectedCategory = category.toLowerCase();
           });
         },
-        selectedColor: Colors.blue.shade100,
+        selectedColor: const Color.fromARGB(115, 114, 223, 119),
         backgroundColor: Colors.grey.shade200,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),

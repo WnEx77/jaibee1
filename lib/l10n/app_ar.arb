@@ -138,7 +138,7 @@
   "totalSavings": "مجموع المدخرات",
   "aboutAppDescription": "جيبي هو تطبيق بسيط وسهل الاستخدام لتتبع الدخل والمصروفات. هدفنا هو مساعدتك على التحكم في أموالك بكفاءة.",
   "developedBy": "تم تطويره بواسطة",
-  "categoryBudgets": "ميزانية الفئات",
+  "categoryBudgets": "حدد ميزانية كل تصنيف حسب احتياجك",
   "limitExceedsMonthly": "تجاوزت الحد الشهري المسموح به",
   "enterValidNumber": "يرجى إدخال رقم صالح",
   "invalidLimit": "الحد غير صالح",
@@ -247,5 +247,9 @@
   "setDailyReminder": "ضبط تذكير يومي",
   "reminderSetSuccess": "تم ضبط التذكير اليومي بنجاح!",
   "all": "كل الفئات",
-  "totalExpensesInCategory": "إجمالي المصروفات في فئة "
+  "totalExpensesInCategory": "إجمالي المصروفات في فئة ",
+  "budgetSummary": "ملخص الميزانية",
+  "monthlyLimitLabel": "الحد الشهري",
+  "allocatedLabel": "الحد المخصص",
+  "remainingLabel": "الحد المتبقي"
 }

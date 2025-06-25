@@ -409,7 +409,7 @@ class SEn extends S {
   String get developedBy => 'Developed by';
 
   @override
-  String get categoryBudgets => 'Category Budgets';
+  String get categoryBudgets => 'Set Your Budget Per Category';
 
   @override
   String get limitExceedsMonthly => 'Limit Exceeds Monthly';
@@ -737,4 +737,16 @@ class SEn extends S {
 
   @override
   String get totalExpensesInCategory => 'Total Expenses In Category ';
+
+  @override
+  String get budgetSummary => 'Budget Summary';
+
+  @override
+  String get monthlyLimitLabel => 'Limit';
+
+  @override
+  String get allocatedLabel => 'Allocated';
+
+  @override
+  String get remainingLabel => 'Remaining';
 }
