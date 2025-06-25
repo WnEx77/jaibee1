@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:fl_chart/fl_chart.dart';
+// import 'package:fl_chart/fl_chart.dart';
 import 'package:jaibee/data/models/budget.dart';
 import 'package:jaibee/data/models/category.dart';
 import 'package:jaibee/shared/widgets/app_background.dart';
 import 'package:jaibee/l10n/s.dart';
-import 'package:jaibee/core/theme/mint_jade_theme.dart';
+// import 'package:jaibee/core/theme/mint_jade_theme.dart';
 import 'package:jaibee/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -140,50 +140,50 @@ class _BudgetScreenState extends State<BudgetScreen> {
     ).show(context);
   }
 
-  List<PieChartSectionData> _buildPieChartSections() {
-    final total = _controllers.values
-        .map((c) => double.tryParse(c.text) ?? 0)
-        .fold(0.0, (a, b) => a + b);
+  // List<PieChartSectionData> _buildPieChartSections() {
+  //   final total = _controllers.values
+  //       .map((c) => double.tryParse(c.text) ?? 0)
+  //       .fold(0.0, (a, b) => a + b);
 
-    if (total == 0) return [];
+  //   if (total == 0) return [];
 
-    final entries = _controllers.entries.toList();
+  //   final entries = _controllers.entries.toList();
 
-    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
-    final baseColor = mintJade.buttonColor;
+  //   final mintJade = Theme.of(context).extension<MintJadeColors>()!;
+  //   final baseColor = mintJade.buttonColor;
 
-    List<Color> generateShades(Color base, int count) {
-      final hslBase = HSLColor.fromColor(base);
+  //   List<Color> generateShades(Color base, int count) {
+  //     final hslBase = HSLColor.fromColor(base);
 
-      return List.generate(count, (i) {
-        final lightness = (0.9 - i * 0.08).clamp(0.2, 0.85);
-        final hsl = hslBase.withLightness(lightness);
-        return hsl.toColor();
-      });
-    }
+  //     return List.generate(count, (i) {
+  //       final lightness = (0.9 - i * 0.08).clamp(0.2, 0.85);
+  //       final hsl = hslBase.withLightness(lightness);
+  //       return hsl.toColor();
+  //     });
+  //   }
 
-    final List<Color> pieColors = generateShades(baseColor, entries.length);
+  //   final List<Color> pieColors = generateShades(baseColor, entries.length);
 
-    return List.generate(entries.length, (i) {
-      final name = entries[i].key;
-      final value = double.tryParse(entries[i].value.text) ?? 0;
-      final percentage = (value / total) * 100;
+  //   return List.generate(entries.length, (i) {
+  //     final name = entries[i].key;
+  //     final value = double.tryParse(entries[i].value.text) ?? 0;
+  //     final percentage = (value / total) * 100;
 
-      return PieChartSectionData(
-        title:
-            '${getLocalizedCategory(name, S.of(context)!)}\n${percentage.toStringAsFixed(1)}%',
-        value: value,
-        color: pieColors[i % pieColors.length],
-        radius: 60,
-        titleStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
-        titlePositionPercentageOffset: 0.6,
-      );
-    });
-  }
+  //     return PieChartSectionData(
+  //       title:
+  //           '${getLocalizedCategory(name, S.of(context)!)}\n${percentage.toStringAsFixed(1)}%',
+  //       value: value,
+  //       color: pieColors[i % pieColors.length],
+  //       radius: 60,
+  //       titleStyle: const TextStyle(
+  //         fontSize: 12,
+  //         fontWeight: FontWeight.w600,
+  //         color: Colors.white,
+  //       ),
+  //       titlePositionPercentageOffset: 0.6,
+  //     );
+  //   });
+  // }
 
   Future<Widget> buildCurrencySymbolWidget(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -210,7 +210,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
         .map((c) => double.tryParse(c.text) ?? 0)
         .fold(0.0, (a, b) => a + b);
     final remainingBudget = monthlyLimitValue - totalCategoryLimits;
-    final pieSections = _buildPieChartSections();
+    // final pieSections = _buildPieChartSections();
 
     return Scaffold(
       // appBar: AppBar(

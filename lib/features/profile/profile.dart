@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:jaibee/l10n/s.dart';
 import 'package:jaibee/main.dart';
-import 'package:jaibee/features/goals/goals_screen.dart';
+// import 'package:jaibee/features/goals/goals_screen.dart';
 import 'package:jaibee/features/about/about_us_screen.dart';
 import 'package:jaibee/features/webview/webview_screen.dart';
 import 'package:jaibee/core/theme/theme_provider.dart';
@@ -15,7 +15,7 @@ import 'package:jaibee/core/utils/currency_utils.dart';
 import 'package:jaibee/features/about/terms_of_service_screen.dart';
 import 'package:http/http.dart' as http;
 import '../../core/theme/mint_jade_theme.dart';
-import '../../core/services/notification_service.dart';
+// import '../../core/services/notification_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
