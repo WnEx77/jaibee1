@@ -235,14 +235,14 @@ class _TransactionScreenState extends State<TransactionScreen> {
                       const SizedBox(height: 20),
                       _RangeDateTile(
                         icon: Icons.calendar_today,
-                        color: Colors.blue.shade700,
+                        color: Colors.grey.shade800,
                         label: localizer.startDate,
                         date: tempRange!.start,
                         onTap: () => pickDate(isStart: true),
                       ),
                       _RangeDateTile(
                         icon: Icons.event,
-                        color: Colors.green.shade700,
+                        color: Colors.grey.shade800,
                         label: localizer.endDate,
                         date: tempRange!.end,
                         onTap: () => pickDate(isStart: false),
@@ -360,8 +360,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
     );
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
@@ -467,13 +465,16 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                   children: [
                                     Center(
                                       child: Text(
-                                        localizer.totalExpensesInCategory + getLocalizedCategory(_selectedCategory, localizer),
+                                        localizer.totalExpensesInCategory +
+                                            getLocalizedCategory(
+                                              _selectedCategory,
+                                              localizer,
+                                            ),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                         ),
                                       ),
-                                      
                                     ),
                                     const SizedBox(height: 8),
                                     Row(
