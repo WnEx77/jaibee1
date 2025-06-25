@@ -38,7 +38,7 @@ class CategoryProgressScreen extends StatelessWidget {
     final transactionBox = Hive.box('transactions');
     final categoryBox = Hive.box<Category>('categories');
     final budgetBox = Hive.box<Budget>('budgets'); // <-- Add this line
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -111,7 +111,7 @@ class CategoryProgressScreen extends StatelessWidget {
                           backgroundColor: Colors.transparent,
                           child: Icon(
                             getCategoryIcon(cat),
-                            color: mintTheme.unselectedIconColor,
+                            color: mintJade.unselectedIconColor,
                           ),
                         ),
                         title: Text(

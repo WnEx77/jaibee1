@@ -696,20 +696,27 @@ class SAr extends S {
   String get termsOfService => 'شروط الخدمة';
 
   @override
-  String get name => 'Name';
+  String get name => 'الإسم';
 
   @override
-  String get email => 'Email';
+  String get email => 'الإيميل أو رقم جوالك';
 
   @override
-  String get message => 'Message';
+  String get message => 'الرسالة';
 
   @override
-  String get send => 'Send';
+  String get send => 'إرسال';
 
   @override
-  String get feedbackSent => 'Feedback Sent';
+  String get feedbackSent => 'تم إرسال ردك بنجاح';
 
   @override
   String get couldNotSendFeedback => 'Could Not Send Feedback';
+
+  @override
+  String get sending => 'جاري الإرسال';
+
+  @override
+  String get optionalNameEmailNote =>
+      'لمساعدتك بشكل أفضل يرجى إدخال الاسم والبريد الإلكتروني';
 }

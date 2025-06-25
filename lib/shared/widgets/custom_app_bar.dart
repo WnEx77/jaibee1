@@ -20,10 +20,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
     return Container(
       decoration: BoxDecoration(
-        color: mintTheme.appBarColor,
+        color: mintJade.appBarColor,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
         boxShadow: [
           BoxShadow(

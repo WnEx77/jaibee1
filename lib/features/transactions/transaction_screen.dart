@@ -114,7 +114,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   Future<void> _pickRange(BuildContext context) async {
     final localizer = S.of(context)!;
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
 
 
 
@@ -245,7 +245,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             Navigator.of(context).pop();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: mintTheme.buttonColor,
+                            backgroundColor: mintJade.buttonColor,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -280,7 +280,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   void _showFilterDialog(BuildContext context) {
     final localizer = S.of(context)!;
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
     showDialog(
       context: context,
       builder: (context) {
@@ -393,7 +393,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             Navigator.of(context).pop(tempPeriod);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: mintTheme.buttonColor,
+                            backgroundColor: mintJade.buttonColor,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -434,7 +434,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
     final localizer = S.of(context)!;
     final transactionBox = Hive.box('transactions');
     final categoryBox = Hive.box<Category>('categories');
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
 
     return Scaffold(
       body: AppBackground(
@@ -993,7 +993,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                               ),
                                             ),
                                           ),
-                                          color: mintTheme.unselectedIconColor,
+                                          color: mintJade.unselectedIconColor,
                                         ),
                                       ),
                                       title: Text(

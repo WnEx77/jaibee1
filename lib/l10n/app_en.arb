@@ -256,7 +256,7 @@
   "message": "Message",
   "send": "Send",
   "feedbackSent": "Feedback Sent",
-  "couldNotSendFeedback": "Could Not Send Feedback"
-
-
+  "couldNotSendFeedback": "Could Not Send Feedback",
+  "sending": "Sending...",
+  "optionalNameEmailNote": "Name and email are optional, but if you include them, we can follow up to help you better."
 }

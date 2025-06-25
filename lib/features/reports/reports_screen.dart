@@ -84,7 +84,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
 
     Map<String, double> dailyExpenses = {};
     Map<String, double> categoryExpenses = {};
@@ -155,7 +155,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         },
         label: Text(localizer.getAdvice),
         icon: const Icon(Icons.lightbulb),
-        backgroundColor: mintTheme.buttonColor,
+        backgroundColor: mintJade.buttonColor,
         foregroundColor: Colors.white,
       ),
       body: AppBackground(
@@ -275,7 +275,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Widget _buildViewToggle(S localizer) {
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -289,8 +289,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
           },
           borderRadius: BorderRadius.circular(12),
           selectedColor: Colors.white,
-          color: mintTheme.buttonColor,
-          fillColor: mintTheme.buttonColor,
+          color: mintJade.buttonColor,
+          fillColor: mintJade.buttonColor,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

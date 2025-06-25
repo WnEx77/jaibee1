@@ -268,11 +268,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Widget _buildSubmitButton(S localizer) {
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
     return FilledButton.icon(
       onPressed: _submitForm,
       style: FilledButton.styleFrom(
-        backgroundColor: mintTheme.buttonColor,
+        backgroundColor: mintJade.buttonColor,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 14),
       ),

@@ -58,8 +58,8 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
     final locale = Localizations.maybeLocaleOf(context);
     final isRtl = locale?.languageCode == 'ar';
 
-    final mintTheme = Theme.of(context).extension<MintJadeColors>();
-    if (mintTheme == null) {
+    final mintJade = Theme.of(context).extension<MintJadeColors>();
+    if (mintJade == null) {
       return const SizedBox();
     }
 
@@ -97,7 +97,7 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
           bottomNavigationBar: _currentPage != 5
               ? Container(
                   decoration: BoxDecoration(
-                    color: mintTheme.navBarColor,
+                    color: mintJade.navBarColor,
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(16),
                     ),
@@ -125,8 +125,8 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                               label: S.of(context)!.transactions,
                               index: 0,
                               isSelected: _currentPage == 0,
-                              selectedColor: mintTheme.selectedIconColor,
-                              unselectedColor: mintTheme.unselectedIconColor,
+                              selectedColor: mintJade.selectedIconColor,
+                              unselectedColor: mintJade.unselectedIconColor,
                             ),
                           ),
                           Expanded(
@@ -135,8 +135,8 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                               label: S.of(context)!.budgets,
                               index: 1,
                               isSelected: _currentPage == 1,
-                              selectedColor: mintTheme.selectedIconColor,
-                              unselectedColor: mintTheme.unselectedIconColor,
+                              selectedColor: mintJade.selectedIconColor,
+                              unselectedColor: mintJade.unselectedIconColor,
                             ),
                           ),
                           const Spacer(),
@@ -146,8 +146,8 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                               label: S.of(context)!.reports,
                               index: 3,
                               isSelected: _currentPage == 3,
-                              selectedColor: mintTheme.selectedIconColor,
-                              unselectedColor: mintTheme.unselectedIconColor,
+                              selectedColor: mintJade.selectedIconColor,
+                              unselectedColor: mintJade.unselectedIconColor,
                             ),
                           ),
                           Expanded(
@@ -156,8 +156,8 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                               label: S.of(context)!.profile,
                               index: 4,
                               isSelected: _currentPage == 4,
-                              selectedColor: mintTheme.selectedIconColor,
-                              unselectedColor: mintTheme.unselectedIconColor,
+                              selectedColor: mintJade.selectedIconColor,
+                              unselectedColor: mintJade.unselectedIconColor,
                             ),
                           ),
                         ],
@@ -169,7 +169,7 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                           height: 56,
                           width: 56,
                           decoration: BoxDecoration(
-                            color: mintTheme.appBarColor,
+                            color: mintJade.appBarColor,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(

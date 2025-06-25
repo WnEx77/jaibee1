@@ -341,7 +341,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
   @override
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -385,7 +385,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
                       onChanged: (v) =>
                           setState(() => _includeExpenses = v ?? true),
                       title: Text(localizer.expense),
-                      activeColor: mintTheme.selectedIconColor,
+                      activeColor: mintJade.selectedIconColor,
                       checkColor: isDark ? Colors.black : Colors.white,
                     ),
                     CheckboxListTile(
@@ -393,7 +393,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
                       onChanged: (v) =>
                           setState(() => _includeIncome = v ?? true),
                       title: Text(localizer.income),
-                      activeColor: mintTheme.selectedIconColor,
+                      activeColor: mintJade.selectedIconColor,
                       checkColor: isDark ? Colors.black : Colors.white,
                     ),
                     const SizedBox(height: 24),
@@ -403,7 +403,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
                         icon: const Icon(Icons.picture_as_pdf),
                         label: Text(localizer.exportAsPdf),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: mintTheme.buttonColor,
+                          backgroundColor: mintJade.buttonColor,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           textStyle: const TextStyle(

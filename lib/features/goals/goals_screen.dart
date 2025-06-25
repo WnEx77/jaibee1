@@ -39,7 +39,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
     final localizer = S.of(context)!;
 
     return Scaffold(
@@ -71,7 +71,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? mintTheme.appBarColor
+                        ? mintJade.appBarColor
                         : Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
@@ -83,7 +83,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                         ),
                     ],
                     border: Border.all(
-                      color: mintTheme.buttonColor.withOpacity(
+                      color: mintJade.buttonColor.withOpacity(
                         Theme.of(context).brightness == Brightness.dark
                             ? 0.3
                             : 0.4,
@@ -97,7 +97,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                       vertical: 12,
                     ),
                     leading: CircleAvatar(
-                      backgroundColor: mintTheme.buttonColor.withOpacity(0.15),
+                      backgroundColor: mintJade.buttonColor.withOpacity(0.15),
                       child: Icon(
                         Icons.flag,
                         color: Theme.of(context).brightness == Brightness.dark
@@ -225,7 +225,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
             MaterialPageRoute(builder: (_) => AddGoalScreen(onAdd: _addGoal)),
           );
         },
-        backgroundColor: mintTheme.buttonColor,
+        backgroundColor: mintJade.buttonColor,
         label: Text(localizer.addGoal),
         icon: const Icon(Icons.add),
       ),

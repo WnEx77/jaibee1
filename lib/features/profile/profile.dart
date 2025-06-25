@@ -16,6 +16,7 @@ import 'package:jaibee/features/about/privacy_policy_screen.dart';
 import 'package:jaibee/core/utils/currency_utils.dart';
 import 'package:jaibee/features/about/terms_of_service_screen.dart';
 import 'package:http/http.dart' as http;
+import '../../core/theme/mint_jade_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -154,22 +155,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _openSupportPage() async {
-    final s = S.of(context)!;
-    final url = Uri.parse('https://github.com/wnex77/jaibee1/issues');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      Flushbar(
-        message: s.couldNotOpenSupportPage,
-        duration: const Duration(seconds: 2),
-        backgroundColor: Colors.redAccent,
-        margin: const EdgeInsets.all(16),
-        borderRadius: BorderRadius.circular(12),
-        icon: const Icon(Icons.error_outline, color: Colors.white),
-      ).show(context);
-    }
-  }
+  // Future<void> _openSupportPage() async {
+  //   final s = S.of(context)!;
+  //   final url = Uri.parse('https://github.com/wnex77/jaibee1/issues');
+  //   if (await canLaunchUrl(url)) {
+  //     await launchUrl(url, mode: LaunchMode.externalApplication);
+  //   } else {
+  //     Flushbar(
+  //       message: s.couldNotOpenSupportPage,
+  //       duration: const Duration(seconds: 2),
+  //       backgroundColor: Colors.redAccent,
+  //       margin: const EdgeInsets.all(16),
+  //       borderRadius: BorderRadius.circular(12),
+  //       icon: const Icon(Icons.error_outline, color: Colors.white),
+  //     ).show(context);
+  //   }
+  // }
 
   Future<void> _showCurrencyPicker(BuildContext context) async {
     final s = S.of(context)!;
@@ -330,79 +331,191 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final _nameController = TextEditingController();
     final _emailController = TextEditingController();
     final _messageController = TextEditingController();
+    final mintJadeColors = Theme.of(context).extension<MintJadeColors>()!;
+
+    bool isLoading = false;
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(s.supportAndFeedback),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: s.name),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: Theme.of(context).cardColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.feedback,
+                    size: 48,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    s.supportAndFeedback,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: s.name,
+                      prefixIcon: const Icon(Icons.person),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: s.email,
+                      prefixIcon: const Icon(Icons.email),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    s.optionalNameEmailNote, // Localized string like: "Name and email are optional, but they help us reach you if we need more details."
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                    textAlign: TextAlign.start,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _messageController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: s.message,
+                      alignLabelWithHint: true,
+                      prefixIcon: const Icon(Icons.message),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          label: Text(
+                            s.cancel,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: isLoading
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : const Icon(Icons.send),
+                          label: Text(
+                            isLoading ? s.sending : s.send,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: mintJadeColors.buttonColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: isLoading
+                              ? null
+                              : () async {
+                                  final name = _nameController.text.trim();
+                                  final email = _emailController.text.trim();
+                                  final message = _messageController.text
+                                      .trim();
+                                  if (message.isEmpty) return;
+
+                                  setState(() => isLoading = true);
+
+                                  final formUrl =
+                                      "https://docs.google.com/forms/d/e/1FAIpQLSc2jr5yYVYnK9Oxh6AWKvp8yo9m6f50ct_ydlb_J_jDJ8375g/formResponse";
+                                  final Map<String, String> body = {
+                                    "entry.257464318": name,
+                                    "entry.737850348": email,
+                                    "entry.1968950375": message,
+                                  };
+
+                                  try {
+                                    await http.post(
+                                      Uri.parse(formUrl),
+                                      body: body,
+                                    );
+                                    Navigator.pop(context);
+                                    Flushbar(
+                                      message: s.feedbackSent,
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: Colors.green,
+                                      margin: const EdgeInsets.all(16),
+                                      borderRadius: BorderRadius.circular(12),
+                                      icon: const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.white,
+                                      ),
+                                    ).show(context);
+                                  } catch (e) {
+                                    Navigator.pop(context);
+                                    Flushbar(
+                                      message: s.couldNotSendFeedback,
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: Colors.redAccent,
+                                      margin: const EdgeInsets.all(16),
+                                      borderRadius: BorderRadius.circular(12),
+                                      icon: const Icon(
+                                        Icons.error_outline,
+                                        color: Colors.white,
+                                      ),
+                                    ).show(context);
+                                  } finally {
+                                    setState(() => isLoading = false);
+                                  }
+                                },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: s.email),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              TextField(
-                controller: _messageController,
-                decoration: InputDecoration(labelText: s.message),
-                maxLines: 4,
-              ),
-            ],
+            ),
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(s.cancel),
-          ),
-          ElevatedButton(
-            // ...inside _showFeedbackForm's onPressed for the Send button...
-            onPressed: () async {
-              final name = _nameController.text.trim();
-              final email = _emailController.text.trim();
-              final message = _messageController.text.trim();
-              if (message.isEmpty) return;
-
-              // Replace with your Google Form's real entry IDs
-              final formUrl =
-                  "https://docs.google.com/forms/d/e/1FAIpQLSc2jr5yYVYnK9Oxh6AWKvp8yo9m6f50ct_ydlb_J_jDJ8375g/formResponse";
-              final Map<String, String> body = {
-                "entry.257464318": name,
-                "entry.737850348": email,
-                "entry.1968950375": message,
-              };
-
-              try {
-                await http.post(Uri.parse(formUrl), body: body);
-                Navigator.pop(context); // Close the dialog
-                Flushbar(
-                  message: s.feedbackSent,
-                  duration: const Duration(seconds: 2),
-                  backgroundColor: Colors.green,
-                  margin: const EdgeInsets.all(16),
-                  borderRadius: BorderRadius.circular(12),
-                  icon: const Icon(Icons.check_circle, color: Colors.white),
-                ).show(context);
-              } catch (e) {
-                Flushbar(
-                  message: s.couldNotSendFeedback,
-                  duration: const Duration(seconds: 2),
-                  backgroundColor: Colors.redAccent,
-                  margin: const EdgeInsets.all(16),
-                  borderRadius: BorderRadius.circular(12),
-                  icon: const Icon(Icons.error_outline, color: Colors.white),
-                ).show(context);
-              }
-            },
-            child: Text(s.send),
-          ),
-        ],
       ),
     );
   }
@@ -613,12 +726,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: _launchBuyMeACoffee,
                     ),
                     _buildDivider(),
-                    _buildCardTile(
-                      icon: Icons.support_agent,
-                      label: s.supportAndFeedback,
-                      onTap: _openSupportPage,
-                    ),
-                    _buildDivider(),
+                    // _buildCardTile(
+                    //   icon: Icons.support_agent,
+                    //   label: s.supportAndFeedback,
+                    //   onTap: _openSupportPage,
+                    // ),
+                    // _buildDivider(),
                     _buildCardTile(
                       icon: Icons.support_agent,
                       label: s.supportAndFeedback,

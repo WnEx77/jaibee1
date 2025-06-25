@@ -1452,6 +1452,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Could Not Send Feedback'**
   String get couldNotSendFeedback;
+
+  /// No description provided for @sending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get sending;
+
+  /// No description provided for @optionalNameEmailNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Name and email are optional, but if you include them, we can follow up to help you better.'**
+  String get optionalNameEmailNote;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

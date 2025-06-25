@@ -231,5 +231,12 @@
   "incomeAndExpenseSelected": "تم اختيار المصروفات والدخل",
   "onlyIncomeSelected": "تم اختيار الدخل فقط",
   "onlyExpenseSelected": "تم اختيار المصروفات فقط",
-  "termsOfService": "شروط الخدمة"
+  "termsOfService": "شروط الخدمة",
+  "sending": "جاري الإرسال",
+  "name": "الإسم",
+  "email": "الإيميل أو رقم جوالك",
+  "message": "الرسالة",
+  "send": "إرسال",
+  "feedbackSent": "تم إرسال ردك بنجاح",
+  "optionalNameEmailNote": "لمساعدتك بشكل أفضل يرجى إدخال الاسم والبريد الإلكتروني"
 }

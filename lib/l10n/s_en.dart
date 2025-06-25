@@ -706,4 +706,11 @@ class SEn extends S {
 
   @override
   String get couldNotSendFeedback => 'Could Not Send Feedback';
+
+  @override
+  String get sending => 'Sending...';
+
+  @override
+  String get optionalNameEmailNote =>
+      'Name and email are optional, but if you include them, we can follow up to help you better.';
 }

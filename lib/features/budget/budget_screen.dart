@@ -149,8 +149,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
     final entries = _controllers.entries.toList();
 
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
-    final baseColor = mintTheme.buttonColor;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
+    final baseColor = mintJade.buttonColor;
 
     List<Color> generateShades(Color base, int count) {
       final hslBase = HSLColor.fromColor(base);
@@ -202,7 +202,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final mintTheme = Theme.of(context).extension<MintJadeColors>()!;
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ValueListenableBuilder(
@@ -240,7 +240,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
           backgroundColor: Colors.transparent,
           floatingActionButton: FloatingActionButton.extended(
             onPressed: _saveBudgets,
-            backgroundColor: mintTheme.buttonColor,
+            backgroundColor: mintJade.buttonColor,
             foregroundColor: Colors.white,
             icon: const Icon(Icons.save_rounded),
             label: Text(S.of(context)!.save),
@@ -331,7 +331,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                           ? Colors.red
                                           : (progressRatio < 1.0
                                                 ? Colors.orange
-                                                : mintTheme.buttonColor),
+                                                : mintJade.buttonColor),
                                       fontWeight: FontWeight.w500,
                                     ),
                                     overflow: TextOverflow.visible,
