@@ -251,5 +251,15 @@
   "budgetSummary": "ملخص الميزانية",
   "monthlyLimitLabel": "الحد الشهري",
   "allocatedLabel": "الحد المخصص",
-  "remainingLabel": "الحد المتبقي"
+  "remainingLabel": "الحد المتبقي",
+  "monthlyBudget": "الميزانية الشهرية",
+  "enterAmountHint": "أدخل المبلغ",
+  "summary": "الملخص",
+  "allocated": "المخصص",
+  "remaining": "المتبقي",
+  "overBudgetWarning": "لقد تجاوزت ميزانيتك!",
+  "budgetScreenFooter": "نصيحة: قم بتعديل حدودك في أي وقت للبقاء على المسار الصحيح!",
+  "summaryHint": "يجب أن يطابق المبلغ المخصص حد الميزانية الشهرية.",
+  "allocateToCategories": "وزع حد الميزانية الشهري على الفئات المختلفة.",
+  "setYourMonthlyLimit": "حدد الحد الإجمالي للإنفاق الشهري."
 }

@@ -1536,6 +1536,66 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Remaining'**
   String get remainingLabel;
+
+  /// No description provided for @monthlyBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Budget'**
+  String get monthlyBudget;
+
+  /// No description provided for @enterAmountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter amount'**
+  String get enterAmountHint;
+
+  /// No description provided for @summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get summary;
+
+  /// No description provided for @allocated.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocated'**
+  String get allocated;
+
+  /// No description provided for @remaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get remaining;
+
+  /// No description provided for @overBudgetWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You are over your budget!'**
+  String get overBudgetWarning;
+
+  /// No description provided for @budgetScreenFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: Adjust your limits anytime to stay on track!'**
+  String get budgetScreenFooter;
+
+  /// No description provided for @summaryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocated should match your monthly limit.'**
+  String get summaryHint;
+
+  /// No description provided for @allocateToCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Distribute your monthly limit across categories.'**
+  String get allocateToCategories;
+
+  /// No description provided for @setYourMonthlyLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your total spending limit for the month.'**
+  String get setYourMonthlyLimit;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

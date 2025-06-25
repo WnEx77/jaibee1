@@ -756,4 +756,36 @@ class SAr extends S {
 
   @override
   String get remainingLabel => 'الحد المتبقي';
+
+  @override
+  String get monthlyBudget => 'الميزانية الشهرية';
+
+  @override
+  String get enterAmountHint => 'أدخل المبلغ';
+
+  @override
+  String get summary => 'الملخص';
+
+  @override
+  String get allocated => 'المخصص';
+
+  @override
+  String get remaining => 'المتبقي';
+
+  @override
+  String get overBudgetWarning => 'لقد تجاوزت ميزانيتك!';
+
+  @override
+  String get budgetScreenFooter =>
+      'نصيحة: قم بتعديل حدودك في أي وقت للبقاء على المسار الصحيح!';
+
+  @override
+  String get summaryHint => 'يجب أن يطابق المبلغ المخصص حد الميزانية الشهرية.';
+
+  @override
+  String get allocateToCategories =>
+      'وزع حد الميزانية الشهري على الفئات المختلفة.';
+
+  @override
+  String get setYourMonthlyLimit => 'حدد الحد الإجمالي للإنفاق الشهري.';
 }

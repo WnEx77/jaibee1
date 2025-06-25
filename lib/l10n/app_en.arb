@@ -270,6 +270,15 @@
   "budgetSummary": "Budget Summary",
   "monthlyLimitLabel": "Limit",
   "allocatedLabel": "Allocated",
-  "remainingLabel": "Remaining"
-
+  "remainingLabel": "Remaining",
+  "monthlyBudget": "Monthly Budget",
+  "enterAmountHint": "Enter amount",
+  "summary": "Summary",
+  "allocated": "Allocated",
+  "remaining": "Remaining",
+  "overBudgetWarning": "You are over your budget!",
+  "budgetScreenFooter": "Tip: Adjust your limits anytime to stay on track!",
+  "summaryHint": "Allocated should match your monthly limit.",
+  "allocateToCategories": "Distribute your monthly limit across categories.",
+  "setYourMonthlyLimit": "Set your total spending limit for the month."
 }

@@ -749,4 +749,37 @@ class SEn extends S {
 
   @override
   String get remainingLabel => 'Remaining';
+
+  @override
+  String get monthlyBudget => 'Monthly Budget';
+
+  @override
+  String get enterAmountHint => 'Enter amount';
+
+  @override
+  String get summary => 'Summary';
+
+  @override
+  String get allocated => 'Allocated';
+
+  @override
+  String get remaining => 'Remaining';
+
+  @override
+  String get overBudgetWarning => 'You are over your budget!';
+
+  @override
+  String get budgetScreenFooter =>
+      'Tip: Adjust your limits anytime to stay on track!';
+
+  @override
+  String get summaryHint => 'Allocated should match your monthly limit.';
+
+  @override
+  String get allocateToCategories =>
+      'Distribute your monthly limit across categories.';
+
+  @override
+  String get setYourMonthlyLimit =>
+      'Set your total spending limit for the month.';
 }
