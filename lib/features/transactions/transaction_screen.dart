@@ -337,8 +337,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
       padding: const EdgeInsets.only(right: 8),
       child: ChoiceChip(
         label: Text(
-          
-          getLocalizedCategory(category, localizer),
+          category.toLowerCase() == 'all'
+              ? localizer.all
+              : getLocalizedCategory(category, localizer),
           style: TextStyle(
             color: isSelected ? Colors.blue : Colors.grey.shade800,
             fontWeight: FontWeight.w500,
@@ -724,35 +725,35 @@ class _TransactionScreenState extends State<TransactionScreen> {
                               ],
                             ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(
-                    //     left: 16,
-                    //     right: 16,
-                    //     bottom: 8,
-                    //   ),
-                    //   child: SizedBox(
-                    //     height: 40,
-                    //     child: ListView(
-                    //       scrollDirection: Axis.horizontal,
-                    //       children: [
-                    //         _buildCategoryChip(context, 'All'),
-                    //         ...categoryBox.values
-                    //             .where(
-                    //               (category) => usedCategoryNames.contains(
-                    //                 category.name.toLowerCase(),
-                    //               ),
-                    //             )
-                    //             .map(
-                    //               (category) => _buildCategoryChip(
-                    //                 context,
-                    //                 category.name,
-                    //               ),
-                    //             )
-                    //             .toList(),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                      ),
+                      child: SizedBox(
+                        height: 40,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            _buildCategoryChip(context, 'All'),
+                            ...categoryBox.values
+                                .where(
+                                  (category) => usedCategoryNames.contains(
+                                    category.name.toLowerCase(),
+                                  ),
+                                )
+                                .map(
+                                  (category) => _buildCategoryChip(
+                                    context,
+                                    category.name,
+                                  ),
+                                )
+                                .toList(),
+                          ],
+                        ),
+                      ),
+                    ),
 
                     Expanded(
                       child: filteredTransactions.isEmpty

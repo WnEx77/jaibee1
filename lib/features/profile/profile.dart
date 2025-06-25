@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'package:jaibee/l10n/s.dart';
 import 'package:jaibee/main.dart';
 import 'package:jaibee/features/goals/goals_screen.dart';
