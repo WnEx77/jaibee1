@@ -264,5 +264,6 @@
   "infoAndLegal": "Info & Legal",
   "support": "Support",
   "setDailyReminder": "Set Daily Reminder",
-  "reminderSetSuccess": "Daily reminder set successfully!"
+  "reminderSetSuccess": "Daily reminder set successfully!",
+  "all": "All"
 }

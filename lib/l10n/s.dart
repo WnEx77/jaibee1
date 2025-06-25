@@ -1500,6 +1500,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Daily reminder set successfully!'**
   String get reminderSetSuccess;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

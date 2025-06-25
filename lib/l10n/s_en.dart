@@ -731,4 +731,7 @@ class SEn extends S {
 
   @override
   String get reminderSetSuccess => 'Daily reminder set successfully!';
+
+  @override
+  String get all => 'All';
 }

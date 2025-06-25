@@ -245,5 +245,6 @@
   "infoAndLegal": "المعلومات والشروط",
   "support": "الدعم",
   "setDailyReminder": "ضبط تذكير يومي",
-  "reminderSetSuccess": "تم ضبط التذكير اليومي بنجاح!"
+  "reminderSetSuccess": "تم ضبط التذكير اليومي بنجاح!",
+  "all": "كل الفئات"
 }

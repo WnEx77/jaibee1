@@ -738,4 +738,7 @@ class SAr extends S {
 
   @override
   String get reminderSetSuccess => 'تم ضبط التذكير اليومي بنجاح!';
+
+  @override
+  String get all => 'كل الفئات';
 }
