@@ -96,10 +96,28 @@ class JaibeeTrackerApp extends StatefulWidget {
 class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
   Locale _locale = const Locale('en');
 
-  void setLocale(Locale locale) {
+  void setLocale(Locale locale) async {
     setState(() {
       _locale = locale;
     });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('locale', locale.languageCode);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocale();
+  }
+
+  void _loadLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    final code = prefs.getString('locale');
+    if (code != null) {
+      setState(() {
+        _locale = Locale(code);
+      });
+    }
   }
 
   @override
@@ -140,7 +158,6 @@ class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
         ),
       ],
     );
-
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
