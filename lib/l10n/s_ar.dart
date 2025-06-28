@@ -791,11 +791,14 @@ class SAr extends S {
 
   @override
   String get monthlyLimitAuto =>
-      'Your monthly limit is the sum of all category limits below.';
+      'الحد الشهري الخاص بك هو مجموع حدود جميع الفئات أدناه.';
 
   @override
-  String get time => 'Time';
+  String get time => 'الوقت';
 
   @override
-  String get cannotSelectFutureTime => 'Cannot select future time';
+  String get cannotSelectFutureTime => 'لا يمكن اختيار وقت في المستقبل';
+
+  @override
+  String get addIncome => 'إضافة دخل';
 }

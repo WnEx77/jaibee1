@@ -283,5 +283,6 @@
   "setYourMonthlyLimit": "Set your total spending limit for the month.",
   "monthlyLimitAuto": "Your monthly limit is the sum of all category limits below.",
   "time": "Time",
-  "cannotSelectFutureTime": "Cannot select future time"
+  "cannotSelectFutureTime": "Cannot select future time",
+  "addIncome": "Add Income"
 }

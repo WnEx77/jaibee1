@@ -792,4 +792,7 @@ class SEn extends S {
 
   @override
   String get cannotSelectFutureTime => 'Cannot select future time';
+
+  @override
+  String get addIncome => 'Add Income';
 }

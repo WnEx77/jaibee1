@@ -346,19 +346,23 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
-  Widget _buildSubmitButton(S localizer) {
-    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
-    return FilledButton.icon(
-      onPressed: _submitForm,
-      style: FilledButton.styleFrom(
-        backgroundColor: mintJade.buttonColor,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-      ),
-      icon: const Icon(Icons.add),
-      label: Text(localizer.addTransaction),
-    );
-  }
+Widget _buildSubmitButton(S localizer) {
+  final mintJade = Theme.of(context).extension<MintJadeColors>()!;
+  return FilledButton.icon(
+    onPressed: _submitForm,
+    style: FilledButton.styleFrom(
+      backgroundColor: mintJade.buttonColor,
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 14),
+    ),
+    icon: const Icon(Icons.add),
+    label: Text(
+      _isIncome
+          ? localizer.addIncome
+          : localizer.addTransaction,
+    ),
+  );
+}
 
   void _submitForm() {
     final localizer = S.of(context)!;

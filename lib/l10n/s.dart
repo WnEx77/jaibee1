@@ -1614,6 +1614,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Cannot select future time'**
   String get cannotSelectFutureTime;
+
+  /// No description provided for @addIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Income'**
+  String get addIncome;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
