@@ -44,6 +44,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   late bool _isIncome;
   late String _category;
   late DateTime _selectedDate;
+  TimeOfDay? _selectedTime;
   List<Category> _customCategories = [];
 
   @override
@@ -67,6 +68,11 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     _isIncome = widget.transaction.isIncome;
     _category = widget.transaction.category;
     _selectedDate = widget.transaction.date;
+    if (widget.transaction.time != null) {
+      _selectedTime = TimeOfDay.fromDateTime(widget.transaction.time!);
+    } else {
+      _selectedTime = TimeOfDay.fromDateTime(widget.transaction.date);
+    }
     _loadCategories();
   }
 
@@ -91,6 +97,40 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     }
   }
 
+  Future<void> _selectTime(BuildContext context) async {
+    final now = DateTime.now();
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime ?? TimeOfDay.now(),
+    );
+    if (picked != null) {
+      // If selected date is today, don't allow future time
+      if (_selectedDate.year == now.year &&
+          _selectedDate.month == now.month &&
+          _selectedDate.day == now.day) {
+        final pickedDateTime = DateTime(
+          _selectedDate.year,
+          _selectedDate.month,
+          _selectedDate.day,
+          picked.hour,
+          picked.minute,
+        );
+        if (pickedDateTime.isAfter(now)) {
+          Flushbar(
+            message: S.of(context)!.cannotSelectFutureTime ?? "Cannot select a future time.",
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.redAccent,
+            margin: const EdgeInsets.all(16),
+            borderRadius: BorderRadius.circular(12),
+            icon: const Icon(Icons.error_outline, color: Colors.white),
+          ).show(context);
+          return;
+        }
+      }
+      setState(() => _selectedTime = picked);
+    }
+  }
+
   void _saveTransaction() {
     if (_formKey.currentState!.validate()) {
       final newTransaction = Transaction(
@@ -101,6 +141,15 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
         description: _descriptionController.text.trim().isEmpty
             ? null
             : _descriptionController.text.trim(),
+        time: _selectedTime != null
+            ? DateTime(
+                _selectedDate.year,
+                _selectedDate.month,
+                _selectedDate.day,
+                _selectedTime!.hour,
+                _selectedTime!.minute,
+              )
+            : null,
       );
 
       Hive.box('transactions').put(widget.transactionKey, newTransaction);
@@ -192,6 +241,17 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     } else {
       return Text(currency.symbol, style: const TextStyle(fontSize: 22));
     }
+  }
+
+  Widget _buildTimePicker(S localizer) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(
+        '${localizer.time ?? "Time"}: ${_selectedTime?.format(context) ?? "--:--"}',
+      ),
+      trailing: const Icon(Icons.access_time),
+      onTap: () => _selectTime(context),
+    );
   }
 
   @override
@@ -368,6 +428,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                       ),
                       onTap: () => _selectDate(context),
                     ),
+                    const SizedBox(height: 16),
+                    _buildTimePicker(localizer),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _descriptionController,

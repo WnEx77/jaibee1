@@ -1602,6 +1602,18 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Your monthly limit is the sum of all category limits below.'**
   String get monthlyLimitAuto;
+
+  /// No description provided for @time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get time;
+
+  /// No description provided for @cannotSelectFutureTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot select future time'**
+  String get cannotSelectFutureTime;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

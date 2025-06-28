@@ -7,6 +7,7 @@ import 'package:jaibee/core/theme/mint_jade_theme.dart';
 import 'package:jaibee/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:jaibee/shared/widgets/global_confirm_delete_dialog.dart';
+import 'package:jaibee/data/models/trancs.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});
@@ -41,7 +42,6 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     Category(name: 'gifts', icon: 'cake'),
     // Category(name: 'savings', icon: 'savings'),
     Category(name: 'events', icon: 'event'),
-
   ];
 
   @override
@@ -239,11 +239,14 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                                 color: Colors.redAccent,
                               ),
                               onPressed: () async {
-                                final confirmed = await showGlobalConfirmDeleteDialog(
-                                  context: context,
-                                  title: localizer.deleteCategory,
-                                  message: localizer.deleteCategoryConfirm(localizedName),
-                                );
+                                final confirmed =
+                                    await showGlobalConfirmDeleteDialog(
+                                      context: context,
+                                      title: localizer.deleteCategory,
+                                      message: localizer.deleteCategoryConfirm(
+                                        localizedName,
+                                      ),
+                                    );
 
                                 if (confirmed == true) {
                                   final key = _categoriesBox.keyAt(
@@ -252,6 +255,22 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                                     ),
                                   );
                                   _categoriesBox.delete(key);
+
+                                  // Delete all transactions with this category
+                                  final transactionBox = Hive.box(
+                                    'transactions',
+                                  );
+                                  final toDelete = transactionBox.keys.where((
+                                    k,
+                                  ) {
+                                    final t = transactionBox.get(k);
+                                    return t is Transaction &&
+                                        t.category == cat.name;
+                                  }).toList();
+                                  for (final k in toDelete) {
+                                    transactionBox.delete(k);
+                                  }
+
                                   setState(() {});
                                   Flushbar(
                                     message:

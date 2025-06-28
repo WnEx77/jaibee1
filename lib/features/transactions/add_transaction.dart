@@ -35,6 +35,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   String _category = '';
   bool _isIncome = false;
   DateTime _selectedDate = DateTime.now();
+  TimeOfDay? _selectedTime = TimeOfDay.now();
 
   @override
   void dispose() {
@@ -110,6 +111,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     const SizedBox(height: 16),
                     _buildDatePicker(localizer),
                     const SizedBox(height: 16),
+                    _buildTimePicker(localizer), // <-- Add this line
+                    const SizedBox(height: 16),
                     _buildDescriptionField(localizer),
                     const SizedBox(height: 24),
                     _buildSubmitButton(localizer),
@@ -181,13 +184,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   Widget _buildCategoryDropdown(S localizer, List<Category> categories) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-      // Sort so 'other' is always last
-  categories.sort((a, b) {
-    if (a.name == 'other') return 1;
-    if (b.name == 'other') return -1;
-    return 0;
-  });
-  
+    // Sort so 'other' is always last
+    categories.sort((a, b) {
+      if (a.name == 'other') return 1;
+      if (b.name == 'other') return -1;
+      return 0;
+    });
+
     final dropdownCategories = _isIncome
         ? [Category(name: 'income', icon: 'attach_money')]
         : categories;
@@ -309,6 +312,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
+  Widget _buildTimePicker(S localizer) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(
+        '${localizer.time ?? "Time"}: ${_selectedTime?.format(context) ?? "--:--"}',
+      ),
+      trailing: const Icon(Icons.access_time),
+      onTap: () => _selectTime(context),
+    );
+  }
+
   Widget _buildDescriptionField(S localizer) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return _styledContainer(
@@ -373,6 +387,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         date: _selectedDate,
         description: _descriptionController.text.trim().isNotEmpty
             ? _descriptionController.text.trim()
+            : null,
+        time: _selectedTime != null
+            ? DateTime(
+                _selectedDate.year,
+                _selectedDate.month,
+                _selectedDate.day,
+                _selectedTime!.hour,
+                _selectedTime!.minute,
+              )
             : null,
       );
 
@@ -441,6 +464,42 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
     if (picked != null) {
       setState(() => _selectedDate = picked);
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final now = DateTime.now();
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime ?? TimeOfDay.now(),
+    );
+    if (picked != null) {
+      // If selected date is today, don't allow future time
+      if (_selectedDate.year == now.year &&
+          _selectedDate.month == now.month &&
+          _selectedDate.day == now.day) {
+        final pickedDateTime = DateTime(
+          _selectedDate.year,
+          _selectedDate.month,
+          _selectedDate.day,
+          picked.hour,
+          picked.minute,
+        );
+        if (pickedDateTime.isAfter(now)) {
+          Flushbar(
+            message:
+                S.of(context)!.cannotSelectFutureTime ??
+                "Cannot select a future time.",
+            duration: const Duration(seconds: 2),
+            backgroundColor: Colors.redAccent,
+            margin: const EdgeInsets.all(16),
+            borderRadius: BorderRadius.circular(12),
+            icon: const Icon(Icons.error_outline, color: Colors.white),
+          ).show(context);
+          return;
+        }
+      }
+      setState(() => _selectedTime = picked);
     }
   }
 

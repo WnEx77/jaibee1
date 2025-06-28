@@ -786,4 +786,10 @@ class SEn extends S {
   @override
   String get monthlyLimitAuto =>
       'Your monthly limit is the sum of all category limits below.';
+
+  @override
+  String get time => 'Time';
+
+  @override
+  String get cannotSelectFutureTime => 'Cannot select future time';
 }

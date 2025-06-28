@@ -37,6 +37,14 @@ class _TransactionScreenState extends State<TransactionScreen> {
     _loadCategories();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(
+      () {},
+    ); // This will rebuild the widget when returning to this screen
+  }
+
   Future<void> _loadMonthlyLimit() async {
     final budgetBox = Hive.box<Budget>('budgets');
     final monthlyBudget = budgetBox.get('__monthly__');
@@ -1016,7 +1024,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                           context: context,
                                           builder: (_) => EditTransactionScreen(
                                             transaction: transaction,
-                                            transactionKey: transaction.key as int,
+                                            transactionKey:
+                                                transaction.key as int,
                                           ),
                                         );
                                       },
