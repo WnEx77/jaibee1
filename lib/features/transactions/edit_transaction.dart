@@ -16,6 +16,7 @@ import 'package:jaibee/core/utils/currency_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee/shared/widgets/global_date_picker.dart';
 import 'package:jaibee/shared/widgets/global_confirm_delete_dialog.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -37,10 +38,22 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   late TextEditingController _amountController;
   late TextEditingController _descriptionController;
 
+  final FocusNode _amountFocus = FocusNode();
+  final FocusNode _descriptionFocus = FocusNode();
+
   late bool _isIncome;
   late String _category;
   late DateTime _selectedDate;
   List<Category> _customCategories = [];
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _descriptionController.dispose();
+    _amountFocus.dispose();
+    _descriptionFocus.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -186,272 +199,257 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     final localizer = S.of(context)!;
     final mintJade = Theme.of(context).extension<MintJadeColors>();
 
-    return AppBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: CustomAppBar(
-            title: localizer.editTransaction,
-            showBackButton: true,
-            // actions: [
-            //   IconButton(
-            //     icon: const Icon(Icons.delete),
-            //     tooltip: localizer.deleteTransaction,
-            //     onPressed: _confirmDelete,
-            //   ),
-            // ],
-          ),
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 80), // Make dialog smaller
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 400, // Set a max width for desktop/tablet
+          minWidth: 280,
+          maxHeight: 520, // Limit the height so it doesn't fill the screen
         ),
-        body: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 380, // Make the box smaller on wide screens
-                ),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Form(
-                      key: _formKey,
-                      child: ListView(
-                        shrinkWrap: true,
-                        children: [
-                          FutureBuilder<Widget>(
-                            future: buildCurrencySymbolWidget(context),
-                            builder: (context, snapshot) {
-                              return TextFormField(
-                                controller: _amountController,
-                                keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d+\.?\d{0,2}'),
-                                  ),
-                                ],
-                                decoration: InputDecoration(
-                                  labelText: localizer.amount,
-                                  border: InputBorder.none,
-                                  filled: true,
-                                  fillColor:
-                                      Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.grey[900]
-                                      : Colors.white,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(18),
-                                    borderSide: BorderSide(
-                                      color:
-                                          Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? Colors.grey[800]!
-                                          : Colors.grey[200]!,
-                                      width: 1.2,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(18),
-                                    borderSide: const BorderSide(
-                                      color: Colors.teal,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  icon: snapshot.hasData
-                                      ? snapshot.data
-                                      : const SizedBox(width: 24, height: 24),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return localizer.pleaseEnterAmount;
-                                  }
-                                  return null;
-                                },
-                              );
-                            },
+        child: KeyboardActions(
+          config: KeyboardActionsConfig(
+            actions: [
+              KeyboardActionsItem(
+                focusNode: _amountFocus,
+                toolbarButtons: [
+                  (node) => TextButton(
+                        onPressed: () => node.unfocus(),
+                        child: const Text('Done'),
+                      ),
+                ],
+              ),
+              KeyboardActionsItem(
+                focusNode: _descriptionFocus,
+                toolbarButtons: [
+                  (node) => TextButton(
+                        onPressed: () => node.unfocus(),
+                        child: const Text('Done'),
+                      ),
+                ],
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      localizer.editTransaction,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 16),
-
-                          DropdownButtonFormField<String>(
-                            value: _category.isNotEmpty ? _category : null,
-                            items: _buildCategoryItems(localizer),
-                            onChanged: _isIncome
-                                ? null
-                                : (val) => setState(() => _category = val!),
-                            decoration: InputDecoration(
-                              labelText: localizer.category,
-                              border: InputBorder.none,
-                              filled: true,
-                              fillColor:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.grey[900]
-                                  : Colors.white,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(18),
-                                borderSide: BorderSide(
-                                  color:
-                                      Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.grey[800]!
-                                      : Colors.grey[200]!,
-                                  width: 1.2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(18),
-                                borderSide: const BorderSide(
-                                  color: Colors.teal,
-                                  width: 1.5,
-                                ),
-                              ),
-                              icon: Icon(
-                                getCategoryIcon(
-                                  _customCategories.firstWhere(
-                                    (cat) => cat.name == _category,
-                                    orElse: () =>
-                                        Category(name: _category, icon: ''),
-                                  ),
-                                ),
+                    ),
+                    const SizedBox(height: 20),
+                    FutureBuilder<Widget>(
+                      future: buildCurrencySymbolWidget(context),
+                      builder: (context, snapshot) {
+                        return TextFormField(
+                          controller: _amountController,
+                          focusNode: _amountFocus,
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                          ],
+                          decoration: InputDecoration(
+                            labelText: localizer.amount,
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[900]
+                                : Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.grey[800]!
+                                    : Colors.grey[200]!,
+                                width: 1.2,
                               ),
                             ),
-                            borderRadius: BorderRadius.circular(18),
-                            icon: const Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              size: 28,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: const BorderSide(
+                                color: Colors.teal,
+                                width: 1.5,
+                              ),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return localizer.pleaseSelectCategory;
-                              }
-                              return null;
-                            },
+                            icon: snapshot.hasData
+                                ? snapshot.data
+                                : const SizedBox(width: 24, height: 24),
                           ),
-
-                          const SizedBox(height: 16),
-
-                          ListTile(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            // tileColor: Colors.blue.shade50.withOpacity(0.3),
-                            leading: Icon(
-                              Icons.calendar_today,
-                              color: mintJade!.buttonColor,
-                            ),
-                            title: Text(
-                              '${localizer.date}: ${DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(_selectedDate)}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            onTap: () => _selectDate(context),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return localizer.pleaseEnterAmount;
+                            }
+                            return null;
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: _category.isNotEmpty ? _category : null,
+                      items: _buildCategoryItems(localizer),
+                      onChanged: _isIncome
+                          ? null
+                          : (val) => setState(() => _category = val!),
+                      decoration: InputDecoration(
+                        labelText: localizer.category,
+                        border: InputBorder.none,
+                        filled: true,
+                        fillColor: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[900]
+                            : Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[800]!
+                                : Colors.grey[200]!,
+                            width: 1.2,
                           ),
-                          const SizedBox(height: 16),
-
-                          TextFormField(
-                            controller: _descriptionController,
-                            maxLines: 2,
-                            decoration: InputDecoration(
-                              labelText: localizer.description,
-                              border: InputBorder.none,
-                              filled: true,
-                              fillColor:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.grey[900]
-                                  : Colors.white,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(18),
-                                borderSide: BorderSide(
-                                  color:
-                                      Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.grey[800]!
-                                      : Colors.grey[200]!,
-                                  width: 1.2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(18),
-                                borderSide: const BorderSide(
-                                  color: Colors.teal,
-                                  width: 1.5,
-                                ),
-                              ),
-                              icon: const Icon(Icons.notes),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: const BorderSide(
+                            color: Colors.teal,
+                            width: 1.5,
+                          ),
+                        ),
+                        icon: Icon(
+                          getCategoryIcon(
+                            _customCategories.firstWhere(
+                              (cat) => cat.name == _category,
+                              orElse: () => Category(name: _category, icon: ''),
                             ),
                           ),
-                          const SizedBox(height: 24),
-
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
-                                  ),
-                                  label: Text(
-                                    localizer.deleteTransaction,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.redAccent,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 14,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  onPressed: _confirmDelete,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  icon: const Icon(Icons.save),
-                                  label: Text(localizer.saveChanges),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: mintJade.buttonColor,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 14,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  onPressed: _saveTransaction,
-                                ),
-                              ),
-                            ],
+                        ),
+                      ),
+                      borderRadius: BorderRadius.circular(18),
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        size: 28,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return localizer.pleaseSelectCategory;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      leading: Icon(
+                        Icons.calendar_today,
+                        color: mintJade!.buttonColor,
+                      ),
+                      title: Text(
+                        '${localizer.date}: ${DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(_selectedDate)}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onTap: () => _selectDate(context),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _descriptionController,
+                      focusNode: _descriptionFocus,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        labelText: localizer.description,
+                        border: InputBorder.none,
+                        filled: true,
+                        fillColor: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[900]
+                            : Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[800]!
+                                : Colors.grey[200]!,
+                            width: 1.2,
                           ),
-                        ],
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: const BorderSide(
+                            color: Colors.teal,
+                            width: 1.5,
+                          ),
+                        ),
+                        icon: const Icon(Icons.notes),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                            label: Text(
+                              localizer.deleteTransaction,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 14,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: _confirmDelete,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.save),
+                            label: Text(localizer.saveChanges),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: mintJade.buttonColor,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 14,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: _saveTransaction,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-// import 'package:fl_chart/fl_chart.dart';
 import 'package:jaibee/data/models/budget.dart';
 import 'package:jaibee/data/models/category.dart';
 import 'package:jaibee/shared/widgets/app_background.dart';
 import 'package:jaibee/l10n/s.dart';
-// import 'package:jaibee/core/theme/mint_jade_theme.dart';
 import 'package:jaibee/core/utils/category_utils.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/currency_utils.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -22,8 +21,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
   late Box<Category> _categoryBox;
   late Box<Budget> _budgetBox;
 
-  double? _monthlyLimit;
-  final TextEditingController _monthlyLimitController = TextEditingController();
+  final Map<String, FocusNode> _focusNodes = {};
   final Map<String, TextEditingController> _controllers = {};
 
   @override
@@ -43,18 +41,21 @@ class _BudgetScreenState extends State<BudgetScreen> {
             ? existingBudget.limit.toStringAsFixed(0)
             : '',
       );
+      _focusNodes[category.name] = FocusNode();
     }
   }
 
+  @override
+  void dispose() {
+    for (final node in _focusNodes.values) {
+      node.dispose();
+    }
+    super.dispose();
+  }
+
   Future<void> _loadMonthlyLimit() async {
-    final monthlyBudget = _budgetBox.get('__monthly__');
-    setState(() {
-      _monthlyLimit = monthlyBudget?.limit;
-      _monthlyLimitController.text =
-          (_monthlyLimit != null && _monthlyLimit! > 0)
-          ? _monthlyLimit!.toStringAsFixed(0)
-          : '';
-    });
+    // No need to load or set a monthly limit, as it is now always the sum of category limits.
+    setState(() {});
   }
 
   bool _isInvalidInput(String? text) {
@@ -87,36 +88,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
       totalCategoryLimits += limit;
     }
 
-    final monthlyText = _monthlyLimitController.text.trim();
-    final monthly = monthlyText.isEmpty ? null : double.tryParse(monthlyText);
-
-    if (monthly == null || monthly < 0) {
-      Flushbar(
-        message: S.of(context)!.invalidMonthlyLimit,
-        backgroundColor: Colors.redAccent,
-        duration: const Duration(seconds: 3),
-        margin: const EdgeInsets.all(16),
-        borderRadius: BorderRadius.circular(8),
-      ).show(context);
-      return;
-    }
-
-    if (monthly != totalCategoryLimits) {
-      Flushbar(
-        message: S
-            .of(context)!
-            .monthlyLimitValidation(
-              monthly.toStringAsFixed(0),
-              totalCategoryLimits.toStringAsFixed(0),
-            ),
-        backgroundColor: Colors.redAccent,
-        duration: const Duration(seconds: 3),
-        margin: const EdgeInsets.all(16),
-        borderRadius: BorderRadius.circular(8),
-      ).show(context);
-      return;
-    }
-
     for (var category in _categoryBox.values) {
       final name = category.name;
       final controller = _controllers[name];
@@ -127,70 +98,18 @@ class _BudgetScreenState extends State<BudgetScreen> {
       _budgetBox.put(name, budget);
     }
 
-    final monthlyBudget = Budget(category: '__monthly__', limit: monthly);
+    final monthlyBudget = Budget(
+      category: '__monthly__',
+      limit: totalCategoryLimits,
+    );
     await _budgetBox.put('__monthly__', monthlyBudget);
-
-    Flushbar(
-      message: S.of(context)!.budgetsSaved,
-      backgroundColor: Colors.green,
-      duration: const Duration(seconds: 2),
-      margin: const EdgeInsets.all(16),
-      borderRadius: BorderRadius.circular(8),
-      icon: const Icon(Icons.check_circle, color: Colors.white, size: 28),
-    ).show(context);
   }
-
-  // List<PieChartSectionData> _buildPieChartSections() {
-  //   final total = _controllers.values
-  //       .map((c) => double.tryParse(c.text) ?? 0)
-  //       .fold(0.0, (a, b) => a + b);
-
-  //   if (total == 0) return [];
-
-  //   final entries = _controllers.entries.toList();
-
-  //   final mintJade = Theme.of(context).extension<MintJadeColors>()!;
-  //   final baseColor = mintJade.buttonColor;
-
-  //   List<Color> generateShades(Color base, int count) {
-  //     final hslBase = HSLColor.fromColor(base);
-
-  //     return List.generate(count, (i) {
-  //       final lightness = (0.9 - i * 0.08).clamp(0.2, 0.85);
-  //       final hsl = hslBase.withLightness(lightness);
-  //       return hsl.toColor();
-  //     });
-  //   }
-
-  //   final List<Color> pieColors = generateShades(baseColor, entries.length);
-
-  //   return List.generate(entries.length, (i) {
-  //     final name = entries[i].key;
-  //     final value = double.tryParse(entries[i].value.text) ?? 0;
-  //     final percentage = (value / total) * 100;
-
-  //     return PieChartSectionData(
-  //       title:
-  //           '${getLocalizedCategory(name, S.of(context)!)}\n${percentage.toStringAsFixed(1)}%',
-  //       value: value,
-  //       color: pieColors[i % pieColors.length],
-  //       radius: 60,
-  //       titleStyle: const TextStyle(
-  //         fontSize: 12,
-  //         fontWeight: FontWeight.w600,
-  //         color: Colors.white,
-  //       ),
-  //       titlePositionPercentageOffset: 0.6,
-  //     );
-  //   });
-  // }
 
   Future<Widget> buildCurrencySymbolWidget(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final code = prefs.getString('currency_code') ?? 'SAR';
     final currency = getCurrencyByCode(code);
 
-    // Use theme from context for dark mode
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final asset = currency.getAsset(isDarkMode: isDark);
     if (asset != null) {
@@ -204,375 +123,224 @@ class _BudgetScreenState extends State<BudgetScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final categories = _categoryBox.values.toList();
-    final monthlyLimitValue =
-        double.tryParse(_monthlyLimitController.text) ?? 0;
+
+    // Ensure 'other' is always last
+    categories.sort((a, b) {
+      if (a.name == 'other') return 1;
+      if (b.name == 'other') return -1;
+      return 0;
+    });
+
     final totalCategoryLimits = _controllers.values
         .map((c) => double.tryParse(c.text) ?? 0)
         .fold(0.0, (a, b) => a + b);
-    final remainingBudget = monthlyLimitValue - totalCategoryLimits;
-    // final pieSections = _buildPieChartSections();
 
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   foregroundColor: Theme.of(context).colorScheme.onSurface,
-      //   elevation: 0,
-      //   centerTitle: true,
-      //   shape: const RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-      //   ),
-      //   title: Row(
-      //     mainAxisSize: MainAxisSize.min,
-      //     children: [
-      //       Icon(
-      //         Icons.account_balance_wallet_rounded,
-      //         // No manual color, use theme
-      //         size: 28,
-      //       ),
-      //       const SizedBox(width: 8),
-      //       Text(
-      //         S.of(context)!.monthlyBudget,
-      //         style: Theme.of(
-      //           context,
-      //         ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-      //       ),
-      //     ],
-      //   ),
-      //   // actions: [
-      //   //   IconButton(
-      //   //     icon: const Icon(Icons.save),
-      //   //     tooltip: S.of(context)!.save,
-      //   //     onPressed: _saveBudgets,
-      //   //   ),
-      //   // ],
-      // ),
       body: AppBackground(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 1. Monthly Limit Section
-              Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(18),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.flag, color: Colors.teal),
-                          const SizedBox(width: 8),
-                          Text(
-                            S.of(context)!.monthlyLimit,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        S
-                            .of(context)!
-                            .setYourMonthlyLimit, // Add this to your l10n: "Set your total spending limit for the month."
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+        child: KeyboardActions(
+          config: KeyboardActionsConfig(
+            actions: _controllers.keys.map((name) {
+              return KeyboardActionsItem(
+                focusNode: _focusNodes[name]!,
+                toolbarButtons: [
+                  (node) => TextButton(
+                    onPressed: () => node.unfocus(),
+                    child: const Text('Done'),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. Monthly Limit Section (Read-only)
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.flag, color: Colors.teal),
+                            const SizedBox(width: 10),
+                            Text(
+                              S.of(context)!.monthlyLimit,
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    content: Text(
+                                      S.of(context)!.monthlyLimitAuto,
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: Text(S.of(context)!.ok ?? 'OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Icon(
+                                Icons.help_outline,
+                                color: Colors.teal,
+                                size: 18,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      _styledContainer(
-                        child: TextField(
-                          controller: _monthlyLimitController,
-                          keyboardType: TextInputType.number,
-                          style: Theme.of(context).textTheme.titleLarge,
-                          decoration: InputDecoration(
-                            labelText:
-                                _monthlyLimitController.text.trim().isEmpty
-                                ? S.of(context)!.enterMonthlyLimitHint
-                                : null,
-                            // prefixIcon: const Icon(Icons.attach_money),
-                            border: InputBorder.none,
-                            isDense: true,
-                            errorText:
-                                _isInvalidInput(_monthlyLimitController.text)
-                                ? S.of(context)!.invalidMonthlyLimit
-                                : null,
+                        const SizedBox(height: 8),
+                        // Removed the monthlyLimitAuto text from here
+                        const SizedBox(height: 16),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.teal.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          onChanged: (_) => setState(() {}),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 16,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '${totalCategoryLimits.toStringAsFixed(0)}',
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal[800],
+                                ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              // 2. Category Budgets Section
-              Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(18),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.category, color: Colors.teal),
-                          const SizedBox(width: 8),
-                          Text(
-                            S.of(context)!.categoryBudgets,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        S
-                            .of(context)!
-                            .allocateToCategories, // Add to l10n: "Distribute your monthly limit across categories."
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+                // 2. Category Budgets Section
+                Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.category, color: Colors.teal),
+                            const SizedBox(width: 8),
+                            Text(
+                              S.of(context)!.categoryBudgets,
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      ...categories.map((category) {
-                        final controller = _controllers[category.name];
-                        final isEmpty = controller?.text.trim().isEmpty ?? true;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            children: [
-                              Icon(
-                                getCategoryIcon(category),
-                                color: isDark ? Colors.tealAccent : Colors.teal,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  getLocalizedCategory(
-                                    category.name,
-                                    S.of(context)!,
-                                  ),
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                        const SizedBox(height: 6),
+                        Text(
+                          S.of(context)!.allocateToCategories,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.grey[600]),
+                        ),
+                        const SizedBox(height: 12),
+                        ...categories.map((category) {
+                          final controller = _controllers[category.name];
+                          final isEmpty =
+                              controller?.text.trim().isEmpty ?? true;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  getCategoryIcon(category),
+                                  color: isDark
+                                      ? Colors.tealAccent
+                                      : Colors.teal,
+                                  size: 24,
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                flex: 3,
-                                child: _styledContainer(
-                                  child: TextField(
-                                    controller: controller,
-                                    keyboardType: TextInputType.number,
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    getLocalizedCategory(
+                                      category.name,
+                                      S.of(context)!,
+                                    ),
                                     style: Theme.of(
                                       context,
                                     ).textTheme.bodyLarge,
-                                    decoration: InputDecoration(
-                                      // prefixText: 'SAR ',
-                                      labelText: isEmpty
-                                          ? S.of(context)!.enterAmountHint
-                                          : null,
-                                      // suffixIcon: const Icon(
-                                      //   Icons.edit,
-                                      //   size: 18,
-                                      //   color: Colors.grey,
-                                      // ),
-                                      border: InputBorder.none,
-                                      isDense: true,
-                                    ),
-                                    onChanged: (_) => setState(() {}),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 28),
-
-              // 3. Summary Section
-              Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 14,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.summarize, color: Colors.teal),
-                          const SizedBox(width: 8),
-                          Text(
-                            S.of(context)!.summary,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      _buildBudgetInfoRow(
-                        S.of(context)!.limit,
-                        monthlyLimitValue,
-                      ),
-                      _buildBudgetInfoRow(
-                        S.of(context)!.allocated,
-                        totalCategoryLimits,
-                        highlight: true,
-                      ),
-                      _buildBudgetInfoRow(
-                        S.of(context)!.remaining,
-                        remainingBudget,
-                      ),
-                      const SizedBox(height: 10),
-                      LinearProgressIndicator(
-                        value: monthlyLimitValue == 0
-                            ? 0
-                            : (totalCategoryLimits / monthlyLimitValue).clamp(
-                                0,
-                                1,
-                              ),
-                        minHeight: 10,
-                        backgroundColor: Colors.grey.shade200,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          (totalCategoryLimits / monthlyLimitValue) >= 1
-                              ? Colors.redAccent
-                              : Colors.teal,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        S
-                            .of(context)!
-                            .summaryHint, // Add to l10n: "Allocated should match your monthly limit."
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // 4. Pie Chart Section
-              // if (pieSections.isNotEmpty) ...[
-              //   const SizedBox(height: 28),
-              //   Card(
-              //     elevation: 2,
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(24),
-              //     ),
-              //     child: Padding(
-              //       padding: const EdgeInsets.all(18),
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-              //           Row(
-              //             children: [
-              //               const Icon(Icons.pie_chart, color: Colors.teal),
-              //               const SizedBox(width: 8),
-              //               Text(
-              //                 S.of(context)!.budgetDistribution,
-              //                 style: Theme.of(context).textTheme.titleMedium
-              //                     ?.copyWith(fontWeight: FontWeight.bold),
-              //               ),
-              //             ],
-              //           ),
-              //           const SizedBox(height: 16),
-              //           SizedBox(
-              //             height: 220,
-              //             child: PieChart(
-              //               PieChartData(
-              //                 sections: pieSections,
-              //                 centerSpaceRadius: 40,
-              //                 sectionsSpace: 2,
-              //                 borderData: FlBorderData(show: false),
-              //               ),
-              //             ),
-              //           ),
-              //           const SizedBox(height: 12),
-              //           Wrap(
-              //             spacing: 8,
-              //             children: categories.map((cat) {
-              //               return Chip(
-              //                 label: Text(
-              //                   getLocalizedCategory(cat.name, S.of(context)!),
-              //                 ),
-              //                 // backgroundColor: getCategoryColor(
-              //                 //   cat.name,
-              //                 // ).withOpacity(0.18),
-              //               );
-              //             }).toList(),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              // ],
-
-              // const SizedBox(height: 32),
-              // 5. Info Footer
-              Center(
-                child: Text(
-                  S
-                      .of(context)!
-                      .budgetScreenFooter, // Add to l10n: "Tip: Adjust your limits anytime to stay on track!"
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.teal),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton.icon(
-                  icon: const Icon(
-                    Icons.save,
-                    color: Colors.teal, // <-- Changed icon color to teal
-                  ),
-                  label: Text(
-                    S.of(context)!.save,
-                    style: const TextStyle(
-                      color: Colors.teal, // <-- Changed text color to teal
-                      fontWeight: FontWeight.bold,
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  flex: 3,
+                                  child: _styledContainer(
+                                    child: TextField(
+                                      controller: controller,
+                                      focusNode: _focusNodes[category.name],
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                            decimal: true,
+                                          ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge,
+                                      decoration: InputDecoration(
+                                        labelText: isEmpty
+                                            ? S.of(context)!.enterAmountHint
+                                            : null,
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                      ),
+                                      onChanged: (_) async {
+                                        setState(() {});
+                                        await _saveBudgets();
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    backgroundColor: Colors
-                        .white, // Optional: white button for teal text/icon
-                    textStyle: Theme.of(context).textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                    elevation: 2,
-                  ),
-                  onPressed: _saveBudgets,
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 28),
+
+                // 5. Info Footer
+                Center(
+                  child: Text(
+                    S.of(context)!.budgetScreenFooter,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.teal),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

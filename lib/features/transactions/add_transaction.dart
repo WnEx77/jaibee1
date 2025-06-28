@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 // import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -14,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/currency_utils.dart';
 import 'package:jaibee/shared/widgets/global_date_picker.dart';
 import 'package:jaibee/data/models/budget.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -27,9 +29,21 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
 
+  final FocusNode _amountFocus = FocusNode();
+  final FocusNode _descriptionFocus = FocusNode();
+
   String _category = '';
   bool _isIncome = false;
   DateTime _selectedDate = DateTime.now();
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _descriptionController.dispose();
+    _amountFocus.dispose();
+    _descriptionFocus.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -52,36 +66,69 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               top: 16,
               bottom: MediaQuery.of(context).viewInsets.bottom + 16,
             ),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  _buildAmountField(localizer),
-                  const SizedBox(height: 16),
-                  ValueListenableBuilder(
-                    valueListenable: Hive.box<Category>(
-                      'categories',
-                    ).listenable(),
-                    builder: (context, Box<Category> box, _) {
-                      final categories = box.values.toList();
-                      return _buildCategoryDropdown(localizer, categories);
-                    },
+            child: KeyboardActions(
+              config: KeyboardActionsConfig(
+                actions: [
+                  KeyboardActionsItem(
+                    focusNode: _amountFocus,
+                    toolbarButtons: [
+                      (node) => TextButton(
+                        onPressed: () => node.unfocus(),
+                        child: const Text('Done'),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  _buildTypeToggle(localizer),
-                  const SizedBox(height: 16),
-                  _buildDatePicker(localizer),
-                  const SizedBox(height: 16),
-                  _buildDescriptionField(localizer),
-                  const SizedBox(height: 24),
-                  _buildSubmitButton(localizer),
+                  KeyboardActionsItem(
+                    focusNode: _descriptionFocus,
+                    toolbarButtons: [
+                      (node) => TextButton(
+                        onPressed: () => node.unfocus(),
+                        child: const Text('Done'),
+                      ),
+                    ],
+                  ),
                 ],
+              ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildAmountField(localizer),
+                    const SizedBox(height: 16),
+                    ValueListenableBuilder(
+                      valueListenable: Hive.box<Category>(
+                        'categories',
+                      ).listenable(),
+                      builder: (context, Box<Category> box, _) {
+                        final categories = box.values.toList();
+                        return _buildCategoryDropdown(localizer, categories);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTypeToggle(localizer),
+                    const SizedBox(height: 16),
+                    _buildDatePicker(localizer),
+                    const SizedBox(height: 16),
+                    _buildDescriptionField(localizer),
+                    const SizedBox(height: 24),
+                    _buildSubmitButton(localizer),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  String convertArabicDigitsToEnglish(String input) {
+    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    for (int i = 0; i < arabicDigits.length; i++) {
+      input = input.replaceAll(arabicDigits[i], i.toString());
+    }
+    return input;
   }
 
   Widget _buildAmountField(S localizer) {
@@ -93,15 +140,19 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         builder: (context, snapshot) {
           return TextFormField(
             controller: _amountController,
-            keyboardType: TextInputType.number,
+            focusNode: _amountFocus,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return localizer.pleaseEnterAmount;
               }
-              final numValue = double.tryParse(value);
-              if (numValue == null || numValue <= 1) {
-                return localizer
-                    .enterValidAmount; // Add this to your localization
+              final englishValue = convertArabicDigitsToEnglish(value);
+              final numValue = double.tryParse(englishValue);
+              if (numValue == null || numValue <= 0) {
+                return localizer.enterValidAmount;
               }
               return null;
             },
@@ -119,7 +170,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     ? snapshot.data!
                     : SizedBox(width: 24, height: 24),
               ),
-              // hintText: localizer.enterAmount,
               border: InputBorder.none,
             ),
           );
@@ -130,6 +180,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   Widget _buildCategoryDropdown(S localizer, List<Category> categories) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+      // Sort so 'other' is always last
+  categories.sort((a, b) {
+    if (a.name == 'other') return 1;
+    if (b.name == 'other') return -1;
+    return 0;
+  });
+  
     final dropdownCategories = _isIncome
         ? [Category(name: 'income', icon: 'attach_money')]
         : categories;
@@ -256,6 +314,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return _styledContainer(
       child: TextFormField(
         controller: _descriptionController,
+        focusNode: _descriptionFocus,
         maxLines: 2,
         style: TextStyle(
           color: isDark ? Colors.white : Colors.black,
@@ -267,7 +326,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             Icons.notes_rounded,
             color: isDark ? Colors.tealAccent : Colors.teal,
           ),
-          // hintText: localizer.enterDescription,
           border: InputBorder.none,
         ),
       ),
@@ -306,7 +364,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
       final transaction = Transaction(
         category: _category,
-        amount: double.tryParse(_amountController.text) ?? 0.0,
+        amount:
+            double.tryParse(
+              convertArabicDigitsToEnglish(_amountController.text),
+            ) ??
+            0.0,
         isIncome: _isIncome,
         date: _selectedDate,
         description: _descriptionController.text.trim().isNotEmpty
@@ -351,6 +413,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         _selectedDate = DateTime.now();
         _category = '';
       });
+
+      Navigator.of(context).pushReplacementNamed('/transactions');
 
       Flushbar(
         message: exceededLimit
@@ -424,6 +488,34 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ),
       ),
       child: child,
+    );
+  }
+
+  Route createAnimatedRoute(Widget page) {
+    return PageRouteBuilder(
+      transitionDuration: const Duration(milliseconds: 400),
+      reverseTransitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // Combine fade and slide for a smooth effect
+        final slideAnimation =
+            Tween<Offset>(
+              begin: const Offset(0, 0.08),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+            );
+
+        final fadeAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeInOut,
+        );
+
+        return FadeTransition(
+          opacity: fadeAnimation,
+          child: SlideTransition(position: slideAnimation, child: child),
+        );
+      },
     );
   }
 }

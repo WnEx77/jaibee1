@@ -788,4 +788,8 @@ class SAr extends S {
 
   @override
   String get setYourMonthlyLimit => 'حدد الحد الإجمالي للإنفاق الشهري.';
+
+  @override
+  String get monthlyLimitAuto =>
+      'Your monthly limit is the sum of all category limits below.';
 }

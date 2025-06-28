@@ -75,9 +75,7 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
             onBackPressed: () => _onNavItemTapped(0),
             actions: [
               IconButton(
-                icon: const Icon(
-                  Icons.tune,
-                ),
+                icon: const Icon(Icons.tune),
                 tooltip: S.of(context)!.manageCategories,
                 onPressed: () {
                   Navigator.push(
@@ -109,10 +107,12 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(
+                    12,
+                    4,
+                    12,
+                    18,
+                  ), // left, top, right, bottom
                   child: Stack(
                     alignment: Alignment.center,
                     children: [

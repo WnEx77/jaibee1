@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:jaibee/features/home/jaibee_home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,7 @@ import 'data/models/goal_model.dart';
 import 'data/models/trancs.dart';
 import 'features/home/splash_screen.dart';
 import 'core/services/notification_service.dart';
+import 'features/transactions/transaction_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -182,6 +184,23 @@ class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
       darkTheme: darkTheme,
       themeMode: themeProvider.themeMode,
       home: const SplashScreen(), // Always show splash first
+      routes: {
+        '/transactions': (context) => JaibeeHomeScreen(),
+        // Add other routes here if needed
+      },
+      builder: (context, child) {
+        return GestureDetector(
+          onTap: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus &&
+                currentFocus.focusedChild != null) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
+          },
+          behavior: HitTestBehavior.opaque,
+          child: child!,
+        );
+      },
     );
   }
 }

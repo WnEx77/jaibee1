@@ -53,6 +53,13 @@ class CategoryProgressScreen extends StatelessWidget {
                 .where((c) => c.name.toLowerCase() != 'income')
                 .toList();
 
+            // Ensure 'other' is always last
+            categories.sort((a, b) {
+              if (a.name == 'other') return 1;
+              if (b.name == 'other') return -1;
+              return 0;
+            });
+
             return ValueListenableBuilder(
               valueListenable: transactionBox.listenable(),
               builder: (context, Box box, _) {

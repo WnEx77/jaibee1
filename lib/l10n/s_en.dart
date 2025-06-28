@@ -782,4 +782,8 @@ class SEn extends S {
   @override
   String get setYourMonthlyLimit =>
       'Set your total spending limit for the month.';
+
+  @override
+  String get monthlyLimitAuto =>
+      'Your monthly limit is the sum of all category limits below.';
 }

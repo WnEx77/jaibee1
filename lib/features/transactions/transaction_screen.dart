@@ -1012,15 +1012,11 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                     ),
                                     child: ListTile(
                                       onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                EditTransactionScreen(
-                                                  transaction: transaction,
-                                                  transactionKey:
-                                                      transaction.key as int,
-                                                ),
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) => EditTransactionScreen(
+                                            transaction: transaction,
+                                            transactionKey: transaction.key as int,
                                           ),
                                         );
                                       },

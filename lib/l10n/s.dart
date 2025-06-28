@@ -1596,6 +1596,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Set your total spending limit for the month.'**
   String get setYourMonthlyLimit;
+
+  /// No description provided for @monthlyLimitAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Your monthly limit is the sum of all category limits below.'**
+  String get monthlyLimitAuto;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

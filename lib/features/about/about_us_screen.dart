@@ -118,16 +118,16 @@ class _AboutUsScreenState extends State<AboutUsScreen>
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
-                  Column(
-                    children: [
-                      Icon(Icons.info_outline, color: subTextColor),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Package ID: $_packageName',
-                        style: TextStyle(color: subTextColor),
-                      ),
-                    ],
-                  ),
+                  // Column(
+                  //   children: [
+                  //     Icon(Icons.info_outline, color: subTextColor),
+                  //     const SizedBox(height: 4),
+                  //      Text(
+                  //        'Package ID: $_packageName',
+                  //        style: TextStyle(color: subTextColor),
+                  //      ),
+                  //   ],
+                  // ),
                   const Spacer(),
                   Column(
                     children: [

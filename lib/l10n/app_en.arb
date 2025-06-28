@@ -280,5 +280,6 @@
   "budgetScreenFooter": "Tip: Adjust your limits anytime to stay on track!",
   "summaryHint": "Allocated should match your monthly limit.",
   "allocateToCategories": "Distribute your monthly limit across categories.",
-  "setYourMonthlyLimit": "Set your total spending limit for the month."
+  "setYourMonthlyLimit": "Set your total spending limit for the month.",
+  "monthlyLimitAuto": "Your monthly limit is the sum of all category limits below."
 }
