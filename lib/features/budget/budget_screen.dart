@@ -54,7 +54,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
   }
 
   Future<void> _loadMonthlyLimit() async {
-    // No need to load or set a monthly limit, as it is now always the sum of category limits.
     setState(() {});
   }
 
@@ -122,226 +121,231 @@ class _BudgetScreenState extends State<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final categories = _categoryBox.values.toList();
-
-    // Ensure 'other' is always last
-    categories.sort((a, b) {
-      if (a.name == 'other') return 1;
-      if (b.name == 'other') return -1;
-      return 0;
-    });
-
-    final totalCategoryLimits = _controllers.values
-        .map((c) => double.tryParse(c.text) ?? 0)
-        .fold(0.0, (a, b) => a + b);
 
     return Scaffold(
       body: AppBackground(
-        child: KeyboardActions(
-          config: KeyboardActionsConfig(
-            actions: _controllers.keys.map((name) {
-              return KeyboardActionsItem(
-                focusNode: _focusNodes[name]!,
-                toolbarButtons: [
-                  (node) => TextButton(
-                    onPressed: () => node.unfocus(),
-                    child: const Text('Done'),
-                  ),
-                ],
-              );
-            }).toList(),
-          ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 1. Monthly Limit Section (Read-only)
-                Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.flag, color: Colors.teal),
-                            const SizedBox(width: 10),
-                            Text(
-                              S.of(context)!.monthlyLimit,
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(width: 4),
-                            GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    content: Text(
-                                      S.of(context)!.monthlyLimitAuto,
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: Text(S.of(context)!.ok ?? 'OK'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              child: Icon(
-                                Icons.help_outline,
-                                color: Colors.teal,
-                                size: 18,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        // Removed the monthlyLimitAuto text from here
-                        const SizedBox(height: 16),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.teal.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 20,
-                            horizontal: 16,
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            '${totalCategoryLimits.toStringAsFixed(0)}',
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.teal[800],
-                                ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+        child: ValueListenableBuilder(
+          valueListenable: _categoryBox.listenable(),
+          builder: (context, Box<Category> box, _) {
+            final categories = box.values.toList();
 
-                const SizedBox(height: 24),
+            // Ensure 'other' is always last
+            categories.sort((a, b) {
+              if (a.name == 'other') return 1;
+              if (b.name == 'other') return -1;
+              return 0;
+            });
 
-                // 2. Category Budgets Section
-                Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(18),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+            final totalCategoryLimits = categories
+                .map((cat) => double.tryParse(_controllers[cat.name]?.text ?? '') ?? 0)
+                .fold(0.0, (a, b) => a + b);
+
+            return KeyboardActions(
+              config: KeyboardActionsConfig(
+                actions: _controllers.keys.map((name) {
+                  return KeyboardActionsItem(
+                    focusNode: _focusNodes[name]!,
+                    toolbarButtons: [
+                      (node) => TextButton(
+                            onPressed: () => node.unfocus(),
+                            child: const Text('Done'),
+                          ),
+                    ],
+                  );
+                }).toList(),
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 1. Monthly Limit Section (Read-only)
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const Icon(Icons.category, color: Colors.teal),
-                            const SizedBox(width: 8),
-                            Text(
-                              S.of(context)!.categoryBudgets,
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          S.of(context)!.allocateToCategories,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: Colors.grey[600]),
-                        ),
-                        const SizedBox(height: 12),
-                        ...categories.map((category) {
-                          final controller = _controllers[category.name];
-                          final isEmpty =
-                              controller?.text.trim().isEmpty ?? true;
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Row(
+                            Row(
                               children: [
-                                Icon(
-                                  getCategoryIcon(category),
-                                  color: isDark
-                                      ? Colors.tealAccent
-                                      : Colors.teal,
-                                  size: 24,
-                                ),
+                                const Icon(Icons.flag, color: Colors.teal),
                                 const SizedBox(width: 10),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    getLocalizedCategory(
-                                      category.name,
-                                      S.of(context)!,
-                                    ),
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodyLarge,
-                                  ),
+                                Text(
+                                  S.of(context)!.monthlyLimit,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
                                 ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  flex: 3,
-                                  child: _styledContainer(
-                                    child: TextField(
-                                      controller: controller,
-                                      focusNode: _focusNodes[category.name],
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                            decimal: true,
+                                const SizedBox(width: 4),
+                                GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        content: Text(
+                                          S.of(context)!.monthlyLimitAuto,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: Text(S.of(context)!.ok ?? 'OK'),
                                           ),
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyLarge,
-                                      decoration: InputDecoration(
-                                        labelText: isEmpty
-                                            ? S.of(context)!.enterAmountHint
-                                            : null,
-                                        border: InputBorder.none,
-                                        isDense: true,
+                                        ],
                                       ),
-                                      onChanged: (_) async {
-                                        setState(() {});
-                                        await _saveBudgets();
-                                      },
-                                    ),
+                                    );
+                                  },
+                                  child: Icon(
+                                    Icons.help_outline,
+                                    color: Colors.teal,
+                                    size: 18,
                                   ),
                                 ),
                               ],
                             ),
-                          );
-                        }),
-                      ],
+                            const SizedBox(height: 8),
+                            const SizedBox(height: 16),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.teal.withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 20,
+                                horizontal: 16,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                '${totalCategoryLimits.toStringAsFixed(0)}',
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.teal[800],
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
 
-                const SizedBox(height: 28),
+                    const SizedBox(height: 24),
 
-                // 5. Info Footer
-                Center(
-                  child: Text(
-                    S.of(context)!.budgetScreenFooter,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: Colors.teal),
-                    textAlign: TextAlign.center,
-                  ),
+                    // 2. Category Budgets Section
+                    Card(
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.category, color: Colors.teal),
+                                const SizedBox(width: 8),
+                                Text(
+                                  S.of(context)!.categoryBudgets,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              S.of(context)!.allocateToCategories,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.grey[600]),
+                            ),
+                            const SizedBox(height: 12),
+                            ...categories.map((category) {
+                              final controller = _controllers[category.name];
+                              final isEmpty =
+                                  controller?.text.trim().isEmpty ?? true;
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      getCategoryIcon(category),
+                                      color: isDark
+                                          ? Colors.tealAccent
+                                          : Colors.teal,
+                                      size: 24,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        getLocalizedCategory(
+                                          category.name,
+                                          S.of(context)!,
+                                        ),
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      flex: 3,
+                                      child: _styledContainer(
+                                        child: TextField(
+                                          controller: controller,
+                                          focusNode: _focusNodes[category.name],
+                                          keyboardType:
+                                              const TextInputType.numberWithOptions(
+                                                decimal: true,
+                                              ),
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyLarge,
+                                          decoration: InputDecoration(
+                                            labelText: isEmpty
+                                                ? S.of(context)!.enterAmountHint
+                                                : null,
+                                            border: InputBorder.none,
+                                            isDense: true,
+                                          ),
+                                          onChanged: (_) async {
+                                            setState(() {});
+                                            await _saveBudgets();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 28),
+
+                    // 5. Info Footer
+                    Center(
+                      child: Text(
+                        S.of(context)!.budgetScreenFooter,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: Colors.teal),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

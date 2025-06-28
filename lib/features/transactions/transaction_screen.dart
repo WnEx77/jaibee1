@@ -429,7 +429,11 @@ class _TransactionScreenState extends State<TransactionScreen> {
                               t.category.toLowerCase() == _selectedCategory,
                         )
                         .toList()
-                      ..sort((a, b) => b.date.compareTo(a.date));
+                      ..sort((a, b) {
+                        final aDateTime = a.time ?? a.date;
+                        final bDateTime = b.time ?? b.date;
+                        return bDateTime.compareTo(aDateTime);
+                      });
 
                 for (var t in filteredTransactions) {
                   if (t.isIncome) {
@@ -1046,16 +1050,70 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                           color: mintJade.unselectedIconColor,
                                         ),
                                       ),
-                                      title: Text(
-                                        getLocalizedCategory(
-                                          transaction.category,
-                                          localizer,
-                                        ),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                      title: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Category name in one line
+                                          Text(
+                                            getLocalizedCategory(
+                                              transaction.category,
+                                              localizer,
+                                            ),
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          // Date and time in one line
+                                          Row(
+                                            children: [
+                                              Text(
+                                                DateFormat.yMMMd().format(
+                                                  transaction.date,
+                                                ),
+                                                style: TextStyle(
+                                                  color: Colors.grey[700],
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                              if (transaction.time != null) ...[
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  DateFormat(
+                                                    'hh:mm a',
+                                                  ).format(transaction.time!),
+                                                  style: TextStyle(
+                                                    color: Colors.grey[700],
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                          // Description in one line
+                                          if (transaction.description != null &&
+                                              transaction.description!
+                                                  .trim()
+                                                  .isNotEmpty)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 2.0,
+                                              ),
+                                              child: Text(
+                                                transaction.description!,
+                                                style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: 13,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                        ],
                                       ),
-                                      subtitle: Text(formattedDate),
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
