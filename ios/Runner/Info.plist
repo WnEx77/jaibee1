@@ -30,6 +30,10 @@
 		<string>Main</string>
 		<key>NSUserNotificationUsageDescription</key>
 		<string>This app uses notifications to remind you to log your expenses daily.</string>
+		<key>NSUserNotificationAlertStyle</key>
+		<string>alert</string>
+		<key>NSUserNotificationUsageDescription</key>
+		<string>This app uses notifications to remind you to log your expenses.</string>
 		<key>UNNotificationAlertStyle</key>
 		<string>banner</string>
 		<key>UIBackgroundModes</key>
