@@ -187,23 +187,69 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                   onTap: () {
                                     showDialog(
                                       context: context,
-                                      builder: (context) => AlertDialog(
-                                        content: Text(
-                                          S.of(context)!.monthlyLimitAuto,
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
-                                            child: Text(
-                                              S.of(context)!.ok ?? 'OK',
+                                      barrierColor:
+                                          Colors.transparent, // خلفية شفافة
+                                      builder: (context) {
+                                        final isDarkMode =
+                                            Theme.of(context).brightness ==
+                                            Brightness.dark;
+                                        final bgColor = isDarkMode
+                                            ? Colors.grey.shade800
+                                            : Colors.grey.shade200;
+                                        final textColor = isDarkMode
+                                            ? Colors.white
+                                            : Colors.black87;
+
+                                        return Align(
+                                          alignment: Alignment.topRight,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 60.0,
+                                              right: 20.0,
+                                            ),
+                                            child: Material(
+                                              color: bgColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              elevation: 6,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(
+                                                  10,
+                                                ),
+                                                child: Text(
+                                                  S
+                                                      .of(context)!
+                                                      .monthlyLimitAuto,
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: textColor,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        );
+                                      },
                                     );
+
+                                    // ⏱️ لإغلاقه تلقائيًا بعد ثانيتين
+                                    Future.delayed(
+                                      const Duration(seconds: 2),
+                                      () {
+                                        if (Navigator.of(context).canPop()) {
+                                          Navigator.of(context).pop();
+                                        }
+                                      },
+                                    );
+
+                                    // لإغلاقه تلقائيًا بعد 2 ثانية مثلاً:
+                                    Future.delayed(Duration(seconds: 2), () {
+                                      if (Navigator.of(context).canPop()) {
+                                        Navigator.of(context).pop();
+                                      }
+                                    });
                                   },
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.help_outline,
                                     color: Colors.teal,
                                     size: 18,

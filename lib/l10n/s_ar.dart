@@ -545,7 +545,7 @@ class SAr extends S {
   String get ofExpenses => 'جزء من إجمالي المصروفات';
 
   @override
-  String get categoryProgress => 'نسبة استهلاك الفئة';
+  String get categoryProgress => 'نسبة استهلاك الفئات';
 
   @override
   String get noLimitSet => 'لم يتم تعيين حد لهذه الفئة بعد.';
