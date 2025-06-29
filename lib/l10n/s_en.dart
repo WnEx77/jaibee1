@@ -51,7 +51,7 @@ class SEn extends S {
   String get date => 'Date';
 
   @override
-  String get addTransaction => 'Add Transaction';
+  String get addTransaction => 'Add Expense';
 
   @override
   String get transactionAdded => 'Transaction added';

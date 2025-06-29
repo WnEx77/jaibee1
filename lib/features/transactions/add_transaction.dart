@@ -349,15 +349,25 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   Widget _buildSubmitButton(S localizer) {
     final mintJade = Theme.of(context).extension<MintJadeColors>()!;
-    return FilledButton.icon(
-      onPressed: _submitForm,
-      style: FilledButton.styleFrom(
-        backgroundColor: mintJade.buttonColor,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 14),
+    return SizedBox(
+      width: double.infinity, // Make it full-width if needed
+      child: FilledButton.icon(
+        onPressed: _submitForm,
+        style: FilledButton.styleFrom(
+          backgroundColor: mintJade.buttonColor,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 9,
+          ), // More padding
+          textStyle: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ), // Larger text
+        ),
+        icon: const Icon(Icons.add, size: 24), // Larger icon
+        label: Text(_isIncome ? localizer.addIncome : localizer.addTransaction),
       ),
-      icon: const Icon(Icons.add),
-      label: Text(_isIncome ? localizer.addIncome : localizer.addTransaction),
     );
   }
 

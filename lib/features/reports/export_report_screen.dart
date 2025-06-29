@@ -101,7 +101,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
           // Logo at top right
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.end,
-            children: [pw.Image(logo, height: 40)],
+            children: [pw.Image(logo, height: 90)],
           ),
           pw.SizedBox(height: 8),
 

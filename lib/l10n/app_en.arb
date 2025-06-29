@@ -14,7 +14,7 @@
   "income": "Income",
   "expense": "Expense",
   "date": "Date",
-  "addTransaction": "Add Transaction",
+  "addTransaction": "Add Expense",
   "transactionAdded": "Transaction added",
   "noTransactions": "No Transactions Yet",
   "transactionDeleted": "Transaction deleted",

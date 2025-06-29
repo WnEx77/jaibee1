@@ -32,8 +32,8 @@
 		<string>This app uses notifications to remind you to log your expenses daily.</string>
 		<key>UIBackgroundModes</key>
 		<array>
-    		<string>fetch</string>
-    		<string>remote-notification</string>
+			<string>fetch</string>
+			<string>remote-notification</string>
 		</array>
 		<key>UISupportedInterfaceOrientations</key>
 		<array>

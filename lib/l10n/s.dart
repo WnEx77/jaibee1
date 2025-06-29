@@ -184,7 +184,7 @@ abstract class S {
   /// No description provided for @addTransaction.
   ///
   /// In en, this message translates to:
-  /// **'Add Transaction'**
+  /// **'Add Expense'**
   String get addTransaction;
 
   /// No description provided for @transactionAdded.
