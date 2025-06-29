@@ -374,6 +374,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
     final transactionBox = Hive.box('transactions');
     final categoryBox = Hive.box<Category>('categories');
     final mintJade = Theme.of(context).extension<MintJadeColors>()!;
+    final locale = Localizations.localeOf(context);
 
     return Scaffold(
       body: AppBackground(
@@ -668,7 +669,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                '${DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day - DateTime.now().day} ${localizer.daysRemaining}',
+                                                locale.languageCode == 'ar'
+                                                    ? '${localizer.daysRemaining} ${DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day - DateTime.now().day}'
+                                                    : '${DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day - DateTime.now().day} ${localizer.daysRemaining}',
                                                 style: TextStyle(
                                                   color: Colors.grey.shade600,
                                                   fontStyle: FontStyle.italic,
