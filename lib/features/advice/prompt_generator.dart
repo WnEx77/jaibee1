@@ -1,8 +1,5 @@
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jaibee/core/utils/currency_utils.dart';
-
-import 'monthly_summary.dart';
 import 'dart:ui';
+import 'monthly_summary.dart';
 
 Future<String> generatePrompt(
   MonthlySummary summary,
@@ -14,12 +11,6 @@ Future<String> generatePrompt(
 }) async {
   final isArabic = locale.languageCode == 'ar';
   final prompt = StringBuffer();
-
-  // Get user's selected currency
-  final prefs = await SharedPreferences.getInstance();
-  final code = prefs.getString('currency_code') ?? 'SAR';
-  final currency = getCurrencyByCode(code);
-  final currencyLabel = currency.code == 'SAR' ? 'SAR' : currency.symbol;
 
   if (isArabic) {
     prompt.writeln(
@@ -42,24 +33,18 @@ Future<String> generatePrompt(
     if (age != null) prompt.writeln("العمر: $age سنة");
 
     prompt.writeln("\n📊 ملخص الشهر:");
-    prompt.writeln(
-      "- إجمالي الدخل: ${summary.totalIncome.toStringAsFixed(2)} $currencyLabel",
-    );
-    prompt.writeln(
-      "- إجمالي المصروفات: ${summary.totalExpenses.toStringAsFixed(2)} $currencyLabel",
-    );
+    prompt.writeln("- إجمالي الدخل: ${summary.totalIncome.toStringAsFixed(2)}");
+    prompt.writeln("- إجمالي المصروفات: ${summary.totalExpenses.toStringAsFixed(2)}");
 
     if (summary.monthlyLimit != null) {
-      prompt.writeln(
-        "- الحد الشهري للصرف: ${summary.monthlyLimit!.toStringAsFixed(2)} $currencyLabel",
-      );
+      prompt.writeln("- الحد الشهري للصرف: ${summary.monthlyLimit!.toStringAsFixed(2)}");
     } else {
       prompt.writeln("- ما تم تحديد حد شهري للصرف.");
     }
 
     prompt.writeln("\n💸 توزيع المصروفات حسب التصنيف:");
     summary.expensesByCategory.forEach((category, amount) {
-      prompt.writeln("- $category: ${amount.toStringAsFixed(2)} $currencyLabel");
+      prompt.writeln("- $category: ${amount.toStringAsFixed(2)}");
     });
 
     if (budgets.isNotEmpty) {
@@ -70,7 +55,7 @@ Future<String> generatePrompt(
         final spent = summary.expensesByCategory[category] ?? 0.0;
         final status = spent > limit ? "🔴 فوق الحد" : "🟢 ضمن الحد";
         prompt.writeln(
-          "- $category: صرفت ${spent.toStringAsFixed(2)} $currencyLabel (الحد: ${limit.toStringAsFixed(2)} $currencyLabel) $status",
+          "- $category: صرفت ${spent.toStringAsFixed(2)} (الحد: ${limit.toStringAsFixed(2)}) $status",
         );
       }
     }
@@ -79,7 +64,7 @@ Future<String> generatePrompt(
       prompt.writeln("\n🎯 أهدافي المالية:");
       for (var goal in goals) {
         prompt.writeln(
-          "- أبغى أحقق '${goal['item']}' عن طريق توفير ${goal['monthly']} $currencyLabel شهرياً لمدة ${goal['months']} شهر (${goal['type']}).",
+          "- أبغى أحقق '${goal['item']}' عن طريق توفير ${goal['monthly']} شهرياً لمدة ${goal['months']} شهر (${goal['type']}).",
         );
       }
     }
@@ -112,24 +97,18 @@ Future<String> generatePrompt(
     if (age != null) prompt.writeln("Age: $age");
 
     prompt.writeln("\n📊 Monthly Summary:");
-    prompt.writeln(
-      "- Total Income: ${summary.totalIncome.toStringAsFixed(2)} $currencyLabel",
-    );
-    prompt.writeln(
-      "- Total Expenses: ${summary.totalExpenses.toStringAsFixed(2)} $currencyLabel",
-    );
+    prompt.writeln("- Total Income: ${summary.totalIncome.toStringAsFixed(2)}");
+    prompt.writeln("- Total Expenses: ${summary.totalExpenses.toStringAsFixed(2)}");
 
     if (summary.monthlyLimit != null) {
-      prompt.writeln(
-        "- Monthly Spending Limit: ${summary.monthlyLimit!.toStringAsFixed(2)} $currencyLabel",
-      );
+      prompt.writeln("- Monthly Spending Limit: ${summary.monthlyLimit!.toStringAsFixed(2)}");
     } else {
       prompt.writeln("- No monthly spending limit has been set.");
     }
 
     prompt.writeln("\n💸 Expense Breakdown by Category:");
     summary.expensesByCategory.forEach((category, amount) {
-      prompt.writeln("- $category: ${amount.toStringAsFixed(2)} $currencyLabel");
+      prompt.writeln("- $category: ${amount.toStringAsFixed(2)}");
     });
 
     if (budgets.isNotEmpty) {
@@ -140,7 +119,7 @@ Future<String> generatePrompt(
         final spent = summary.expensesByCategory[category] ?? 0.0;
         final status = spent > limit ? "🔴 Over Budget" : "🟢 Within Budget";
         prompt.writeln(
-          "- $category: Spent ${spent.toStringAsFixed(2)} $currencyLabel (Limit: ${limit.toStringAsFixed(2)} $currencyLabel) $status",
+          "- $category: Spent ${spent.toStringAsFixed(2)} (Limit: ${limit.toStringAsFixed(2)}) $status",
         );
       }
     }
@@ -149,7 +128,7 @@ Future<String> generatePrompt(
       prompt.writeln("\n🎯 My Financial Goals:");
       for (var goal in goals) {
         prompt.writeln(
-          "- Goal '${goal['item']}' — Saving ${goal['monthly']} $currencyLabel per month for ${goal['months']} months (${goal['type']}).",
+          "- Goal '${goal['item']}' — Saving ${goal['monthly']} per month for ${goal['months']} months (${goal['type']}).",
         );
       }
     }
