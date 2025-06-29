@@ -15,7 +15,8 @@ import 'package:jaibee/core/utils/currency_utils.dart';
 import 'package:jaibee/features/about/terms_of_service_screen.dart';
 import 'package:http/http.dart' as http;
 import '../../core/theme/mint_jade_theme.dart';
-// import '../../core/services/notification_service.dart';
+import '../../core/services/notification_service.dart';
+import 'package:jaibee/shared/widgets/global_time_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -131,45 +132,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
-  // Future<void> _contactSupport() async {
-  //   final s = S.of(context)!;
-  //   final Uri emailLaunchUri = Uri(
-  //     scheme: 'mailto',
-  //     path: 'jaibee.care@gmail.com',
-  //     query: 'subject=Contact%20Support',
-  //   );
-  //   if (await canLaunchUrl(emailLaunchUri)) {
-  //     await launchUrl(emailLaunchUri);
-  //   } else {
-  //     // ignore: use_build_context_synchronously
-  //     Flushbar(
-  //       message: s.couldNotLaunchEmailClient,
-  //       duration: const Duration(seconds: 2),
-  //       backgroundColor: Colors.redAccent,
-  //       margin: const EdgeInsets.all(16),
-  //       borderRadius: BorderRadius.circular(12),
-  //       icon: const Icon(Icons.error_outline, color: Colors.white),
-  //     ).show(context);
-  //   }
-  // }
-
-  // Future<void> _openSupportPage() async {
-  //   final s = S.of(context)!;
-  //   final url = Uri.parse('https://github.com/wnex77/jaibee1/issues');
-  //   if (await canLaunchUrl(url)) {
-  //     await launchUrl(url, mode: LaunchMode.externalApplication);
-  //   } else {
-  //     Flushbar(
-  //       message: s.couldNotOpenSupportPage,
-  //       duration: const Duration(seconds: 2),
-  //       backgroundColor: Colors.redAccent,
-  //       margin: const EdgeInsets.all(16),
-  //       borderRadius: BorderRadius.circular(12),
-  //       icon: const Icon(Icons.error_outline, color: Colors.white),
-  //     ).show(context);
-  //   }
-  // }
 
   Future<void> _showCurrencyPicker(BuildContext context) async {
     final s = S.of(context)!;
@@ -609,27 +571,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildSectionCard(
                 title: s.appFeatures,
                 children: [
-                  // _buildCardTile(
-                  //   icon: Icons.alarm,
-                  //   label: s.setDailyReminder,
-                  //   onTap: () async {
-                  //     final pickedTime = await showTimePicker(
-                  //       context: context,
-                  //       initialTime: TimeOfDay.now(),
-                  //     );
+                  _buildCardTile(
+                    icon: Icons.alarm,
+                    label: s.setDailyReminder,
+                    onTap: () async {
+                      final pickedTime = await showGlobalCupertinoTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                      );
 
-                  //     if (pickedTime != null) {
-                  //       await NotificationService.scheduleDailyReminder(
-                  //         pickedTime,
-                  //       );
+                      if (pickedTime != null) {
+                        await NotificationService.scheduleDailyReminder(
+                          pickedTime,
+                        );
 
-                  //       ScaffoldMessenger.of(context).showSnackBar(
-                  //         SnackBar(content: Text(s.reminderSetSuccess)),
-                  //       );
-                  //     }
-                  //   },
-                  // ),
-                  // _buildDivider(),
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(s.reminderSetSuccess),
+                              duration: Duration(seconds: 3),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+
+                  _buildDivider(),
                   // _buildCardTile(
                   //   icon: Icons.flag_outlined,
                   //   label: s.setGoals,
