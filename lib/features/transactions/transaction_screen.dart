@@ -896,9 +896,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
                               itemBuilder: (context, index) {
                                 final transaction = filteredTransactions[index];
                                 final isIncome = transaction.isIncome;
-                                final formattedDate = DateFormat.yMMMd().format(
-                                  transaction.date,
-                                );
                                 final amountColor = isIncome
                                     ? Colors.green
                                     : Colors.red;

@@ -42,20 +42,9 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadAdvice());
   }
 
-  Future<double?> _getMonthlyLimitFromBudgetsBox() async {
-    final budgetsBox = Hive.box<Budget>('budgets');
-    final monthlyBudget = budgetsBox.get('__monthly__');
-    return monthlyBudget?.limit;
-  }
-
   Future<void> _loadAdvice() async {
     try {
-      // ✅ Check internet connection
       final connectivityResult = await Connectivity().checkConnectivity();
-
-      // Get monthly limit from budgets box instead of prefs
-      final double? monthlyLimit = await _getMonthlyLimitFromBudgetsBox();
-
       final budgetsBox = Hive.box<Budget>('budgets');
       final List<Map<String, dynamic>> budgets = budgetsBox.values
           .whereType<Budget>()

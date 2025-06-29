@@ -14,7 +14,6 @@ class _AboutUsScreenState extends State<AboutUsScreen>
     with SingleTickerProviderStateMixin {
   String _appVersion = '';
   String _appName = '';
-  String _packageName = '';
   String _buildNumber = '';
 
   late AnimationController _controller;
@@ -52,7 +51,6 @@ class _AboutUsScreenState extends State<AboutUsScreen>
     setState(() {
       _appVersion = info.version;
       _appName = info.appName;
-      _packageName = info.packageName;
       _buildNumber = info.buildNumber;
     });
   }

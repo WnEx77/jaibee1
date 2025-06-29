@@ -14,7 +14,6 @@ import 'data/models/goal_model.dart';
 import 'data/models/trancs.dart';
 import 'features/home/splash_screen.dart';
 import 'core/services/notification_service.dart';
-import 'features/transactions/transaction_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

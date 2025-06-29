@@ -57,13 +57,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
     setState(() {});
   }
 
-  bool _isInvalidInput(String? text) {
-    if (text == null || text.trim().isEmpty) {
-      return false; // Empty is OK, treated as 0
-    }
-    return double.tryParse(text.trim()) == null;
-  }
-
   Future<void> _saveBudgets() async {
     double totalCategoryLimits = 0;
 
@@ -405,29 +398,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
             );
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildBudgetInfoRow(
-    String label,
-    double value, {
-    bool highlight = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-          Text(
-            '${value.toStringAsFixed(0)}',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: highlight ? Colors.teal : null,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -5,9 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:jaibee/data/models/trancs.dart';
 import 'package:jaibee/l10n/s.dart';
 import 'package:jaibee/data/models/category.dart';
-import 'package:jaibee/shared/widgets/app_background.dart';
-import 'package:jaibee/shared/widgets/custom_app_bar.dart';
-// import 'package:jaibee/utils/category_utils.dart';
 import 'package:jaibee/core/theme/mint_jade_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jaibee/core/utils/category_utils.dart';
@@ -225,7 +222,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(
-        '${localizer.time ?? "Time"}: ${_selectedTime?.format(context) ?? "--:--"}',
+        '${localizer.time}: ${_selectedTime?.format(context) ?? "--:--"}',
       ),
       trailing: const Icon(Icons.access_time),
       onTap: () => _selectTime(context),
