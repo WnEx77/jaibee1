@@ -208,7 +208,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     ),
                     const SizedBox(height: 16),
                     _buildBarChart(categoryExpenses),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 70),
                     // Text(
                     //   localizer.categoryDistribution,
                     //   style: Theme.of(context).textTheme.titleLarge!.copyWith(
