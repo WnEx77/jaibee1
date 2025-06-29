@@ -25,6 +25,7 @@ String getLocalizedCategory(String name, S localizer) {
     'savings': localizer.savings,
     'events': localizer.events,
     'fitness': localizer.fitness,
+    'laundry': localizer.laundry,
     'other': localizer.other,
   };
   return map[name.toLowerCase()] ?? name;
@@ -51,6 +52,7 @@ IconData getCategoryIcon(Category category) {
     'cake': Icons.cake,
     'savings': Icons.savings,
     'event': Icons.event,
+    'laundry': Icons.local_laundry_service,
     'attach_money': Icons.attach_money,
   };
   return iconMap[category.icon] ?? Icons.category;

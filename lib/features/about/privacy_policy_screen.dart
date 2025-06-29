@@ -50,7 +50,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
 1. **المعلومات التي نجمعها**
 - لا نقوم بجمع أو تخزين أي معلومات تعريف شخصية مثل الاسم أو البريد الإلكتروني أو رقم الهاتف على أي خوادم خارجية.
 - جميع بياناتك المالية (المعاملات، الميزانيات، الفئات، الأهداف، التفضيلات) يتم تخزينها محليًا على جهازك باستخدام قاعدة بيانات Hive.
-- تفضيلاتك (مثل اللغة، السمة، حالة إكمال المقدمة) يتم تخزينها محليًا باستخدام SharedPreferences.
+- تفضيلاتك (مثل اللغة، السمة) يتم تخزينها محليًا باستخدام SharedPreferences.
 
 2. **استخدام الإنترنت**
 - قد يتصل التطبيق بالإنترنت فقط لجلب نصائح مالية ذكية (عبر خدمة الذكاء الاصطناعي) أو تحميل بعض الرموز أو الرسوم المتحركة.
@@ -79,7 +79,7 @@ Your privacy is important to us. This document explains how the "Jaibee" app col
 1. **Information We Collect**
 - We do not collect or store any personally identifiable information such as name, email, or phone number on any external servers.
 - All your financial data (transactions, budgets, categories, goals, preferences) is stored locally on your device using the Hive database.
-- Your preferences (such as language, theme, onboarding status) are stored locally using SharedPreferences.
+- Your preferences (such as language, theme) are stored locally using SharedPreferences.
 
 2. **Internet Usage**
 - The app may connect to the internet only to fetch smart financial advice (via AI service) or to download some icons or animations.

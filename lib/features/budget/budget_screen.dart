@@ -137,7 +137,10 @@ class _BudgetScreenState extends State<BudgetScreen> {
             });
 
             final totalCategoryLimits = categories
-                .map((cat) => double.tryParse(_controllers[cat.name]?.text ?? '') ?? 0)
+                .map(
+                  (cat) =>
+                      double.tryParse(_controllers[cat.name]?.text ?? '') ?? 0,
+                )
                 .fold(0.0, (a, b) => a + b);
 
             return KeyboardActions(
@@ -147,9 +150,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
                     focusNode: _focusNodes[name]!,
                     toolbarButtons: [
                       (node) => TextButton(
-                            onPressed: () => node.unfocus(),
-                            child: const Text('Done'),
-                          ),
+                        onPressed: () => node.unfocus(),
+                        child: const Text('Done'),
+                      ),
                     ],
                   );
                 }).toList(),
@@ -192,7 +195,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.of(context).pop(),
-                                            child: Text(S.of(context)!.ok ?? 'OK'),
+                                            child: Text(
+                                              S.of(context)!.ok ?? 'OK',
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -268,7 +273,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
                               final isEmpty =
                                   controller?.text.trim().isEmpty ?? true;
                               return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4,
+                                ),
                                 child: Row(
                                   children: [
                                     Icon(
@@ -302,13 +309,18 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                               const TextInputType.numberWithOptions(
                                                 decimal: true,
                                               ),
+                                          textAlign: TextAlign
+                                              .center, // Center both hint and input text
                                           style: Theme.of(
                                             context,
                                           ).textTheme.bodyLarge,
                                           decoration: InputDecoration(
-                                            labelText: isEmpty
+                                            hintText: isEmpty
                                                 ? S.of(context)!.enterAmountHint
-                                                : null,
+                                                : null, // Use hintText instead
+                                            hintStyle: TextStyle(
+                                              color: Colors.grey,
+                                            ), // Optional
                                             border: InputBorder.none,
                                             isDense: true,
                                           ),

@@ -134,9 +134,9 @@ class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
       extensions: const <ThemeExtension<dynamic>>[
         MintJadeColors(
           appBarColor: Color(0xFFE9F4F2),
-          navBarColor: Color(0xFFFFFFFF),
-          selectedIconColor: Color(0xFFA8E6CF),
-          unselectedIconColor: Color(0xFF9EB6B3),
+          navBarColor: Color(0xFFF5F5F5), // Light gray for clarity
+          selectedIconColor: Color(0xFF009688), // Strong teal
+          unselectedIconColor: Color(0xFF9E9E9E), // Neutral dark grey
           buttonColor: Colors.teal,
         ),
       ],

@@ -12,7 +12,7 @@
   "entertainment": "الترفيه",
   "coffee": "القهوة",
   "income": "الدخل",
-  "expense": "النفقات",
+  "expense": "المصاريف",
   "date": "التاريخ",
   "addTransaction": "إضافة مصروف",
   "transactionAdded": "تمت إضافة المصروف",
@@ -131,6 +131,7 @@
   "books": "الكتب",
   "petCare": "رعاية الحيوانات",
   "gifts": "الهدايا",
+  "laundry": "مغسلة الملابس",
   "savings": "المدخرات",
   "events": "الفعاليات",
   "fitness": "اللياقة البدنية",
@@ -265,5 +266,6 @@
   "monthlyLimitAuto": "الحد الشهري الخاص بك هو مجموع حدود جميع الفئات أدناه.",
   "time": "الوقت",
   "cannotSelectFutureTime": "لا يمكن اختيار وقت في المستقبل",
-  "addIncome": "إضافة دخل"
+  "addIncome": "إضافة دخل",
+  "pleaseSelectNewCategory": "فضلًا قم باختيار فئة أولًا"
 }

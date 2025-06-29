@@ -128,46 +128,58 @@ class CategoryProgressScreen extends StatelessWidget {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            LinearProgressIndicator(
-                              value: percent,
-                              minHeight: 10,
-                              backgroundColor: Colors.grey.shade300,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                percent < 0.6
-                                    ? Colors.green
-                                    : percent < 0.9
-                                    ? Colors.orange
-                                    : Colors.red,
+                            const SizedBox(height: 6),
+                            // Rounded progress bar
+                            Container(
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: LinearProgressIndicator(
+                                  value: percent,
+                                  backgroundColor: Colors.transparent,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    percent < 0.6
+                                        ? Colors.green
+                                        : percent < 0.9
+                                        ? Colors.orange
+                                        : Colors.red,
+                                  ),
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            if (originalLimit > 0)
-                              Text(
-                                '${(percent * 100).toStringAsFixed(1)}% ${localizer.ofLimit}',
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 12,
-                                ),
-                              )
-                            else
-                              Text(
-                                localizer.noLimitSet,
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 12,
-                                ),
+                            const SizedBox(height: 6),
+
+                            // Percentage of limit used
+                            Text(
+                              originalLimit > 0
+                                  ? '${(percent * 100).toStringAsFixed(1)}% ${localizer.ofLimit}'
+                                  : localizer.noLimitSet,
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 12,
                               ),
+                            ),
+
+                            // Limit value
                             if (originalLimit > 0)
-                              Text(
-                                '${localizer.limit}: ${originalLimit.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  color: Colors.blueGrey,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Text(
+                                  '${localizer.limit}: ${originalLimit.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                           ],
                         ),
+
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [

@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jaibee/shared/widgets/global_date_picker.dart';
 import 'package:jaibee/shared/widgets/global_confirm_delete_dialog.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:jaibee/shared/widgets/global_time_picker.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final Transaction transaction;
@@ -97,36 +98,13 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     }
   }
 
-  Future<void> _selectTime(BuildContext context) async {
-    final now = DateTime.now();
-    final picked = await showTimePicker(
+  void _selectTime(BuildContext context) async {
+    final initial = _selectedTime ?? TimeOfDay.now();
+    final picked = await showGlobalCupertinoTimePicker(
       context: context,
-      initialTime: _selectedTime ?? TimeOfDay.now(),
+      initialTime: initial,
     );
     if (picked != null) {
-      // If selected date is today, don't allow future time
-      if (_selectedDate.year == now.year &&
-          _selectedDate.month == now.month &&
-          _selectedDate.day == now.day) {
-        final pickedDateTime = DateTime(
-          _selectedDate.year,
-          _selectedDate.month,
-          _selectedDate.day,
-          picked.hour,
-          picked.minute,
-        );
-        if (pickedDateTime.isAfter(now)) {
-          Flushbar(
-            message: S.of(context)!.cannotSelectFutureTime ?? "Cannot select a future time.",
-            duration: const Duration(seconds: 2),
-            backgroundColor: Colors.redAccent,
-            margin: const EdgeInsets.all(16),
-            borderRadius: BorderRadius.circular(12),
-            icon: const Icon(Icons.error_outline, color: Colors.white),
-          ).show(context);
-          return;
-        }
-      }
       setState(() => _selectedTime = picked);
     }
   }
@@ -261,7 +239,10 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 80), // Make dialog smaller
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: 32,
+        vertical: 80,
+      ), // Make dialog smaller
       child: ConstrainedBox(
         constraints: const BoxConstraints(
           maxWidth: 400, // Set a max width for desktop/tablet
@@ -275,18 +256,18 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                 focusNode: _amountFocus,
                 toolbarButtons: [
                   (node) => TextButton(
-                        onPressed: () => node.unfocus(),
-                        child: const Text('Done'),
-                      ),
+                    onPressed: () => node.unfocus(),
+                    child: const Text('Done'),
+                  ),
                 ],
               ),
               KeyboardActionsItem(
                 focusNode: _descriptionFocus,
                 toolbarButtons: [
                   (node) => TextButton(
-                        onPressed: () => node.unfocus(),
-                        child: const Text('Done'),
-                      ),
+                    onPressed: () => node.unfocus(),
+                    child: const Text('Done'),
+                  ),
                 ],
               ),
             ],
@@ -302,8 +283,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                     Text(
                       localizer.editTransaction,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     FutureBuilder<Widget>(
@@ -312,15 +293,20 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                         return TextFormField(
                           controller: _amountController,
                           focusNode: _amountFocus,
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                           inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d{0,2}'),
+                            ),
                           ],
                           decoration: InputDecoration(
                             labelText: localizer.amount,
                             border: InputBorder.none,
                             filled: true,
-                            fillColor: Theme.of(context).brightness == Brightness.dark
+                            fillColor:
+                                Theme.of(context).brightness == Brightness.dark
                                 ? Colors.grey[900]
                                 : Colors.white,
                             contentPadding: const EdgeInsets.symmetric(
@@ -330,7 +316,9 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(18),
                               borderSide: BorderSide(
-                                color: Theme.of(context).brightness == Brightness.dark
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
                                     ? Colors.grey[800]!
                                     : Colors.grey[200]!,
                                 width: 1.2,
@@ -367,7 +355,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                         labelText: localizer.category,
                         border: InputBorder.none,
                         filled: true,
-                        fillColor: Theme.of(context).brightness == Brightness.dark
+                        fillColor:
+                            Theme.of(context).brightness == Brightness.dark
                             ? Colors.grey[900]
                             : Colors.white,
                         contentPadding: const EdgeInsets.symmetric(
@@ -377,7 +366,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide(
-                            color: Theme.of(context).brightness == Brightness.dark
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
                                 ? Colors.grey[800]!
                                 : Colors.grey[200]!,
                             width: 1.2,
@@ -422,9 +412,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                       ),
                       title: Text(
                         '${localizer.date}: ${DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(_selectedDate)}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       onTap: () => _selectDate(context),
                     ),
@@ -439,7 +427,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                         labelText: localizer.description,
                         border: InputBorder.none,
                         filled: true,
-                        fillColor: Theme.of(context).brightness == Brightness.dark
+                        fillColor:
+                            Theme.of(context).brightness == Brightness.dark
                             ? Colors.grey[900]
                             : Colors.white,
                         contentPadding: const EdgeInsets.symmetric(
@@ -449,7 +438,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide(
-                            color: Theme.of(context).brightness == Brightness.dark
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
                                 ? Colors.grey[800]!
                                 : Colors.grey[200]!,
                             width: 1.2,
@@ -470,10 +460,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                       children: [
                         Expanded(
                           child: ElevatedButton.icon(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
+                            icon: const Icon(Icons.delete, color: Colors.white),
                             label: Text(
                               localizer.deleteTransaction,
                               style: const TextStyle(color: Colors.white),
@@ -481,9 +468,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.redAccent,
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 14,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -499,9 +484,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: mintJade.buttonColor,
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 14,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),

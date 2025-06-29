@@ -390,6 +390,9 @@ class SEn extends S {
   String get gifts => 'Gifts';
 
   @override
+  String get laundry => 'Laundry';
+
+  @override
   String get savings => 'Savings';
 
   @override
@@ -795,4 +798,7 @@ class SEn extends S {
 
   @override
   String get addIncome => 'Add Income';
+
+  @override
+  String get pleaseSelectNewCategory => 'Please select a category first';
 }

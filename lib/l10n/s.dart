@@ -847,6 +847,12 @@ abstract class S {
   /// **'Gifts'**
   String get gifts;
 
+  /// No description provided for @laundry.
+  ///
+  /// In en, this message translates to:
+  /// **'Laundry'**
+  String get laundry;
+
   /// No description provided for @savings.
   ///
   /// In en, this message translates to:
@@ -1620,6 +1626,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Add Income'**
   String get addIncome;
+
+  /// No description provided for @pleaseSelectNewCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a category first'**
+  String get pleaseSelectNewCategory;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {

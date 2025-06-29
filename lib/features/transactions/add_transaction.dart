@@ -16,6 +16,7 @@ import '../../core/utils/currency_utils.dart';
 import 'package:jaibee/shared/widgets/global_date_picker.dart';
 import 'package:jaibee/data/models/budget.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:jaibee/shared/widgets/global_time_picker.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
@@ -316,7 +317,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(
-        '${localizer.time ?? "Time"}: ${_selectedTime?.format(context) ?? "--:--"}',
+        '${localizer.time}: ${_selectedTime?.format(context) ?? "--:--"}',
       ),
       trailing: const Icon(Icons.access_time),
       onTap: () => _selectTime(context),
@@ -346,23 +347,19 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
-Widget _buildSubmitButton(S localizer) {
-  final mintJade = Theme.of(context).extension<MintJadeColors>()!;
-  return FilledButton.icon(
-    onPressed: _submitForm,
-    style: FilledButton.styleFrom(
-      backgroundColor: mintJade.buttonColor,
-      foregroundColor: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 14),
-    ),
-    icon: const Icon(Icons.add),
-    label: Text(
-      _isIncome
-          ? localizer.addIncome
-          : localizer.addTransaction,
-    ),
-  );
-}
+  Widget _buildSubmitButton(S localizer) {
+    final mintJade = Theme.of(context).extension<MintJadeColors>()!;
+    return FilledButton.icon(
+      onPressed: _submitForm,
+      style: FilledButton.styleFrom(
+        backgroundColor: mintJade.buttonColor,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+      ),
+      icon: const Icon(Icons.add),
+      label: Text(_isIncome ? localizer.addIncome : localizer.addTransaction),
+    );
+  }
 
   void _submitForm() {
     final localizer = S.of(context)!;
@@ -447,8 +444,8 @@ Widget _buildSubmitButton(S localizer) {
         message: exceededLimit
             ? localizer.categoryLimitExceeded
             : localizer.transactionAdded,
-        duration: const Duration(seconds: 2),
-        backgroundColor: exceededLimit ? Colors.red : Colors.green,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.green,
         margin: const EdgeInsets.all(16),
         borderRadius: BorderRadius.circular(12),
         icon: Icon(
@@ -471,38 +468,13 @@ Widget _buildSubmitButton(S localizer) {
     }
   }
 
-  Future<void> _selectTime(BuildContext context) async {
-    final now = DateTime.now();
-    final picked = await showTimePicker(
+  void _selectTime(BuildContext context) async {
+    final initial = _selectedTime ?? TimeOfDay.now();
+    final picked = await showGlobalCupertinoTimePicker(
       context: context,
-      initialTime: _selectedTime ?? TimeOfDay.now(),
+      initialTime: initial,
     );
     if (picked != null) {
-      // If selected date is today, don't allow future time
-      if (_selectedDate.year == now.year &&
-          _selectedDate.month == now.month &&
-          _selectedDate.day == now.day) {
-        final pickedDateTime = DateTime(
-          _selectedDate.year,
-          _selectedDate.month,
-          _selectedDate.day,
-          picked.hour,
-          picked.minute,
-        );
-        if (pickedDateTime.isAfter(now)) {
-          Flushbar(
-            message:
-                S.of(context)!.cannotSelectFutureTime ??
-                "Cannot select a future time.",
-            duration: const Duration(seconds: 2),
-            backgroundColor: Colors.redAccent,
-            margin: const EdgeInsets.all(16),
-            borderRadius: BorderRadius.circular(12),
-            icon: const Icon(Icons.error_outline, color: Colors.white),
-          ).show(context);
-          return;
-        }
-      }
       setState(() => _selectedTime = picked);
     }
   }

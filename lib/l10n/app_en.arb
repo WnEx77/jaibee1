@@ -138,6 +138,7 @@
   "books": "Books",
   "petCare": "Pet Care",
   "gifts": "Gifts",
+  "laundry": "Laundry",
   "savings": "Savings",
   "events": "Events",
   "totalSavings": "Total Savings",
@@ -284,5 +285,6 @@
   "monthlyLimitAuto": "Your monthly limit is the sum of all category limits below.",
   "time": "Time",
   "cannotSelectFutureTime": "Cannot select future time",
-  "addIncome": "Add Income"
+  "addIncome": "Add Income",
+  "pleaseSelectNewCategory": "Please select a category first"
 }

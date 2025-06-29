@@ -40,6 +40,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     Category(name: 'books', icon: 'book'),
     Category(name: 'petCare', icon: 'pets'),
     Category(name: 'gifts', icon: 'cake'),
+    Category(name: 'laundry', icon: 'laundry'),
     // Category(name: 'savings', icon: 'savings'),
     Category(name: 'events', icon: 'event'),
   ];
@@ -61,7 +62,17 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
   void _addCategory() {
     final localizer = S.of(context)!;
 
-    if (_selectedCategory.isEmpty) return;
+    if (_selectedCategory.isEmpty) {
+      Flushbar(
+        message: localizer.pleaseSelectNewCategory,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.redAccent,
+        margin: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(12),
+        icon: const Icon(Icons.error_outline, color: Colors.white),
+      ).show(context);
+      return;
+    }
 
     final selected = defaultUserCategories.firstWhere(
       (c) => c.name == _selectedCategory,

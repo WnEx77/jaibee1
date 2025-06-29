@@ -169,19 +169,33 @@ class _JaibeeHomeScreenState extends State<JaibeeHomeScreen> {
                           height: 56,
                           width: 56,
                           decoration: BoxDecoration(
-                            color: mintJade.appBarColor,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                ? mintJade.buttonColor.withOpacity(
+                                    0.9,
+                                  ) // لون محسّن للوضع الفاتح
+                                : mintJade
+                                      .buttonColor, // لون الوضع الداكن (أو غيره حسب اختيارك)
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.15),
+                                color: Colors.black.withOpacity(
+                                  Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? 0.15
+                                      : 0.3,
+                                ),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.add,
-                            color: Colors.white,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                ? Colors.white
+                                : Colors.white,
                             size: 28,
                           ),
                         ),

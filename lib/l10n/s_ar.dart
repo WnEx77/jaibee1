@@ -45,7 +45,7 @@ class SAr extends S {
   String get income => 'الدخل';
 
   @override
-  String get expense => 'النفقات';
+  String get expense => 'المصاريف';
 
   @override
   String get date => 'التاريخ';
@@ -387,6 +387,9 @@ class SAr extends S {
 
   @override
   String get gifts => 'الهدايا';
+
+  @override
+  String get laundry => 'مغسلة الملابس';
 
   @override
   String get savings => 'المدخرات';
@@ -801,4 +804,7 @@ class SAr extends S {
 
   @override
   String get addIncome => 'إضافة دخل';
+
+  @override
+  String get pleaseSelectNewCategory => 'فضلًا قم باختيار فئة أولًا';
 }
