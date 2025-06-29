@@ -22,12 +22,13 @@ Future<String> generatePrompt(
     prompt.writeln(
       "لا تعيد ذكر الأرقام مثل ما هي، ركز على التحليل، التوجيه، والفرص.",
     );
-    prompt.writeln(
-      "وضح لي إذا كنت أصرف بشكل متوازن، وإذا فيه تصنيفات تحتاج مراجعة.",
-    );
+    prompt.writeln("وضح لي إذا كنت أصرف بشكل متوازن، وإذا فيه تصنيفات تحتاج مراجعة.");
     prompt.writeln("قيم أهدافي وإذا كانت مناسبة لوضعي الحالي أو تحتاج تعديل.");
     prompt.writeln("إذا وضعي ممتاز، امدحني وعلمني كيف أطور نفسي أكثر.");
     prompt.writeln("تكلم بلغة واضحة، قصيرة، وتركز على أهم نصيحتين أو ثلاث.");
+    prompt.writeln(
+      "حتى لو بعض التصنيفات مكتوبة بالإنجليزية، ترجمها وتكلم بالعربية فقط.",
+    );
 
     if (sex != null) prompt.writeln("الجنس: $sex");
     if (age != null) prompt.writeln("العمر: $age سنة");
@@ -37,7 +38,7 @@ Future<String> generatePrompt(
     prompt.writeln("- إجمالي المصروفات: ${summary.totalExpenses.toStringAsFixed(2)}");
 
     if (summary.monthlyLimit != null) {
-      prompt.writeln("- الحد الشهري للصرف: ${summary.monthlyLimit!.toStringAsFixed(2)}");
+      prompt.writeln("- الحد الشهري للصرف (من الميزانية): ${summary.monthlyLimit!.toStringAsFixed(2)}");
     } else {
       prompt.writeln("- ما تم تحديد حد شهري للصرف.");
     }
@@ -101,7 +102,7 @@ Future<String> generatePrompt(
     prompt.writeln("- Total Expenses: ${summary.totalExpenses.toStringAsFixed(2)}");
 
     if (summary.monthlyLimit != null) {
-      prompt.writeln("- Monthly Spending Limit: ${summary.monthlyLimit!.toStringAsFixed(2)}");
+      prompt.writeln("- Monthly Spending Limit (from budgets): ${summary.monthlyLimit!.toStringAsFixed(2)}");
     } else {
       prompt.writeln("- No monthly spending limit has been set.");
     }

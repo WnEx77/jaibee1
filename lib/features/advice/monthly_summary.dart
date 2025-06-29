@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:jaibee/data/models/trancs.dart';
+import 'package:jaibee/data/models/budget.dart';
 
 class MonthlySummary {
   final double totalIncome;
@@ -18,7 +19,7 @@ class MonthlySummary {
 MonthlySummary getMonthlySummary(
   DateTime month,
   Box transactionsBox, {
-  double? monthlyLimit,
+  required Box<Budget> budgetsBox,
 }) {
   double income = 0.0;
   double expenses = 0.0;
@@ -37,6 +38,10 @@ MonthlySummary getMonthlySummary(
       }
     }
   }
+
+  // ✅ استرجاع الحد الشهري مباشرة من budgetBox باستخدام المفتاح '__monthly__'
+  final monthlyBudget = budgetsBox.get('__monthly__');
+  final monthlyLimit = monthlyBudget?.limit;
 
   return MonthlySummary(
     totalIncome: income,
