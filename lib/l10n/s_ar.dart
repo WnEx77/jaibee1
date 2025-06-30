@@ -392,6 +392,12 @@ class SAr extends S {
   String get laundry => 'مغسلة الملابس';
 
   @override
+  String get investments => 'الاستثمارات';
+
+  @override
+  String get subscriptions => 'الاشتراكات';
+
+  @override
   String get savings => 'المدخرات';
 
   @override

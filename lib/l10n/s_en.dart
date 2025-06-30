@@ -393,6 +393,12 @@ class SEn extends S {
   String get laundry => 'Laundry';
 
   @override
+  String get investments => 'Investments';
+
+  @override
+  String get subscriptions => 'Subscriptions';
+
+  @override
   String get savings => 'Savings';
 
   @override

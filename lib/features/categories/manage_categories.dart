@@ -41,6 +41,8 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     Category(name: 'petCare', icon: 'pets'),
     Category(name: 'gifts', icon: 'cake'),
     Category(name: 'laundry', icon: 'laundry'),
+    Category(name: 'investments', icon: 'trending_up'),
+    Category(name: 'subscriptions', icon: 'subscriptions'),
     // Category(name: 'savings', icon: 'savings'),
     Category(name: 'events', icon: 'event'),
   ];

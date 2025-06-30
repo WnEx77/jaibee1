@@ -853,6 +853,18 @@ abstract class S {
   /// **'Laundry'**
   String get laundry;
 
+  /// No description provided for @investments.
+  ///
+  /// In en, this message translates to:
+  /// **'Investments'**
+  String get investments;
+
+  /// No description provided for @subscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions'**
+  String get subscriptions;
+
   /// No description provided for @savings.
   ///
   /// In en, this message translates to:
