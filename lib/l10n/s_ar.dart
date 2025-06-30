@@ -813,4 +813,7 @@ class SAr extends S {
 
   @override
   String get pleaseSelectNewCategory => 'فضلًا قم باختيار فئة أولًا';
+
+  @override
+  String get pickReminderTime => 'Pick Reminder Time';
 }

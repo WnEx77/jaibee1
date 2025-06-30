@@ -807,4 +807,7 @@ class SEn extends S {
 
   @override
   String get pleaseSelectNewCategory => 'Please select a category first';
+
+  @override
+  String get pickReminderTime => 'Pick Reminder Time';
 }

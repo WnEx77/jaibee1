@@ -484,6 +484,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context)!;
+    bool _isReminderEnabled = false;
+    TimeOfDay? _reminderTime;
+    bool _notificationGranted = false;
 
     return Scaffold(
       body: AppBackground(
@@ -574,29 +577,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildCardTile(
                     icon: Icons.alarm,
                     label: s.setDailyReminder,
-                    onTap: () async {
-                      final pickedTime = await showGlobalCupertinoTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
+                    trailing: Switch(
+                      value: _isReminderEnabled,
+                      onChanged: (value) async {
+                        if (value) {
+                          final granted =
+                              await NotificationService.requestPermission();
 
-                      if (pickedTime != null) {
-                        await NotificationService.scheduleDailyReminder(
-                          pickedTime,
-                        );
+                          if (granted) {
+                            setState(() {
+                              _notificationGranted = true;
+                              _isReminderEnabled = true;
+                            });
+                          } else {
+                            setState(() {
+                              _notificationGranted = false;
+                              _isReminderEnabled = false;
+                            });
 
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(s.reminderSetSuccess),
-                              duration: Duration(seconds: 3),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
+                            if (context.mounted) {
+                              Flushbar(
+                                message: 'Notification permission is required.',
+                                flushbarPosition: FlushbarPosition.BOTTOM,
+                                margin: EdgeInsets.all(8),
+                                borderRadius: BorderRadius.circular(8),
+                                duration: Duration(seconds: 3),
+                                backgroundColor: Colors.redAccent,
+                                icon: Icon(
+                                  Icons.error_outline,
+                                  color: Colors.white,
+                                ),
+                              ).show(context);
+                            }
+                          }
+                        } else {
+                          // Toggle off, cancel any scheduled notifications
+                          NotificationService.cancelDailyReminder();
+                          setState(() {
+                            _isReminderEnabled = false;
+                            _reminderTime = null;
+                          });
                         }
-                      }
-                    },
+                      },
+                    ),
+                    onTap: () {},
                   ),
+
+                  if (_isReminderEnabled && _notificationGranted)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: ElevatedButton.icon(
+                        icon: Icon(Icons.access_time),
+                        label: Text(
+                          _reminderTime != null
+                              ? 'Reminder: ${_reminderTime!.format(context)}'
+                              : s.pickReminderTime,
+                        ),
+                        onPressed: () async {
+                          final pickedTime =
+                              await showGlobalCupertinoTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+
+                          if (pickedTime != null) {
+                            await NotificationService.scheduleDailyReminder(
+                              pickedTime,
+                            );
+                            setState(() {
+                              _reminderTime = pickedTime;
+                            });
+
+                            if (context.mounted) {
+                              Flushbar(
+                                message: s.reminderSetSuccess,
+                                flushbarPosition: FlushbarPosition.BOTTOM,
+                                margin: EdgeInsets.all(8),
+                                borderRadius: BorderRadius.circular(8),
+                                duration: Duration(seconds: 2),
+                                backgroundColor: Colors.green,
+                                icon: Icon(
+                                  Icons.check_circle_outline,
+                                  color: Colors.white,
+                                ),
+                              ).show(context);
+                            }
+                          }
+                        },
+                      ),
+                    ),
 
                   _buildDivider(),
                   // _buildCardTile(
@@ -732,6 +801,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
+    Widget? trailing, // براميتر اختياري جديد
   }) {
     return ListTile(
       leading: Icon(icon, color: Colors.teal, size: 28),
@@ -739,11 +809,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         label,
         style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
       ),
-      trailing: const Icon(
-        Icons.arrow_forward_ios,
-        size: 16,
-        color: Colors.grey,
-      ),
+      trailing:
+          trailing ??
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

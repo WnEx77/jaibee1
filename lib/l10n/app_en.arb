@@ -288,5 +288,6 @@
   "time": "Time",
   "cannotSelectFutureTime": "Cannot select future time",
   "addIncome": "Add Income",
-  "pleaseSelectNewCategory": "Please select a category first"
+  "pleaseSelectNewCategory": "Please select a category first",
+  "pickReminderTime": "Pick Reminder Time"
 }

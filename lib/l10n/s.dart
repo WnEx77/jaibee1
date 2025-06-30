@@ -1644,6 +1644,12 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Please select a category first'**
   String get pleaseSelectNewCategory;
+
+  /// No description provided for @pickReminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick Reminder Time'**
+  String get pickReminderTime;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
