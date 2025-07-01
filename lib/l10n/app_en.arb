@@ -289,5 +289,9 @@
   "cannotSelectFutureTime": "Cannot select future time",
   "addIncome": "Add Income",
   "pleaseSelectNewCategory": "Please select a category first",
-  "pickReminderTime": "Pick Reminder Time"
+  "pickReminderTime": "Pick Reminder Time",
+  "reminderLabel": "Reminder: {time}",
+  "notificationsDisabled": "Notifications Disabled",
+  "enableNotificationsInSettings": "Enable Notifications In Settings",
+  "openSettings": "Open Settings"
 }

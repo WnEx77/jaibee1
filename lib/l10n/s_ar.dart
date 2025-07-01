@@ -815,5 +815,19 @@ class SAr extends S {
   String get pleaseSelectNewCategory => 'فضلًا قم باختيار فئة أولًا';
 
   @override
-  String get pickReminderTime => 'Pick Reminder Time';
+  String get pickReminderTime => 'اختر وقت التذكير';
+
+  @override
+  String reminderLabel(Object time) {
+    return 'تذكير: $time';
+  }
+
+  @override
+  String get notificationsDisabled => 'الإشعارات غير مفعلة';
+
+  @override
+  String get enableNotificationsInSettings => 'فعّل الإشعارات من الإعدادات';
+
+  @override
+  String get openSettings => 'افتح الإعدادات';
 }

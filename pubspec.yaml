@@ -2,7 +2,7 @@ name: jaibee
 description: "Jaibee is a simple and intuitive app for tracking your income and expenses. We aim to help you take control of your finances with ease."
 publish_to: 'none'
 
-version: 1.0.1+4
+version: 1.0.1+6
 
 environment:
   sdk: ^3.8.1
@@ -38,6 +38,7 @@ dependencies:
   timezone: ^0.9.2
   super_cupertino_navigation_bar: ^2.1.2
   keyboard_actions: ^4.2.0
+  app_settings: ^6.1.1
 
 dev_dependencies:
   flutter_test:

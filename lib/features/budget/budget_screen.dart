@@ -334,7 +334,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                                         ),
                                         style: Theme.of(
                                           context,
-                                        ).textTheme.bodyLarge,
+                                        ).textTheme.bodyMedium,
                                       ),
                                     ),
                                     const SizedBox(width: 10),

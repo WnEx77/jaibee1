@@ -269,5 +269,10 @@
   "time": "الوقت",
   "cannotSelectFutureTime": "لا يمكن اختيار وقت في المستقبل",
   "addIncome": "إضافة دخل",
-  "pleaseSelectNewCategory": "فضلًا قم باختيار فئة أولًا"
+  "pleaseSelectNewCategory": "فضلًا قم باختيار فئة أولًا",
+  "pickReminderTime": "اختر وقت التذكير",
+  "reminderLabel": "تذكير: {time}",
+  "notificationsDisabled": "الإشعارات غير مفعلة",
+  "enableNotificationsInSettings": "فعّل الإشعارات من الإعدادات",
+  "openSettings": "افتح الإعدادات"
 }

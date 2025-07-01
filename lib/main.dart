@@ -1,3 +1,4 @@
+// main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -28,21 +29,12 @@ Future<void> main() async {
   Hive.registerAdapter(BudgetAdapter());
   Hive.registerAdapter(GoalAdapter());
 
-  // Place this before opening the 'categories' box, if you want to delete it before use.
-  // await Hive.deleteBoxFromDisk('categories');
-  // await Hive.deleteBoxFromDisk('transactions');
-  // await Hive.deleteBoxFromDisk('budgets');
-
   await Hive.openBox('transactions');
   await Hive.openBox<Category>('categories');
   await Hive.openBox<double>('settings');
   await Hive.openBox<Budget>('budgets');
   await Hive.openBox<Goal>('goals');
   await Hive.openBox<Category>('userCategories');
-
-  // await prefs.clear(); // ← to test the onboarding screen ONLY
-
-  // Remove this line in production
 
   await _addDefaultCategoriesIfEmpty();
   await _addDefaultMonthlyLimitIfNotExists();
@@ -133,9 +125,9 @@ class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
       extensions: const <ThemeExtension<dynamic>>[
         MintJadeColors(
           appBarColor: Color(0xFFE9F4F2),
-          navBarColor: Color(0xFFF5F5F5), // Light gray for clarity
-          selectedIconColor: Color(0xFF009688), // Strong teal
-          unselectedIconColor: Color(0xFF9E9E9E), // Neutral dark grey
+          navBarColor: Color(0xFFF5F5F5),
+          selectedIconColor: Color(0xFF009688),
+          unselectedIconColor: Color(0xFF9E9E9E),
           buttonColor: Colors.teal,
         ),
       ],
@@ -182,10 +174,9 @@ class _JaibeeTrackerAppState extends State<JaibeeTrackerApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeProvider.themeMode,
-      home: const SplashScreen(), // Always show splash first
+      home: const SplashScreen(),
       routes: {
         '/transactions': (context) => JaibeeHomeScreen(),
-        // Add other routes here if needed
       },
       builder: (context, child) {
         return GestureDetector(

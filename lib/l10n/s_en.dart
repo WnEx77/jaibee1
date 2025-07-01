@@ -810,4 +810,19 @@ class SEn extends S {
 
   @override
   String get pickReminderTime => 'Pick Reminder Time';
+
+  @override
+  String reminderLabel(Object time) {
+    return 'Reminder: $time';
+  }
+
+  @override
+  String get notificationsDisabled => 'Notifications Disabled';
+
+  @override
+  String get enableNotificationsInSettings =>
+      'Enable Notifications In Settings';
+
+  @override
+  String get openSettings => 'Open Settings';
 }

@@ -17,6 +17,8 @@ import 'package:http/http.dart' as http;
 import '../../core/theme/mint_jade_theme.dart';
 import '../../core/services/notification_service.dart';
 import 'package:jaibee/shared/widgets/global_time_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:app_settings/app_settings.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -28,11 +30,159 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _goalsController = TextEditingController();
 
+  bool _isReminderEnabled = false;
+  TimeOfDay? _reminderTime;
+  bool _notificationGranted = false;
+
   @override
   void initState() {
     super.initState();
     _loadProfile();
+    _loadReminderStatus();
+    _loadReminderTime();
   }
+
+  void _loadReminderStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnabled = prefs.getBool('isReminderEnabled') ?? false;
+
+    setState(() {
+      _isReminderEnabled = isEnabled;
+      _notificationGranted = isEnabled; // إذا تم تفعيلها، نفترض أن الإذن موجود
+    });
+  }
+
+  Future<void> _loadReminderTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hour = prefs.getInt('reminder_hour');
+    final minute = prefs.getInt('reminder_minute');
+
+    if (hour != null && minute != null) {
+      setState(() {
+        _reminderTime = TimeOfDay(hour: hour, minute: minute);
+      });
+    }
+  }
+
+  void _toggleReminder(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (value) {
+      final granted = await NotificationService.requestPermission();
+
+      if (granted) {
+        await prefs.setBool('isReminderEnabled', true);
+        setState(() {
+          _notificationGranted = true;
+          _isReminderEnabled = true;
+        });
+      } else {
+        await prefs.setBool('isReminderEnabled', false);
+        setState(() {
+          _notificationGranted = false;
+          _isReminderEnabled = false;
+        });
+
+        if (context.mounted) {
+          _showNotificationSettingsDialog(context, S.of(context)!);
+        }
+      }
+    } else {
+      await prefs.setBool('isReminderEnabled', false);
+      NotificationService.cancelDailyReminder();
+      setState(() {
+        _isReminderEnabled = false;
+        _reminderTime = null;
+      });
+    }
+  }
+
+  Future<void> _saveReminderTime(TimeOfDay time) async {
+    final prefs = await SharedPreferences.getInstance();
+    // نحفظ الساعة والدقيقة بشكل منفصل
+    await prefs.setInt('reminder_hour', time.hour);
+    await prefs.setInt('reminder_minute', time.minute);
+  }
+
+
+void _showNotificationSettingsDialog(BuildContext context, S s) {
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+    ),
+    backgroundColor: Theme.of(context).cardColor,
+    builder: (context) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.notifications_off_rounded,
+                size: 40,
+                color: Colors.redAccent,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                s.notificationsDisabled ?? 'Notifications Disabled',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                s.enableNotificationsInSettings ??
+                    'To receive daily reminders, please enable notifications in your device settings.',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isDark ? Colors.white70 : Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    AppSettings.openAppSettings(type: AppSettingsType.notification);
+                  },
+                  child: Text(s.openSettings ?? 'Open Settings'),
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: isDark ? Colors.white : Colors.black87,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(s.cancel ?? 'Cancel'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 
   Future<void> _loadProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -484,9 +634,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context)!;
-    bool _isReminderEnabled = false;
-    TimeOfDay? _reminderTime;
-    bool _notificationGranted = false;
 
     return Scaffold(
       body: AppBackground(
@@ -579,91 +726,104 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     label: s.setDailyReminder,
                     trailing: Switch(
                       value: _isReminderEnabled,
-                      onChanged: (value) async {
-                        if (value) {
-                          final granted =
-                              await NotificationService.requestPermission();
-
-                          if (granted) {
-                            setState(() {
-                              _notificationGranted = true;
-                              _isReminderEnabled = true;
-                            });
-                          } else {
-                            setState(() {
-                              _notificationGranted = false;
-                              _isReminderEnabled = false;
-                            });
-
-                            if (context.mounted) {
-                              Flushbar(
-                                message: 'Notification permission is required.',
-                                flushbarPosition: FlushbarPosition.BOTTOM,
-                                margin: EdgeInsets.all(8),
-                                borderRadius: BorderRadius.circular(8),
-                                duration: Duration(seconds: 3),
-                                backgroundColor: Colors.redAccent,
-                                icon: Icon(
-                                  Icons.error_outline,
-                                  color: Colors.white,
-                                ),
-                              ).show(context);
-                            }
-                          }
-                        } else {
-                          // Toggle off, cancel any scheduled notifications
-                          NotificationService.cancelDailyReminder();
-                          setState(() {
-                            _isReminderEnabled = false;
-                            _reminderTime = null;
-                          });
-                        }
-                      },
+                      onChanged: _toggleReminder,
                     ),
                     onTap: () {},
                   ),
 
                   if (_isReminderEnabled && _notificationGranted)
                     Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: ElevatedButton.icon(
-                        icon: Icon(Icons.access_time),
-                        label: Text(
-                          _reminderTime != null
-                              ? 'Reminder: ${_reminderTime!.format(context)}'
-                              : s.pickReminderTime,
-                        ),
-                        onPressed: () async {
-                          final pickedTime =
-                              await showGlobalCupertinoTimePicker(
-                                context: context,
-                                initialTime: TimeOfDay.now(),
-                              );
-
-                          if (pickedTime != null) {
-                            await NotificationService.scheduleDailyReminder(
-                              pickedTime,
-                            );
-                            setState(() {
-                              _reminderTime = pickedTime;
-                            });
-
-                            if (context.mounted) {
-                              Flushbar(
-                                message: s.reminderSetSuccess,
-                                flushbarPosition: FlushbarPosition.BOTTOM,
-                                margin: EdgeInsets.all(8),
-                                borderRadius: BorderRadius.circular(8),
-                                duration: Duration(seconds: 2),
-                                backgroundColor: Colors.green,
-                                icon: Icon(
-                                  Icons.check_circle_outline,
-                                  color: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Title for clarity
+                          Text(
+                            s.pickReminderTime,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.teal[700],
                                 ),
-                              ).show(context);
-                            }
-                          }
-                        },
+                          ),
+                          const SizedBox(height: 8),
+                          GestureDetector(
+                            onTap: () async {
+                              final pickedTime =
+                                  await showGlobalCupertinoTimePicker(
+                                    context: context,
+                                    initialTime:
+                                        _reminderTime ?? TimeOfDay.now(),
+                                  );
+                              if (pickedTime != null) {
+                                await NotificationService.scheduleDailyReminder(
+                                  context,
+                                  pickedTime,
+                                );
+                                await _saveReminderTime(pickedTime);
+                                setState(() {
+                                  _reminderTime = pickedTime;
+                                });
+
+                                if (context.mounted) {
+                                  Flushbar(
+                                    message: s.reminderSetSuccess,
+                                    flushbarPosition: FlushbarPosition.BOTTOM,
+                                    margin: const EdgeInsets.all(8),
+                                    borderRadius: BorderRadius.circular(8),
+                                    duration: const Duration(seconds: 2),
+                                    backgroundColor: Colors.green,
+                                    icon: const Icon(
+                                      Icons.check_circle_outline,
+                                      color: Colors.white,
+                                    ),
+                                  ).show(context);
+                                }
+                              }
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 14,
+                                horizontal: 18,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.teal.withOpacity(0.07),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.teal,
+                                  width: 1.2,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _reminderTime != null
+                                        ? s.reminderLabel(
+                                            _reminderTime!.format(context),
+                                          )
+                                        : s.pickReminderTime,
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(
+                                          color: Colors.teal[900],
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                  const Icon(
+                                    Icons.access_time,
+                                    color: Colors.teal,
+                                    size: 22,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 

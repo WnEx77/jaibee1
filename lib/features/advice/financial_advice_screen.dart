@@ -185,15 +185,15 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             centerTitle: true,
-            actions: [
-              IconButton(
-                icon: Icon(
-                  Icons.share,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-                onPressed: _showShareOptions,
-              ),
-            ],
+            // actions: [
+            //   IconButton(
+            //     icon: Icon(
+            //       Icons.share,
+            //       color: isDark ? Colors.white : Colors.black,
+            //     ),
+            //     onPressed: _showShareOptions,
+            //   ),
+            // ],
           ),
         ),
       ),

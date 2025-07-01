@@ -1,3 +1,4 @@
+// notification_service.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -6,7 +7,6 @@ import 'package:timezone/timezone.dart' as tz;
 class NotificationService {
   static final _notifications = FlutterLocalNotificationsPlugin();
 
-  /// Initialize notifications and request permissions
   static Future<void> init() async {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -15,22 +15,21 @@ class NotificationService {
       requestBadgePermission: true,
       requestAlertPermission: true,
       onDidReceiveLocalNotification:
-          (int id, String? title, String? body, String? payload) async {
-        // Fallback for iOS < 10
-      },
+          (int id, String? title, String? body, String? payload) async {},
     );
 
     final settings = InitializationSettings(android: android, iOS: iOS);
     await _notifications.initialize(settings);
 
-    // Timezone initialization
     tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Asia/Riyadh'));
   }
 
-  /// Ask user for notification permissions and return result
   static Future<bool> requestPermission() async {
-    final iosPlugin = _notifications.resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>();
+    final iosPlugin = _notifications
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
 
     if (iosPlugin != null) {
       final result = await iosPlugin.requestPermissions(
@@ -40,33 +39,47 @@ class NotificationService {
       );
       return result ?? false;
     }
-
-    // Android grants permission by default
     return true;
   }
 
-  /// Schedule a daily notification at the selected time
-  static Future<void> scheduleDailyReminder(TimeOfDay time) async {
+  static Future<void> scheduleDailyReminder(
+    BuildContext context,
+    TimeOfDay time,
+  ) async {
     final now = tz.TZDateTime.now(tz.local);
 
-    // Determine the first notification time
-    final scheduledDate = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      time.hour,
-      time.minute,
-    ).add(
-      Duration(
-        days: now.hour > time.hour || (now.hour == time.hour && now.minute >= time.minute) ? 1 : 0,
-      ),
-    );
+    final scheduledDate =
+        tz.TZDateTime(
+          tz.local,
+          now.year,
+          now.month,
+          now.day,
+          time.hour,
+          time.minute,
+        ).add(
+          Duration(
+            days:
+                now.hour > time.hour ||
+                    (now.hour == time.hour && now.minute >= time.minute)
+                ? 1
+                : 0,
+          ),
+        );
+
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
+    final title = isArabic
+        ? 'لا تنسى تسجيل مصروفاتك 💸'
+        : 'Don’t forget to log your expenses 💸';
+
+    final body = isArabic
+        ? 'تتبع المصروفات يوميًا يساعدك في الالتزام بميزانيتك.'
+        : 'Keeping track daily helps you stick to your budget.';
 
     await _notifications.zonedSchedule(
-      0, // Notification ID
-      'Don’t forget to log your expenses 💸',
-      'Keeping track daily helps you stick to your budget.',
+      0,
+      title,
+      body,
       scheduledDate,
       const NotificationDetails(
         android: AndroidNotificationDetails(
@@ -78,14 +91,13 @@ class NotificationService {
         iOS: DarwinNotificationDetails(),
       ),
       androidAllowWhileIdle: true,
-      matchDateTimeComponents: DateTimeComponents.time, // Repeat daily
+      matchDateTimeComponents: DateTimeComponents.time,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
-  /// Cancel the daily reminder if needed
   static Future<void> cancelDailyReminder() async {
-    await _notifications.cancel(0); // Same ID as in zonedSchedule
+    await _notifications.cancel(0);
   }
 }

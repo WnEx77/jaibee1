@@ -1650,6 +1650,30 @@ abstract class S {
   /// In en, this message translates to:
   /// **'Pick Reminder Time'**
   String get pickReminderTime;
+
+  /// No description provided for @reminderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder: {time}'**
+  String reminderLabel(Object time);
+
+  /// No description provided for @notificationsDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications Disabled'**
+  String get notificationsDisabled;
+
+  /// No description provided for @enableNotificationsInSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications In Settings'**
+  String get enableNotificationsInSettings;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
 }
 
 class _SDelegate extends LocalizationsDelegate<S> {
