@@ -20,14 +20,6 @@ class TermsOfServiceScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                isArabic ? 'شروط الخدمة' : 'Terms of Service',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: isArabic ? TextAlign.right : TextAlign.left,
-              ),
               const SizedBox(height: 16),
               Container(
                 decoration: BoxDecoration(

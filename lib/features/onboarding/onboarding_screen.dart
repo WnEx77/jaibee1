@@ -162,9 +162,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if (page.imageAsset != null && page.imageAsset!.isNotEmpty)
+                            if (page.imageAsset != null &&
+                                page.imageAsset!.isNotEmpty)
                               Image.asset(page.imageAsset!, height: 240)
-                            else if (page.lottieAsset != null && page.lottieAsset!.isNotEmpty)
+                            else if (page.lottieAsset != null &&
+                                page.lottieAsset!.isNotEmpty)
                               Lottie.asset(page.lottieAsset!, height: 240),
                             const SizedBox(height: 32),
                             Text(
@@ -213,7 +215,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 const SizedBox(height: 24),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.fromLTRB(
+                    16,
+                    16,
+                    16,
+                    50,
+                  ), // more bottom space
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
