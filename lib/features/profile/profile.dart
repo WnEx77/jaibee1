@@ -104,85 +104,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await prefs.setInt('reminder_minute', time.minute);
   }
 
-
-void _showNotificationSettingsDialog(BuildContext context, S s) {
-  showModalBottomSheet(
-    context: context,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
-    ),
-    backgroundColor: Theme.of(context).cardColor,
-    builder: (context) {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
-      return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.notifications_off_rounded,
-                size: 40,
-                color: Colors.redAccent,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                s.notificationsDisabled ?? 'Notifications Disabled',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: isDark ? Colors.white : Colors.black87,
+  void _showNotificationSettingsDialog(BuildContext context, S s) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      backgroundColor: Theme.of(context).cardColor,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.notifications_off_rounded,
+                  size: 40,
+                  color: Colors.redAccent,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                s.enableNotificationsInSettings ??
-                    'To receive daily reminders, please enable notifications in your device settings.',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: isDark ? Colors.white70 : Colors.black54,
+                const SizedBox(height: 12),
+                Text(
+                  s.notificationsDisabled ?? 'Notifications Disabled',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 10),
+                Text(
+                  s.enableNotificationsInSettings ??
+                      'To receive daily reminders, please enable notifications in your device settings.',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      AppSettings.openAppSettings(
+                        type: AppSettingsType.notification,
+                      );
+                    },
+                    child: Text(s.openSettings ?? 'Open Settings'),
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    AppSettings.openAppSettings(type: AppSettingsType.notification);
-                  },
-                  child: Text(s.openSettings ?? 'Open Settings'),
                 ),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: isDark ? Colors.white : Colors.black87,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: isDark ? Colors.white : Colors.black87,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(s.cancel ?? 'Cancel'),
                   ),
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(s.cancel ?? 'Cancel'),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   Future<void> _loadProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -740,7 +741,6 @@ void _showNotificationSettingsDialog(BuildContext context, S s) {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Title for clarity
                           Text(
                             s.pickReminderTime,
                             style: Theme.of(context).textTheme.bodyMedium
@@ -791,7 +791,11 @@ void _showNotificationSettingsDialog(BuildContext context, S s) {
                                 horizontal: 18,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.teal.withOpacity(0.07),
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.teal.withOpacity(0.18)
+                                    : Colors.teal.withOpacity(0.07),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: Colors.teal,
@@ -810,13 +814,21 @@ void _showNotificationSettingsDialog(BuildContext context, S s) {
                                         : s.pickReminderTime,
                                     style: Theme.of(context).textTheme.bodyLarge
                                         ?.copyWith(
-                                          color: Colors.teal[900],
+                                          color:
+                                              Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.teal[100]
+                                              : Colors.teal[900],
                                           fontWeight: FontWeight.w600,
                                         ),
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.access_time,
-                                    color: Colors.teal,
+                                    color:
+                                        Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.teal[100]
+                                        : Colors.teal,
                                     size: 22,
                                   ),
                                 ],

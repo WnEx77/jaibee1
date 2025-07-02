@@ -2,7 +2,7 @@ name: jaibee
 description: "Jaibee is a simple and intuitive app for tracking your income and expenses. We aim to help you take control of your finances with ease."
 publish_to: 'none'
 
-version: 1.0.1+6
+version: 1.0.1+7
 
 environment:
   sdk: ^3.8.1

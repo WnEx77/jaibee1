@@ -57,6 +57,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
     if (_isIncome && _category != 'income') _category = 'income';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: AppBackground(
@@ -70,6 +71,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             ),
             child: KeyboardActions(
               config: KeyboardActionsConfig(
+                keyboardBarColor: isDark
+                    ? Colors.grey[900]
+                    : Colors.white, // <-- Add this line
+
                 actions: [
                   KeyboardActionsItem(
                     focusNode: _amountFocus,

@@ -138,6 +138,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
             return KeyboardActions(
               config: KeyboardActionsConfig(
+                keyboardBarColor: isDark
+                    ? Colors.grey[900]
+                    : Colors.white, // <-- Add this line
                 actions: _controllers.keys.map((name) {
                   return KeyboardActionsItem(
                     focusNode: _focusNodes[name]!,

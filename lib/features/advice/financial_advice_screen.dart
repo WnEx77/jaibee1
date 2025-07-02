@@ -78,7 +78,6 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
       final prompt = generatePrompt(
         summary,
         locale,
-        goals: goals,
         budgets: budgets,
       );
 

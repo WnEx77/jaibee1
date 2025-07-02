@@ -4,9 +4,6 @@ import 'monthly_summary.dart';
 Future<String> generatePrompt(
   MonthlySummary summary,
   Locale locale, {
-  String? sex,
-  int? age,
-  List<Map<String, dynamic>> goals = const [],
   List<Map<String, dynamic>> budgets = const [],
 }) async {
   final isArabic = locale.languageCode == 'ar';
@@ -23,15 +20,12 @@ Future<String> generatePrompt(
       "لا تعيد ذكر الأرقام مثل ما هي، ركز على التحليل، التوجيه، والفرص.",
     );
     prompt.writeln("وضح لي إذا كنت أصرف بشكل متوازن، وإذا فيه تصنيفات تحتاج مراجعة.");
-    prompt.writeln("قيم أهدافي وإذا كانت مناسبة لوضعي الحالي أو تحتاج تعديل.");
+    prompt.writeln("قيم وضعي المالي وهل هو مستقر أو يحتاج تدخل.");
     prompt.writeln("إذا وضعي ممتاز، امدحني وعلمني كيف أطور نفسي أكثر.");
     prompt.writeln("تكلم بلغة واضحة، قصيرة، وتركز على أهم نصيحتين أو ثلاث.");
     prompt.writeln(
       "حتى لو بعض التصنيفات مكتوبة بالإنجليزية، ترجمها وتكلم بالعربية فقط.",
     );
-
-    if (sex != null) prompt.writeln("الجنس: $sex");
-    if (age != null) prompt.writeln("العمر: $age سنة");
 
     prompt.writeln("\n📊 ملخص الشهر:");
     prompt.writeln("- إجمالي الدخل: ${summary.totalIncome.toStringAsFixed(2)}");
@@ -61,15 +55,6 @@ Future<String> generatePrompt(
       }
     }
 
-    if (goals.isNotEmpty) {
-      prompt.writeln("\n🎯 أهدافي المالية:");
-      for (var goal in goals) {
-        prompt.writeln(
-          "- أبغى أحقق '${goal['item']}' عن طريق توفير ${goal['monthly']} شهرياً لمدة ${goal['months']} شهر (${goal['type']}).",
-        );
-      }
-    }
-
     prompt.writeln(
       "\n📌 عطِني تحليل صريح، مع أهم 2-3 نصائح ممكن تساعدني أبدأ أتحسن من اليوم.",
     );
@@ -85,7 +70,7 @@ Future<String> generatePrompt(
     );
     prompt.writeln("Tell me if my expenses are healthy or need adjustment.");
     prompt.writeln(
-      "Evaluate my goals: Are they realistic? Are they aligned with my financial status?",
+      "Evaluate if my financial state is stable or needs intervention.",
     );
     prompt.writeln(
       "Praise me if I’m doing well, and suggest what to improve further.",
@@ -93,9 +78,6 @@ Future<String> generatePrompt(
     prompt.writeln(
       "Keep your advice focused on the top 2–3 most impactful changes.",
     );
-
-    if (sex != null) prompt.writeln("Sex: $sex");
-    if (age != null) prompt.writeln("Age: $age");
 
     prompt.writeln("\n📊 Monthly Summary:");
     prompt.writeln("- Total Income: ${summary.totalIncome.toStringAsFixed(2)}");
@@ -121,15 +103,6 @@ Future<String> generatePrompt(
         final status = spent > limit ? "🔴 Over Budget" : "🟢 Within Budget";
         prompt.writeln(
           "- $category: Spent ${spent.toStringAsFixed(2)} (Limit: ${limit.toStringAsFixed(2)}) $status",
-        );
-      }
-    }
-
-    if (goals.isNotEmpty) {
-      prompt.writeln("\n🎯 My Financial Goals:");
-      for (var goal in goals) {
-        prompt.writeln(
-          "- Goal '${goal['item']}' — Saving ${goal['monthly']} per month for ${goal['months']} months (${goal['type']}).",
         );
       }
     }

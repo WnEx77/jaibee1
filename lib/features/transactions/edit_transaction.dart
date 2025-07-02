@@ -233,6 +233,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   Widget build(BuildContext context) {
     final localizer = S.of(context)!;
     final mintJade = Theme.of(context).extension<MintJadeColors>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -248,6 +250,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
         ),
         child: KeyboardActions(
           config: KeyboardActionsConfig(
+                keyboardBarColor: isDark ? Colors.grey[900] : Colors.white, // <-- Add this line
             actions: [
               KeyboardActionsItem(
                 focusNode: _amountFocus,
