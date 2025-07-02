@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jaibee/shared/widgets/custom_app_bar.dart';
+import 'package:jaibee/shared/widgets/app_background.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -9,37 +10,38 @@ class PrivacyPolicyScreen extends StatelessWidget {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent, // Important for showing background
       appBar: CustomAppBar(
         title: isArabic ? 'سياسة الخصوصية' : 'Privacy Policy',
         showBackButton: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor.withOpacity(0.95),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 18,
-                ),
-                child: Text(
-                  isArabic
-                      ? '''
+      body: AppBackground(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor.withOpacity(0.95),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 18,
+                  ),
+                  child: Text(
+                    isArabic
+                        ? '''
 خصوصيتك مهمة بالنسبة لنا. يوضح هذا المستند كيف يقوم تطبيق "جيبي" بجمع واستخدام وحماية معلوماتك عند استخدامك للتطبيق.
 
 1. المعلومات التي نجمعها
@@ -68,7 +70,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
 
 للاستفسار أو الدعم، يرجى التواصل معنا عبر البريد الإلكتروني: jaibee.care@gmail.com
 '''
-                      : '''
+                        : '''
 Your privacy is important to us. This document explains how the "Jaibee" app collects, uses, and protects your information when you use the app.
 
 1. Information We Collect
@@ -97,14 +99,15 @@ Your privacy is important to us. This document explains how the "Jaibee" app col
 
 For inquiries or support, please contact us at: jaibee.care@gmail.com
 ''',
-                  style: const TextStyle(fontSize: 15, height: 1.7),
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
+                    style: const TextStyle(fontSize: 15, height: 1.7),
+                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                    textDirection: isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

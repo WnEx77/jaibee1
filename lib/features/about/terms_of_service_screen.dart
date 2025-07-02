@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jaibee/shared/widgets/custom_app_bar.dart';
+import 'package:jaibee/shared/widgets/app_background.dart'; // Import AppBackground
 
 class TermsOfServiceScreen extends StatelessWidget {
   const TermsOfServiceScreen({super.key});
@@ -9,37 +10,38 @@ class TermsOfServiceScreen extends StatelessWidget {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent, // Make scaffold transparent
       appBar: CustomAppBar(
         title: isArabic ? 'شروط الخدمة' : 'Terms of Service',
         showBackButton: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor.withOpacity(0.95),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 18,
-                ),
-                child: Text(
-                  isArabic
-                      ? '''
+      body: AppBackground(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor.withOpacity(0.95),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 18,
+                  ),
+                  child: Text(
+                    isArabic
+                        ? '''
 تم بتاريخ: 24/06/2025
 
 مرحبًا بك في جيبي! باستخدامك لهذا التطبيق، فإنك توافق على الشروط والأحكام التالية. يرجى قراءتها بعناية.
@@ -81,7 +83,7 @@ class TermsOfServiceScreen extends StatelessWidget {
 10. التواصل
 إذا كان لديك أي استفسارات بشأن هذه الشروط، يرجى التواصل معنا عبر البريد الإلكتروني: jaibee.care@gmail.com
 '''
-                      : '''
+                        : '''
 Effective Date: 06/24/2025
 
 Welcome to Jaibee! By using our app, you agree to the following terms and conditions. Please read them carefully.
@@ -123,14 +125,15 @@ We reserve the right to suspend or terminate your access to the App at any time,
 10. Contact
 If you have any questions about these Terms, please contact us at jaibee.care@gmail.com.
 ''',
-                  style: const TextStyle(fontSize: 15, height: 1.7),
-                  textAlign: isArabic ? TextAlign.right : TextAlign.left,
-                  textDirection: isArabic
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
+                    style: const TextStyle(fontSize: 15, height: 1.7),
+                    textAlign: isArabic ? TextAlign.right : TextAlign.left,
+                    textDirection: isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
